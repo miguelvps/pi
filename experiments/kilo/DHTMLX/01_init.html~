@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta  name = "viewport" content = "initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no">
+		<link rel="stylesheet" href="codebase/touchui.css" type="text/css" media="screen" charset="utf-8">
+		<script src="codebase/touchui.js" type="text/javascript" charset="utf-8"></script>
+		<title>Form</title>
+	</head>
+	<body>
+		<style>
+			html {
+				overflow:scroll;
+			}
+		
+        html,body{
+            background-color:#ffffff;
+        }
+        </style>
+            
+		<textarea style="width:200px;height:100px;display:none" name="xml" id="xml">
+			<data>
+				<item>
+					<field_a>Minsk</field_a>
+					<field_b>London</field_b>
+					<field_c>18</field_c>
+					<field_d>Check filght</field_d>
+					<field_e>2</field_e>
+					<field_m>3</field_m>
+					<field_f></field_f>
+					<field_g>right</field_g>
+					<field_g1>1k</field_g1>
+					<field_h>0</field_h>
+					<field_i>i1</field_i>
+					<field_j>0</field_j>
+					<field_k>1</field_k>
+				<item>
+			</data>
+		</textarea>
+		
+		<script type="text/javascript" charset="utf-8">
+		
+		
+		var ui = dhx.ui({
+				rows:[
+						{ 	view:"toolbar", type:"MainBar", data:[
+								{ type:"button", label: 'Clear', click:"clear_form" },
+								{ type:"button", label: 'Set', click:"set_form" },
+								{ type:"button", label: 'Get', click:"get_form" },
+								{ type:"button", label: 'Parse from XML', click:"parse_xml" }
+							]
+						},
+						{ 	view:"form", id:"myform", data:[
+							    { type:"textarea", id:'field_ta', value: "Type here", width:284, labelWidth: 100},
+								{ type:"text", name:"field_a", id:'field_a', label: 'from', value: "Moscow", position: "label-left", width:300, labelWidth: 100},
+								{ type:"text", name:"field_b", id:'field_b', sameLine:true, label: 'to', value: "Guatemala", position: "label-left", inputWidth: 250, labelWidth: 100},
+								{ type:"counter", name:"field_c", id:'field_c', label: 'passengers 12+', step: 1, value: 1, min: 1, max: 20, labelWidth: 150, position: "label-left", labelAlign: "left"},
+								
+								{ type:"list", name: "field_e", id:'field_e', label: 'Type', value: "1", yCount:"3", data:[
+										{ id:"1", value:"One"   },
+										{ id:"2", value:"Two"   },
+										{ id:"3", value:"Three" }
+									],template:"#value#"},
+								{ type:"combo",sameLine:true, name: "field_m", id:'field_m', label: 'Combo', value:"1", yCount:"3", data:[
+										{ id:"1", value:"One"   }, 
+										{ id:"2", value:"Two"   }, 
+										{ id:"3", value:"Three" }
+									],template:"#value#"},
+								{ type:"calendar",sameLine:false, name: "field_f", label: 'Date', id:'calendar',date:new Date(2010,07,10)},
+								
+								{ type:"toggle", name: "field_g", id:'field_g', options: ["Roundtrip","Oneway"], values: ["left", "right"], align: "right" },
+								
+								{ type:"radio", name:"field_i", id:'field_i', labelWidth: 250, labelAlign: "left",value:"2", data:[
+									{ label:"only direct flights", value: "1" },
+									{ label:"any flights", value: "2" },
+								] },
+								{ type:"checkbox", name: "field_j", id:'field_j', label:"find hotels", position:"label-left",labelWidth: 100,labelAlign:"right", value: 1},
+								{ type:"checkbox", name: "field_k", id:'field_k', label:"find car here", labelWidth: 100,labelAlign:"right", position: "label-left",sameLine:true},
+								{ type:"formbutton", name: "field_d", id:'field_d', label: 'Find flight', align:"center", align:"center",width: 290 }						
+							]
+						}
+				]
+			});
+
+			
+			function set_form(){
+				$$('myform').setValues({
+					field_a: "Minsk",
+					field_b: "Deli",
+					field_c: 18,
+					field_d: "Button",
+					field_e: "3",
+					field_f: "2010-12-25",
+					field_g: "right",
+					field_h: 1,
+					field_i: "i2",
+					field_j: false,
+					field_k: true
+				});
+			};
+			function clear_form(){
+				$$('myform').clear();
+			};
+			function get_form(){
+				console.dir($$('myform').getValues());
+			};
+			
+			function parse_xml(){
+				//alert(document.getElementById("xml").value)
+				$$('myform').parseValues(document.getElementById("xml").value,"xml");
+			};
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+	<head>
+        <meta  name = "viewport" content = "initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no">
+	<link rel="stylesheet" href="codebase/touchui.css" type="text/css">
+		<script src="codebase/touchui.js" type="text/javascript"></script>
+	</head>
+	<body>
+              <script type="text/javascript" charset="utf-8">
+	      dhx.ui({
+		   rows:[ // the first row of the layout where we specify toolbar
+		         { view:"toolbar", type:"MainBar", data:[{type:"roundbutton", label:"Add"},// in 'data' parameter we put controls' definitions
+			                                        {type:"roundbutton", label:"Delete"}] // in our case these are 2 round buttons
+			  },
+			  {cols:[ // the second row we divide into 2 columns
+				  {width: 260, id:"grid", view:"grid", header:true, //in the first column we create grid
+		                                        fields:[{ id:"Name", // 'fields' parameter lets to define grid cols
+			                                              width:110,// the width of the first grid col
+			                                              label:"Name",// the name of the first grid col
+								      template:"#name#" // 'template' specifies data which will be presented in the col
+ 			                                            },
+			                                            { id:"email",// the second col of the grid
+								      width: 150,
+			                                              label:"email",
+								      template:"#email#"
+			                                            }],
+                                        		datatype:"xml", // the type of the data by which we will fill grid up
+                                                        url:"names.xml" // the relative path to our xml file
+				   },
+			  { view:"form", id:"topForm", data:[{type:"text", label: 'Name', value: "Alex", position: "label-left", align: "center", labelAlign: "center"}, // the second column of the second row of the layout
+						             {type:"text", label: 'email', value: "alex@fd.br", position: "label-left", align: "center", labelAlign: "center"}] // here we create form object and 2 its controls.
+			  }]
+		 }]
+             })
+ 
+	      </script>
+	</body>
+</html>

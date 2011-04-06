@@ -1,0 +1,33 @@
+							firefox			iphone			android		look_nativo			notas
+jqtouch				+-					x						x					x
+jquerymobile	x						x						wtf				x
+sencha										x						x					x								pesado
+dhtmlx				x						x						x
+xui																															nao tem widgets
+iui						x						x						x					so iphone								
+
+
+
+## Notas ##
+
+Sencha Touch:
+- Não gostei
+- Muito complexo
+- APIs confusas
+- OO
+- Só se escreve javascript (que gera o html)
+- webkit only
+- Android e iOS
+- Não diferencia os widgets para smartphones ou tablets
+- Pouco flexivel talvez
+- Helpers para tudo e mais alguma coisa
+- Pesada
+
+
+jquerymobile:
+	muito parecido com a estrutura do jqtouch
+	relativamente simples e fácil de desenvolver
+	bem estruturado
+	alguns problemas com apresentação, mas nada sério
+	animações não funcionam em browsers desktop não-webkit
+	

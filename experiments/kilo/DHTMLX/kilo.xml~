@@ -1,0 +1,35 @@
+<data>
+	
+	<item id="group_dates">
+		<title>Dates</title>	
+		
+	<item id="group_about">
+		<title>About</title>			
+	</item>
+
+	<item id="01">
+		<title>Today</title>
+	</item>
+
+	<item id="02">
+		<title>Yesterday</title>
+	</item>
+
+	<item id="03">
+		<title>2 Days Ago</title>
+	</item>
+
+	<item id="04">
+		<title>3 Days Ago</title>
+	</item>
+
+	<item id="05">
+		<title>4 Days Ago</title>
+	</item>
+
+	<item id="06">
+		<title>5 Days Ago</title>
+	</item>
+
+	</item>
+</data>

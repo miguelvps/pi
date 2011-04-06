@@ -1,0 +1,140 @@
+,CLI,FUN,M,1,Funciona em diversos browsers e plataformas
+,CLI,FUN,C,1,Funciona em Firefox
+,CLI,FUN,C,1,Funciona em Chrome
+,CLI,FUN,C,1,Funciona em Safari
+,CLI,FUN,C,1,Funciona em IE
+,CLI,FUN,M,1,Funciona em iPhone
+,CLI,FUN,M,1,Funciona em iPad
+,CLI,FUN,M,1,Funciona em Android
+,CLI,INT,M,2,Exibe look nativo em diversas plataformas
+,CLI,INT,M,2,Look nativo para iPad
+,CLI,INT,M,2,Look nativo para iPhone
+,CLI,INT,S,2,Look nativo para Android
+,CLI,INT,M,,Permite a visualização de todas as páginas em modo Portrait
+,CLI,INT,M,,Permite a visualização de todas as páginas em modo Landscape
+
+,CLI,INT,M,3,Permite a visualição de uma página de configurações
+
+,CLI,FUN,M,3,Permite a escolha dos serviços favoritos
+,CLI,FUN,C,3,Permite modificar as cores do interface
+,CLI,FUN,M,,Permite atribuir um rating a cada serviço
+,CLI,FUN,M,4,A aplicação exibe permanência de dados num mesmo dispositivo
+,CLI,FUN,M,4,Permite consultar um histórico dos pedidos anteriormente efectuados
+,CLI,FUN,M,4,Retém as configurações efectuadas
+,CLI,FUN,M,,Permite que um utilizador se registe 
+,CLI,FUN,M,,Permite a autenticação do utilizador
+,CLI,FUN,C,,Permite recuperação de password
+,CLI,FUN,M,5,"A aplicação exibe permanência de dados entre vários dispositivos, desde que o utilizador esteja autenticado em todos eles"
+,CLI,FUN,M,5,Permite consultar um histórico dos pedidos anteriormente efectuados
+,CLI,FUN,M,5,Retém as configurações efectuadas
+,CLI,FUN,M,,Permite a visualização de notificações
+,CLI,FUN,M,,O cliente permite fazer queries textuais a todos os serviços
+,CLI,FUN,M,,O cliente permite fazer queries textuais aos serviços favoritos
+,CLI,FUN,M,8,O cliente permite fazer queries textuais especificando os serviços dos quais deseja resultados
+,CLI,FUN,M,8,Permite ordenação da lista de serviços por fornecedor
+,CLI,FUN,M,8,Permite ordenação da lista de serviços por tipo de serviço
+,CLI,FUN,M,8,Permite ordenação da lista de serviços por assunto
+,CLI,INT,M,,O cliente apresenta os resultados de forma uniforme e estruturada
+
+,CON,ARQ,M,,Guarda uma lista de serviços
+,CON,FUN,M,6,Permite visualizar a lista de serviços
+,CON,FUN,M,6,Permite a inserção de um serviço
+,CON,FUN,M,6,Permite a remoção de um serviço
+
+,CON,FUN,S,7,Permite visualizar a lista de utilizadores registados
+,CON,FUN,M,7,Permite a inserção de um utilizador
+,CON,FUN,M,7,Permite a remoção de um utilizador
+,CON,FUN,M,9,Responde a queries dos clientes
+,CON,FUN,M,9,"Para cada query, consulta todos os serviços não privilegiados indicados"
+,CON,FUN,M,9,Os resultados são ordenados por ordem de relevância por cada serviço
+,CON,FUN,S,9,"No caso da query ser feita por um utilizador autenticado, este pode ter acesso a serviços priviligiados"
+,CON,INF,M,,Os dados recebidos dos serviços são estruturados e tipificados
+,CON,INF,M,10,Guarda a informação dos utilizadores registados
+,CON,INF,M,10,Guarda os serviços favoritos do utilizador
+,CON,INF,M,10,Guarda a rating que cada utilizador atribuiu a cada serviço
+,CON,INF,C,10,Guarda o histórico dos queries de cada utilizador
+,CON,INF,M,11,"Existem entidades base (EB), que representam os tipos de dados tratados pelo concierge"
+,CON,INF,C,11,Existe a EB Pessoa
+,CON,INF,C,11,Existe a EB Espaço
+,CON,INF,C,11,Existe a EB Horário
+,CON,INF,C,11,Existe a EB Unidade Organizativa
+,CON,INF,C,11,Existe a EB Informação Processual
+,CON,INF,C,11,Existe a EB Transporte
+
+,CON,SEG,S,,Está protegido contra SQL injection
+,CON,SEG,S,,Está protegido contra cross site scripting
+,CON,SEG,S,,Tem segurança de transporte para dados entre o cliente e o consierge
+
+
+
+,GEO,FUN,M,,Permite a geolocalização do utilizador
+,GEO,FUN,C,,Permite o planeamento de trajectos
+,GEO,INF,S,,Cada EB Espaço tem uma localização
+,GEO,INT,S,,Cada localização é representada por um marcador num mapa
+,GEO,TEC,M,,Utiliza a API do google maps
+,GEO,FUN,C,14,Permite ao administrador manipular os dados do serviço
+,GEO,FUN,C,14,"Permite ao administrador adicionar um par entidade, localização"
+,GEO,FUN,C,14,"Permite ao administrador remover um par entidade, localização"
+,GEO,FUN,C,14,"Permite ao administrador editar um par entidade, localização"
+,GEO,FUN,C,14,"Permite ao administrador listar um par entidade, localização"
+,GEO,SEG,S,,Tem segurança de transporte para dados
+
+,PES,FUN,M,,Permite efectuar pesquisas sobre a SubEntidade Docente (SE da EB Pessoa)
+,PES,INF,M,12,Cada Docente tem informação associada
+,PES,INF,M,12,Cada Docente tem um nome
+,PES,INF,C,12,Cada Docente tem um idade
+,PES,INF,S,12,Cada Docente tem um email
+,PES,INF,C,12,Cada Docente tem um horário (entidade da EB horário)
+,PES,INF,C,12,Cada Docente tem um gabinete (entidade da EB espaço)
+,PES,FUN,C,13,Permite ao administrador manipular os dados do serviço
+,PES,FUN,C,13,Permite ao administrador adicionar novo Docente 
+,PES,FUN,C,13,Permite ao administrador remover um Docente
+,PES,FUN,C,13,Permite ao administrador listar os Docentes
+,PES,FUN,C,13,Permite ao administrador editar os Docentes
+,PES,SEG,S,,Tem segurança de transporte para dados
+
+,ORG,FUN,M,,Permite pesquisa sobre as entidades departamento (SE da EB Unidade Organizativa)
+,ORG,INF,M,,Cada Departamento pode ter vários cursos (SE de departamento)
+,ORG,INF,M,,Cada Curso pode ter vários cadeiras (SE de curso)
+,ORG,INF,M,,Cada Departamento pode ter várias Pessoas (EB Pessoa)
+,ORG,INF,S,,Cada Departamento pode ter Contactos (EB Contacto)
+,ORG,FUN,C,14,Permite ao administrador manipular os dados do serviço
+,ORG,FUN,C,14,Permite ao administrador adicionar novo Departamentos
+,ORG,FUN,C,14,Permite ao administrador remover um Departamentos
+,ORG,FUN,C,14,Permite ao administrador listar os Departamentos
+,ORG,FUN,C,14,Permite ao administrador editar os Departamentos
+,ORG,SEG,S,,Tem segurança de transporte para dados
+
+,IP,FUN,M,,Permite pesquisa sobre informação processual disponível
+,IP,INF,M,16,Cada informação processual tem informação associada
+,IP,INF,S,16,Cada informação processual tem uma lista de requisitos
+,IP,INF,C,16,Cada informação processual tem uma lista de documentos necessários
+,IP,INF,S,16,Cada informação processual tem um link para uma página do processo
+,IP,INF,C,16,Cada informação processual tem informação textual variada
+,IP,INF,C,16,Cada informação processual tem prazos
+,IP,FUN,C,15,Permite ao administrador manipular os dados do serviço
+,IP,FUN,C,15,Permite ao administrador adicionar novo Departamentos
+,IP,FUN,C,15,Permite ao administrador remover um Departamentos
+,IP,FUN,C,15,Permite ao administrador listar os Departamentos
+,IP,FUN,C,15,Permite ao administrador editar os Departamentos
+,IP,SEG,S,,Tem segurança de transporte para dados
+
+,BUS,FUN,M,,Permite pesquisa sobre os transportes disponíveis numa área
+,BUS,FUN,S,,Permite identificar itinerários entre duas localizações para um dado instante no tempo
+,BUS,INF,M,,O serviço tem uma lista de transportes
+,BUS,INF,M,,Cada transporte tem uma lista de carreiras
+,BUS,INF,S,,Cada espaço tem um horário associado
+,BUS,FUN,C,17,Permite ao administrador manipular os dados do serviço
+,BUS,FUN,C,17,Permite ao administrador adicionar novo Departamentos
+,BUS,FUN,C,17,Permite ao administrador remover um Departamentos
+,BUS,FUN,C,17,Permite ao administrador listar os Departamentos
+,BUS,FUN,C,17,Permite ao administrador editar os Departamentos
+,BUS,SEG,S,,Tem segurança de transporte para dados
+
+,BIB,FUN,M,,Permite pesquisa de obras
+,BIB,FUN,M,,Permite reserva de espaços
+,BIB,INF,C,18,A biblioteca tem uma lista de obras
+,BIB,INF,M,18,Cada obra tem uma lista de autores (SE de Pessoa)
+,BIB,INF,M,18,Cada obra pode ter ISBN
+,BIB,INF,M,18,Cada obra tem um nome
+,BIB,SEG,S,,Tem segurança de transporte para dados

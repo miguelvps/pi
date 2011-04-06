@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head>
+	<title>Kilo</title>   
+	<link type="text/css" rel="stylesheet" media="screen" href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css"/>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"></script>
+</head>
+
+
+
+<body>
+
+<div data-role="page" data-theme="a" id="home">
+	<div data-role="header" data-theme="a">
+		<h1>Kilo</h1>
+		<a href="#settings" data-transition="flip" data-icon="gear" class="ui-btn-right">Settings</a>
+	</div>
+	
+	<div data-role="content"> 
+		<ul data-role="listview" data-inset="false" data-theme="a" data-dividertheme="a">
+			<li><a href="#dates" data-transition="slide">Dates</a></li>
+			<li><a href="#about" data-transition="slide">About</a></li>
+		</ul>
+	</div>
+</div>
+
+
+
+<div id="about" data-role="page" data-theme="a">
+	<div data-role="header" data-theme="a">
+		<h1>About</h1>
+	</div>
+	
+	<div data-role="content">
+		<p>Kilo gives you easy access to your food diary.</p>
+	</div>
+</div>
+
+<div id="dates" data-role="page" data-theme="a">
+	<div data-role="header" data-theme="a">
+		<h1>Dates</h1>
+	</div>
+	
+	<div data-role="content">
+		<ul data-role="listview" data-inset="false" data-theme="a" data-dividertheme="a">
+			<li><a id="0" href="#date">Today</a></li>
+			<li><a id="1" href="#date">Yesterday</a></li>
+			<li><a id="2" href="#date">2 Days Ago</a></li>
+			<li><a id="3" href="#date">3 Days Ago</a></li>
+			<li><a id="4" href="#date">4 Days Ago</a></li>
+			<li><a id="5" href="#date">5 Days Ago</a></li>
+		</ul>
+	</div>
+</div>
+
+
+<div id="date" data-role="page" data-theme="a">
+	<div data-role="header" data-theme="a">
+		<h1>Date</h1>
+		<a href="#createEntry" data-icon="plus" class="ui-btn-right" data-transition="slideup">+</a>
+	</div>
+	
+	<div data-role="content">
+		<ul data-role="listview" data-inset="false" data-theme="a" data-dividertheme="a">
+			<li id="entryTemplate" class="entry" style="display:none">
+				<span class="label">Label</span>
+				<span class="calories">000</span>
+				<span class="delete">Delete</span>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div id="createEntry" data-role="page" data-theme="a">
+	<div data-role="header" data-theme="a">
+		<h1>Dates</h1>
+		<a href="#" data-rel="back" data-icon="delete">Cancel</a>
+	</div>
+	
+	<div data-role="content">
+		<form method="post">
+			<ul>
+				<li><input type="text" placeholder="Food"	 name="food"	 id="food"	 /></li>
+				<li><input type="text" placeholder="Calories" name="calories" id="calories" /></li>
+				<li><div class="ui-block-a"><button type="submit" data-theme="a">Submit</button></div></li>
+			</ul>
+		</form>
+	</div>
+</div>
+
+
+
+<div id="settings" data-role="page" data-theme="a">
+	<div data-role="header" data-theme="a">
+		<h1>Dates</h1>
+		<a href="#home" data-icon="delete" data-transition="flip">Cancel</a>
+	</div>
+	
+	<div data-role="content">
+		<form method="post">
+			<ul>
+			<li><input placeholder="Age" type="text" name="age" id="age" /></li>
+			<li><input placeholder="Weight" type="text" name="weight" id="weight" /></li>
+			<li><input placeholder="Budget" type="text" name="budget" id="budget" /></li>
+			<li><div class="ui-block-a"><button type="submit" data-theme="a">Save Changes</button></div></li>
+			</ul>
+		</form>
+	</div>
+</div>
+
+</body>
+</html>
+
