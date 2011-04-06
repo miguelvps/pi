@@ -5,23 +5,26 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pes.db'
 db = SQLAlchemy(app)
 
-class birthdate(db.Date): kind = "string"
-class name(db.String): pass
-class office(db.String): pass
-class contact(db.String): pass
-class email(db.String): pass
-class phone(db.String): pass
-class fax(db.String): pass
+STRING_TYPE= "string"
+NUMBER_TYPE= "number"
+DATETIME_TYPE= "datetime"
+EMAIL_TYPE= "email"
+URL_TYPE= "url"
+COORDINATE_TYPE= "coordinate"
+IMAGE_TYPE= "image"
+VIDEO_TYPE= "video"
 
-#class Contact_Type(db.Model):
-    #id = db.Column(db.Integer, primary_key=True)
-    #type = db.Column(db.String(64), unique=True)
 
-#class Contact(db.Model):
-    #id = db.Column(db.Integer, primary_key=True)
-    #person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
-    #type_id = db.Column(db.Integer, db.ForeignKey('contact_type.id'))
-    #contact = db.Column(Contact(64))
+class birthdate(db.Date): type = DATETIME_TYPE
+class name(db.String): type = STRING_TYPE
+class office(db.String): type = STRING_TYPE
+class contact(db.String): type = STRING_TYPE
+class email(db.String): type = EMAIL_TYPE
+class phone(db.String): type = STRING_TYPE
+class fax(db.String): type = STRING_TYPE
+
+
+
 
 class Email(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -66,12 +69,24 @@ def teachers():
 
 @app.route("/pessoas/<id>", methods=['GET',])
 def teacher(id):
-    #teacher = Teacher.query.get_or_404(id)
+    teacher = Teacher.query.get_or_404(id)
     doc = Document()
     t = doc.createElement("entity")
     doc.appendChild(t)
     t.setAttribute("kind", teacher.__class__.__name__)
     return Response(response=doc.toprettyxml(), mimetype="application/xml")
+
+def init_db():
+    import random, os
+    if os.path.exists('pes.db'):
+      return
+    db.create_all()
+    for i in range(10):
+        b = Teacher('prof %i'%(random.randint(100000,999999)))
+        db.session.add(b)
+    db.session.commit()
+
+init_db()
 
 if __name__ == "__main__":
     app.run(debug=True)
