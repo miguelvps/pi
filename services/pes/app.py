@@ -1,52 +1,36 @@
+import sys
 from flask import Flask, Response
 from flaskext.sqlalchemy import SQLAlchemy
+sys.path.append('../../common/')
+import xml_kinds
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pes.db'
 db = SQLAlchemy(app)
 
-STRING_TYPE= "string"
-NUMBER_TYPE= "number"
-DATETIME_TYPE= "datetime"
-EMAIL_TYPE= "email"
-URL_TYPE= "url"
-COORDINATE_TYPE= "coordinate"
-IMAGE_TYPE= "image"
-VIDEO_TYPE= "video"
-
-
-class birthdate(db.Date): type = DATETIME_TYPE
-class name(db.String): type = STRING_TYPE
-class office(db.String): type = STRING_TYPE
-class contact(db.String): type = STRING_TYPE
-class email(db.String): type = EMAIL_TYPE
-class phone(db.String): type = STRING_TYPE
-class fax(db.String): type = STRING_TYPE
-
-
-
 
 class Email(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
-    email = db.Column(email(255))
+    email = db.Column( xml_kinds.email(255) )
 
 class Phone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
-    phone = db.Column(phone(255))
+    phone = db.Column( xml_kinds.phone(255) )
 
 class Fax(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
-    phone = db.Column(fax(255))
+    phone = db.Column( xml_kinds.fax(255) )
 
 class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(name(1024))
-    birth_date = db.Column(birthdate)
+    name = db.Column( xml_kinds.name(1024) )
+    birth_date = db.Column( xml_kinds.birthdate )
     #contacts = db.relationship('Contact', backref='person', lazy='dynamic')
-    office = db.Column(office(64))
+    office = db.Column( xml_kinds.office(64) )
 
     def __init__(self, name):
         self.name = name
