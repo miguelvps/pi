@@ -3,6 +3,7 @@ from flask import Flask, Response
 from flaskext.sqlalchemy import SQLAlchemy
 sys.path.append('../../common/')
 import xml_kinds
+import modelxmlserializer
 
 
 app = Flask(__name__)
@@ -29,9 +30,12 @@ class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column( xml_kinds.name(1024) )
     birth_date = db.Column( xml_kinds.birthdate )
-    #contacts = db.relationship('Contact', backref='person', lazy='dynamic')
     office = db.Column( xml_kinds.office(64) )
 
+    emails = db.relationship('Email', backref='teacher', lazy='joined')
+    phones = db.relationship('Phone', backref='teacher', lazy='joined')
+    faxes = db.relationship('Fax', backref='teacher', lazy='dynamic')
+    _lists=['emails','phones','faxes']
     def __init__(self, name):
         self.name = name
 
@@ -54,11 +58,7 @@ def teachers():
 @app.route("/pessoas/<id>", methods=['GET',])
 def teacher(id):
     teacher = Teacher.query.get_or_404(id)
-    doc = Document()
-    t = doc.createElement("entity")
-    doc.appendChild(t)
-    t.setAttribute("kind", teacher.__class__.__name__)
-    return Response(response=doc.toprettyxml(), mimetype="application/xml")
+    return Response(response=modelxmlserializer.xml_of_model(teacher, db).toprettyxml(), mimetype="application/xml")
 
 def init_db():
     import random, os
