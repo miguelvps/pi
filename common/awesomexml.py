@@ -1,8 +1,9 @@
 class AwesomeXml:
-	def __init__(self, tagname, attributes={}):
+	def __init__(self, tagname, attributes={}, content=None):
 		self.name= tagname
 		self.attributes= attributes
 		self.subelements= []
+		self.content= str(content) if content else None
 		self.__iter_index=0
 
 	def __getitem__(self, key):
@@ -18,6 +19,10 @@ class AwesomeXml:
 		return self.subelements[self.__iter_index-1]
 
 	def appendChild(self, tagname, attributes={}):
+		if tagname==None:
+			return None
+		if self.content:
+			raise Exception("Can't append a child to a node with content")
 		if type(tagname)==type(self):
 			el= tagname
 		else:
@@ -28,13 +33,20 @@ class AwesomeXml:
 	def toxml(self):
 		attributes= " ".join(['%s="%s"'%(k,v) for k,v in self.attributes.items()])
 		start= "<%s %s>"%(self.name, attributes) if attributes else "<%s>"%(self.name)
-		subelements= "".join([el.toxml() for el in self.subelements])
+		if self.content:
+			content= self.content
+		else:
+			content= "".join([el.toxml() for el in self.subelements])
+		
 		end= "</%s>"%(self.name)
-		return start+subelements+end
+		return start+conten+tend
 
 	def toprettyxml(self, prefix='', indentor='  '):
 		attributes= " ".join(['%s="%s"'%(k,v) for k,v in self.attributes.items()])
 		start= prefix+"<%s %s>\n"%(self.name, attributes) if attributes else prefix+"<%s>\n"%(self.name)
-		subelements= prefix.join([el.toprettyxml(prefix+indentor, indentor) for el in self.subelements])
+		if self.content:
+			content= self.content
+		else:
+			content= prefix.join([el.toprettyxml(prefix+indentor, indentor) for el in self.subelements])
 		end= prefix+"</%s>\n"%(self.name)
-		return start+subelements+end
+		return start+content+end

@@ -1,68 +1,70 @@
+import sqlalchemy
+import flaskext
 from awesomexml import AwesomeXml
 import inspect
 
-def model_kind(model_class, db):
-	return model_class.__name__
 
-def model_type(model_class, db):
-	return "list"
-
-def model_name(model_class, db):
-	return "entity"
-
-def atribute_type(atribute_class, db):
-	assert hasattr(atribute, 'type')
-	return atribute.type
-
-def atribute_kind(atribute_class, db):
-	return atribute_class.__name__
-
-def atribute_name(atribute_class, db):
-	return "entity"
+ALLOWED_ATRIBUTE_TYPES= [sqlalchemy.types.Date, sqlalchemy.types.String]
 
 
-def xml_atrs(kind, type):
-	d= {'kind':kind, 'type':type}
-	for k in d.keys():	#remove empty string atributes 
-		if not d[k]:
-			d.pop(k)
+class Model_Atribute_Serializer(object):
+	TRUE_ATRIBUTE, MODEL_LIST_ATRIBUTE= range(2)
+	def __init__(self, model_obj, atr_name):
+		self.atr_name= atr_name
+		self.atr_obj=  getattr(model_obj, atr_name)
+		class_proxy= getattr( model_obj.__class__, atr_name)
+		self.atr_type, self.atr_class= Model_Atribute_Serializer.extract_class_type( class_proxy)
 
-def xml_of_atribute(atribute_name, model_object, db):
-	atribute_object= getattr(model_object, atribute_name)
-	atribute_class= getattr(model_object.__class__, atribute_name).property.columns[0].type
-	atribute_ancestors= inpect.getmro()
-	allowed_types= [db.Date, db.String]
-	assert any(map(lambda a:a==atribute_class, allowed_types))
+	@staticmethod
+	def extract_class_type(class_proxy):
+		MAS= Model_Atribute_Serializer
+		props= class_proxy.property
+		if type(props) == sqlalchemy.orm.properties.ColumnProperty:
+			#atribute is a "true" atribute (has a representation on the model's table)
+			return (MAS.TRUE_ATRIBUTE, props.columns[0].type.__class__)
+		elif type(props) == sqlalchemy.orm.properties.RelationshipProperty:
+			#atribute is a relationship with other model...
+			return (MAS.MODEL_LIST_ATRIBUTE, None)
+		else:
+			raise Exception("Found a unexpected Property type")
 	
-	kind= atribute_kind(atribute_class, db)
-	type= atribute_type(atribute_class, db)
-	xml_atributes= xml_atrs(atrkind, atrtype)
-	xml_name= atribute_name(atribute, db)
-	return AwesomeXml(xml_name, xml_atributes)
+	def is_true_atribute(self):
+		return self.atr_type == self.TRUE_ATRIBUTE
 
-def model_atribute_names(model_class):
-	'''gives all the attributes of a model (not including implementation junk)'''
-	atributes= vars(model_class)
-	return filter(lambda k: not k[0]=='_', atributes.keys())
+	def is_model_list(self):
+		return self.atr_type == self.MODEL_LIST_ATRIBUTE
 
-def xml_of_model(model_object, db):
-	assert isinstance(model_object, db.Model)
-	model_class= model_object.__class__
-	
-	modelname= model_name(model_class, db)
-	modelkind= model_kind(model_class, db)
-	modeltype= model_kind(model_class, db)
-	result= AwesomeXml( modelname, xml_atrs(modelkind, modeltype) )
-	
-	atribute_names= model_atribute_names(model_class)
-	for atr_name in atribute_names:
-		result.appendChild(xml_of_atribute(atr_name, model_object,db))
-
-	if hasattr(model_object, '_lists'):
-		for atr_name in model_object._lists:
-			result.appendChild(xml_of_atribute(atr_name, model_object,db))
-	return result
+	def to_xml(self, parameters):
+		axf, axt, axa= parameters[3:6]
+		if axf(self):
+			if self.is_true_atribute():
+				return AwesomeXml( axt(self), axa(self), self.atr_obj )
+			else:
+				xml= AwesomeXml( axt(self), axa(self) )
+				for model in self.atr_obj:
+					xml.appendChild( Model_Serializer(model).to_xml(parameters) )
+				return xml
+		return None
 
 
-'''type(Teacher.name.property.columns[0].type)
-'''
+
+
+
+class Model_Serializer(object):
+	def __init__(self, model_obj):
+		assert isinstance(model_obj, flaskext.sqlalchemy.Model)
+		self.model_obj= model_obj
+		self.model_class= model_obj.__class__
+
+		atribute_names= filter(lambda k: not k[0]=='_', vars(model_obj).keys())
+		self.atributes= [Model_Atribute_Serializer(model_obj, name) for name in atribute_names]
+
+	def to_xml(self, parameters):
+		mxf, mxt, mxa= parameters[0:3]
+		
+		if mxf(self):
+			xml= AwesomeXml( mxt(self), mxa(self) )
+			for atr in self.atributes:
+				xml.appendChild(atr.to_xml(parameters))
+			return xml
+		return None

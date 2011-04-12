@@ -1,10 +1,13 @@
 import sys
 from flask import Flask, Response
 from flaskext.sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import joinedload
+
+
 sys.path.append('../../common/')
 import xml_kinds
 import modelxmlserializer
-
+from xmlserializer_parameters import SERIALIZER_PARAMETERS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pes.db'
@@ -62,8 +65,9 @@ def teachers():
 
 @app.route("/pessoas/<id>", methods=['GET',])
 def teacher(id):
-    teacher = Teacher.query.get_or_404(id)
-    return Response(response=modelxmlserializer.xml_of_model(teacher, db).toprettyxml(), mimetype="application/xml")
+    teacher = Teacher.query.options(joinedload('phones'), joinedload('faxes')).get_or_404(id)
+    xml_text= modelxmlserializer.Model_Serializer(teacher).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
+    return Response(response=xml_text, mimetype="application/xml")
 
 def init_db():
     import random, os
