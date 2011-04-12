@@ -15,16 +15,22 @@ class Email(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
     email = db.Column( xml_kinds.email(255) )
+    def __init__(self, email):
+      self.email= email
 
 class Phone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
     phone = db.Column( xml_kinds.phone(255) )
+    def __init__(self, phone):
+      self.phone= phone
 
 class Fax(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
-    phone = db.Column( xml_kinds.fax(255) )
+    fax = db.Column( xml_kinds.fax(255) )
+    def __init__(self, phone):
+      self.fax= phone
 
 class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,10 +38,9 @@ class Teacher(db.Model):
     birth_date = db.Column( xml_kinds.birthdate )
     office = db.Column( xml_kinds.office(64) )
 
-    emails = db.relationship('Email', backref='teacher', lazy='joined')
-    phones = db.relationship('Phone', backref='teacher', lazy='joined')
-    faxes = db.relationship('Fax', backref='teacher', lazy='dynamic')
-    _lists=['emails','phones','faxes']
+    emails = db.relationship('Email', lazy='joined')
+    phones = db.relationship('Phone', lazy='joined')
+    faxes = db.relationship('Fax', backref='teacher', lazy='joined')
     def __init__(self, name):
         self.name = name
 
@@ -67,6 +72,7 @@ def init_db():
     db.create_all()
     for i in range(10):
         b = Teacher('prof %i'%(random.randint(100000,999999)))
+        b.phones=[Phone('21 1234567')];
         db.session.add(b)
     db.session.commit()
 
