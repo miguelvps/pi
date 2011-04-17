@@ -3,7 +3,7 @@ class AwesomeXml:
 		self.name= tagname
 		self.attributes= attributes
 		self.subelements= []
-		self.content= str(content) if content else None
+		self.content= unicode(content) if content else None
 		self.__iter_index=0
 
 	def __getitem__(self, key):
