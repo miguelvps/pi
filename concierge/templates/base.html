@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html> 
+	<head>
+	
+		<title>Concierge</title> 
+		
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
+		<script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>		
+	</head> 
+
+	<body> 
+
+		<!-- Start of first page -->
+		<div data-role="page" id="{% block page_id %}{% endblock %}">
+
+			{% block header %}
+			<div data-role="header" data-position="fixed" data-id="concheader" >
+				<h1>Concierge</h1>				
+			</div><!-- /header -->
+			{% endblock %}
+			
+			{% block page_content %}{% endblock %}		
+		</div><!-- /page -->
+	</body>
+</html>

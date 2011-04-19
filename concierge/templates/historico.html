@@ -1,22 +1,8 @@
-﻿<!DOCTYPE html>
-<html> 
-	<head>
-		<!--<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">-->
-		<title>Concierge</title> 
-		
-		
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
-		<script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>		
-	</head> 
+﻿{% extends "base.html" %}
 
-	<body> 
-		<div data-role="page" id="historico">
+{% block page_id %} historico {% endblock %}
 
-			<div data-role="header" data-position="fixed" data-id="concheader" >
-				<h1>Concierge</h1>
-			</div><!-- /header -->
+{% block page_content %}
 
 			<div data-role="content">	
 			
@@ -34,11 +20,7 @@
 					</li>
 				</ul>
 			</div><!-- /content -->
-		</div><!-- /page -->
-	</body>
-</html>
-
-
+{% endblock %}
 
 
 
