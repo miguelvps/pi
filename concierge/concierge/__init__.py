@@ -3,8 +3,11 @@ from flaskext.sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'k,\xa3u\xa7;c\x1c\x9f\xc5"2\x8esF:\xb0F\xa6A?\x9bXC'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///concierge.db'
+
+app.config.from_object('concierge.config')
+try: app.config.from_envvar('CONCIERGE_SETTINGS')
+except: pass
+
 db = SQLAlchemy(app)
 
 
