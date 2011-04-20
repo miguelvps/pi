@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from flask import Module, request, session, render_template, redirect
 from flaskext.wtf import Form, TextField, PasswordField, Required, \
@@ -27,7 +27,8 @@ class User(db.Model):
 
 
 class RegisterForm(Form):
-    username = TextField('Username', validators=[Required(), Length(min=1, max=256)])
+    username = TextField('Username', validators=[Required(),
+                                                 Length(min=1, max=256)])
     password = PasswordField('Password', validators=[Required(),
                                                      EqualTo('confirm'),
                                                      Length(min=4, max=256)])
