@@ -6,7 +6,9 @@ setup(
     packages=find_packages(),
     install_requires=[
         'SQLAlchemy',
+        'WTForms',
         'Flask',
         'Flask-SQLAlchemy',
+        'Flask-WTF'
     ]
 )
