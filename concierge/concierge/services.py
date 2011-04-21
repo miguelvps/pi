@@ -13,13 +13,12 @@ services = Module(__name__, 'services')
 
 
 
-'''
-
 services_users = db.Table('services_users',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('service_id', db.Integer, db.ForeignKey('service.id'))
+    db.Column('service_id', db.Integer, db.ForeignKey('service.id')),
+    db.Column('rating', db.Integer),
+    db.Column('favorite', db.Boolean),
 )
-'''
 
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,6 +26,8 @@ class Service(db.Model):
     url = db.Column(xml_kinds.service_url(256), unique=True)
     active= db.Boolean()
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    users = db.relationship('User', secondary=services_users, backref=db.backref('services', lazy='dynamic'))
+
 
     def __init__(self, name, url, user):
         self.name = name

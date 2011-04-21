@@ -16,7 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(256), unique=True)
     password = db.Column(db.String(256))
     created = db.Column(db.DateTime)
-    services= db.relationship('Service', backref='owner')
+    services_owned= db.relationship('Service', backref='owner')
 
     def __init__(self, username, password):
         self.username = username
