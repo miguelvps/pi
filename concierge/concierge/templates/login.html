@@ -1,29 +1,43 @@
 ﻿{% extends "base.html" %}
 
 {% block page_id %} login {% endblock %}
-	
+{% block redirect %}  {% endblock %}
+
+
+{% block header %}
+    <div data-role="header" data-backbtn="false">
+        <h1>Entrar</h1>
+        <a href="/" class="ui-btn-right">Cancel</a>
+    </div><!-- /header -->
+{% endblock %}
+            
 {% block page_content %}
 	<div data-role="content">	
 		
 		<h4> Entre na sua conta Concierge. </h4>
 		
 		<form action="/auth/login" method="post">
-		
-			<div data-role="fieldcontain">
+            <fieldset>
+            
 				{{ form.username.label }} {{ form.username(size=20) }}
-			</div>
-
-			<div data-role="fieldcontain">
+                 <span class="error">
+                    {% for error in form.username.errors  %}
+                        {{ error }} 
+                    {% endfor %}
+                </span>  
 				{{ form.password.label }} {{ form.password(size=20) }}
-			</div>
-
-			
-			<button type="submit" data-theme="d">Entrar</button>
+                 <span class="error">
+                    {% for error in form.password.errors  %}
+                        {{ error }} 
+                    {% endfor %}
+                </span>  
+            </fieldset>
+			<input id="Submit1" type="submit" value="Entrar" data-role="button" data-inline="true" data-theme="b" />
 
 		</form>
+		<hr />
+		<h4> Não tem conta Concierge? <a href="/auth/register">Registe-se aqui.</a> </h4>
 		
-		<h4> Não tem conta Concierge? </h4>
-		<a href="/auth/register" data-role="button">Registe-se aqui</a> 
 		
 	</div><!-- /content -->
 {% endblock %}
