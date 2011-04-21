@@ -43,10 +43,14 @@ class AwesomeXml:
 
 	def toprettyxml(self, prefix='', indentor='  '):
 		attributes= " ".join(['%s="%s"'%(k,v) for k,v in self.attributes.items()])
-		start= prefix+"<%s %s>\n"%(self.name, attributes) if attributes else prefix+"<%s>\n"%(self.name)
+		start= prefix+"<%s %s>"%(self.name, attributes) if attributes else prefix+"<%s>"%(self.name)
 		if self.content:
 			content= self.content
 		else:
+			start+="\n"
 			content= prefix.join([el.toprettyxml(prefix+indentor, indentor) for el in self.subelements])
-		end= prefix+"</%s>\n"%(self.name)
+		if self.content:
+			end= "</%s>\n"%(self.name)
+		else:
+			end= prefix+"</%s>\n"%(self.name)
 		return start+content+end

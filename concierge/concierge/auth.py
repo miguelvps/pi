@@ -16,6 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(256), unique=True)
     password = db.Column(db.String(256))
     created = db.Column(db.DateTime)
+    services= db.relationship('Service', backref='owner')
 
     def __init__(self, username, password):
         self.username = username
@@ -51,7 +52,7 @@ def register():
         db.session.add(User(form.username.data, form.password.data))
         db.session.commit()
         session['username'] = form.username.data
-        session['auth'] = True        
+        session['auth'] = True
         return redirect('/')
     return render_template('register.html', form=form)
 
@@ -61,8 +62,6 @@ def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        print user.username
-        print user.password
         if user and user.check_password(form.password.data):
             session['username'] = form.username.data
             session['auth'] = True
