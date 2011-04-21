@@ -28,10 +28,13 @@ class AuthTest(TestCase):
         db.session.remove()
         db.drop_all()
    
-    def test_showservice(self):
+    def test_listservices(self):
         with self.client as c:
             rv = c.get('/services/')
-            print rv.data
+
+    def test_showservice(self):
+        with self.client as c:
+            rv = c.get('/services/1/')
 
 if __name__ == '__main__':
     unittest.main()
