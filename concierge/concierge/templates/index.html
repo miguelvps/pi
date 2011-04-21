@@ -18,7 +18,9 @@
 	<div data-role="content">					
 		<ul data-role="listview"  data-theme="c" data-dividertheme="b">
 			<!--<li data-role="list-divider">Serviços</li>-->
-
+            {% for service in services %}
+            <li><a href="{{service.url}}">{{service.name}}</a></li>
+            {% endfor %}
 			<li><a href="service">Serviço 1</a></li>
 			<li><a href="">Serviço 2</a></li>
 			<li><a href="">Serviço 3</a></li>
@@ -38,8 +40,14 @@
 	<div data-role="footer" data-position="fixed" data-id="concfooter" >
 			<div data-role="navbar">
 				<ul>
-					<li><a href="config" >Opções</a></li>
-					<li><a href="/auth/login">Login</a></li>
+					<li><a href="config">Opções</a></li>
+                    <li>
+                    {% if session.get("auth") == True %}
+					<a href="/auth/logout">Logout</a>
+                    {% else %}
+                    <a href="/auth/login" data-transition="slideup">Login</a>
+                    {% endif %}
+                    </li>
 					<li><a href="historico">Historico</a></li>
 				</ul>
 			</div><!-- /navbar -->
