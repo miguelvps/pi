@@ -1,6 +1,7 @@
 import sys
 from flask import Flask, Response
 from flaskext.sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
 sys.path.append('../../common/')
@@ -41,6 +42,18 @@ class Teacher(db.Model):
     emails = db.relationship('Email', backref='person')
     phones = db.relationship('Phone', backref='person')
     faxes = db.relationship('Fax', backref='person')
+
+
+@app.route("/search/<query>")
+def search(query):
+    teachers = Teacher.query.outerjoin(Email, Phone, Fax) \
+                      .filter(or_(Teacher.name.like('%{0}%'.format(query)),
+                                  Email.email.like('%{0}%'.format(query)), \
+                                  Phone.phone.like('%{0}%'.format(query)), \
+                                  Fax.fax.like('%{0}%'.format(query)))) \
+                      .all()
+    xml_text= modelxmlserializer.ModelList_xml(teachers).to_xml(SERIALIZER_PARAMETERS).toxml()
+    return Response(response=xml_text, mimetype="application/xml")
 
 
 @app.route("/pessoas/", methods=['GET',])
