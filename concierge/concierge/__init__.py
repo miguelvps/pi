@@ -5,10 +5,11 @@ from flaskext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-def create_app():
+def create_app(cfg=None):
     app = Flask(__name__)
 
     app.config.from_object('concierge.config')
+    if cfg: app.config.from_object(cfg)
     try: app.config.from_envvar('CONCIERGE_SETTINGS')
     except: pass
 
