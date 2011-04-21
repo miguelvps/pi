@@ -18,6 +18,9 @@ def create_app(cfg=None):
     from concierge.frontend import frontend
     app.register_module(frontend)
 
+    from concierge.services import services
+    app.register_module(services, url_prefix='/services')
+
     from concierge.auth import auth
     app.register_module(auth, url_prefix='/auth')
 

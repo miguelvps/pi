@@ -7,3 +7,4 @@ COORDINATE_TYPE= "coordinate"
 IMAGE_TYPE= "image"
 VIDEO_TYPE= "video"
 LIST_TYPE= "list"
+BOOLEAN_TYPE= 'boolean'
