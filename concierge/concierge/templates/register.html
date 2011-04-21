@@ -16,24 +16,15 @@
 		<form action="/auth/register" method="post">
 		
             <fieldset>
-				{{ form.username.label }} {{ form.username(size=20) }} 
-                 <span class="error">
-                    {% for error in form.username.errors  %}
-                        {{ error }} 
-                    {% endfor %}
-                </span>  
-				{{ form.password.label }} {{ form.password(size=20) }}  
-                 <span class="error">
-                    {% for error in form.password.errors  %}
-                        {{ error }} 
-                    {% endfor %}
-                </span>  
-				{{ form.confirm.label }} {{ form.confirm(size=20) }}  
+                {% for field in form %}
+                {{field(placeholder=field.label.text) }}
                 <span class="error">
-                    {% for error in form.confirm.errors  %}
+                    {% for error in field.errors  %}
                         {{ error }} 
                     {% endfor %}
                 </span>  
+                {% endfor %}
+				 
 			</fieldset>
 			<input id="SubmitReg" type="submit" value="Sign up" data-role="button" data-inline="true" data-theme="b" />
 		</form>

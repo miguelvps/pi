@@ -1,7 +1,6 @@
 ﻿{% extends "base.html" %}
 
 {% block page_id %} login {% endblock %}
-{% block redirect %}  {% endblock %}
 
 
 {% block header %}
@@ -17,21 +16,18 @@
 		<h4> Entre na sua conta Concierge. </h4>
 		
 		<form action="/auth/login" method="post">
+        
             <fieldset>
-            
-				{{ form.username.label }} {{ form.username(size=20) }}
-                 <span class="error">
-                    {% for error in form.username.errors  %}
+                {% for field in form %}
+                {{field(placeholder=field.label.text) }}
+                <span class="error">
+                    {% for error in field.errors  %}
                         {{ error }} 
                     {% endfor %}
                 </span>  
-				{{ form.password.label }} {{ form.password(size=20) }}
-                 <span class="error">
-                    {% for error in form.password.errors  %}
-                        {{ error }} 
-                    {% endfor %}
-                </span>  
-            </fieldset>
+                {% endfor %}	 
+			</fieldset>
+
 			<input id="Submit1" type="submit" value="Entrar" data-role="button" data-inline="true" data-theme="b" />
 
 		</form>
