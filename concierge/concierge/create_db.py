@@ -22,4 +22,4 @@ def reset(fill_fixtures=False):
     ctx.pop() 
 
 if __name__=="__main__":
-    reset()
+    reset(fill_fixtures=True)
