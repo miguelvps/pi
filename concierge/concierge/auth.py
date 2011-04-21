@@ -35,7 +35,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password', validators=[Required()])
 
     def validate_username(form, field):
-        if User.query.filter_by(username=form.username).first():
+        if User.query.filter_by(username=form.username.data).first():
             raise ValidationError('Username already in use')
 
 
@@ -48,7 +48,9 @@ class LoginForm(Form):
 def register():
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-        db.session.add(User(form.username, form.password))
+        db.session.add(User(form.username.data, form.password.data))
+        session['username'] = form.username.data
+        session['auth'] = True
         return redirect('/')
     return render_template('register.html', form=form)
 
@@ -57,9 +59,9 @@ def register():
 def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username)
-        if user.check_password(form.password):
-            session['username'] = form.username
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and user.check_password(form.password.data):
+            session['username'] = form.username.data
             session['auth'] = True
             return redirect('/')
     return render_template('login.html', form=form)
@@ -69,3 +71,5 @@ def login():
 def logout():
     session.pop('auth', None)
     return redirect('/')
+
+
