@@ -6,6 +6,19 @@ import inspect
 
 ALLOWED_ATRIBUTE_TYPES= [sqlalchemy.types.Date, sqlalchemy.types.String]
 
+class ModelList_xml(object):
+	def __init__(self, l):
+		assert hasattr(l, '__iter__')
+		self.l= l
+	
+	def to_xml(self, parameters):
+		lxf, lxt, lxa= parameters[2]
+		if lxf(self):
+			xml= AwesomeXml( lxt(self), lxa(self) )
+			for model in self.l:
+				xml.appendChild( Model_Serializer(model).to_xml(parameters) )
+			return xml
+		return None
 
 class Model_Atribute_Serializer(object):
 	TRUE_ATRIBUTE, MODEL_LIST_ATRIBUTE= range(2)
@@ -35,15 +48,12 @@ class Model_Atribute_Serializer(object):
 		return self.atr_type == self.MODEL_LIST_ATRIBUTE
 
 	def to_xml(self, parameters):
-		axf, axt, axa= parameters[3:6]
+		axf, axt, axa= parameters[1]
 		if axf(self):
 			if self.is_true_atribute():
 				return AwesomeXml( axt(self), axa(self), self.atr_obj )
 			else:
-				xml= AwesomeXml( axt(self), axa(self) )
-				for model in self.atr_obj:
-					xml.appendChild( Model_Serializer(model).to_xml(parameters) )
-				return xml
+				return ModelList_xml(self.atr_obj).to_xml(parameters)
 		return None
 
 
@@ -60,7 +70,7 @@ class Model_Serializer(object):
 		self.atributes= [Model_Atribute_Serializer(model_obj, name) for name in atribute_names]
 
 	def to_xml(self, parameters):
-		mxf, mxt, mxa= parameters[0:3]
+		mxf, mxt, mxa= parameters[0]
 		
 		if mxf(self):
 			xml= AwesomeXml( mxt(self), mxa(self) )
