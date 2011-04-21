@@ -39,7 +39,7 @@ class AwesomeXml:
 			content= "".join([el.toxml() for el in self.subelements])
 		
 		end= "</%s>"%(self.name)
-		return start+conten+tend
+		return start+content+end
 
 	def toprettyxml(self, prefix='', indentor='  '):
 		attributes= " ".join(['%s="%s"'%(k,v) for k,v in self.attributes.items()])
