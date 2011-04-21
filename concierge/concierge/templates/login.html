@@ -1,9 +1,11 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block page_id %} login {% endblock %}
 	
 {% block page_content %}
 	<div data-role="content">	
+		
+		<h4> Entre na sua conta Concierge. </h4>
 		
 		<form action="auth/login" method="post">
 		
@@ -17,10 +19,13 @@
 				<input type="password" name="password" id="password" value="" />
 			</div>
 			
-			<button type="submit" data-theme="d">Submit</button>
+			<button type="submit" data-theme="d">Entrar</button>
 
 		</form>
-
+		
+		<h4> Não tem conta Concierge? </h4>
+		<a href="/auth/register" data-role="button">Registe-se aqui</a> 
+		
 	</div><!-- /content -->
 {% endblock %}
 
