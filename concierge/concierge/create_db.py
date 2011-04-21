@@ -21,5 +21,5 @@ def reset(fill_fixtures=False):
     
     ctx.pop() 
 
-if __name__=="main":
+if __name__=="__main__":
     reset()
