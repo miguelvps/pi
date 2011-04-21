@@ -1,4 +1,5 @@
 from flask import Module, render_template
+from concierge.services import Service
 
 
 frontend = Module(__name__, 'frontend')
@@ -6,7 +7,8 @@ frontend = Module(__name__, 'frontend')
 
 @frontend.route('/')
 def index():
-    return render_template('index.html')
+    services = Service.query.all()
+    return render_template('index.html', services = services)
 
 
 @frontend.route('/historico/')
