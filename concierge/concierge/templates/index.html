@@ -2,12 +2,16 @@
 
 {% block page_id %} index {% endblock %}
 
+{% block header %}
+	<div data-role="header"  data-id="concheader" >
+		<h1>Concierge</h1>
+	</div><!-- /header -->
+{% endblock %}
+
 {% block page_content %}
 
-	<div data-role="fieldcontain" data-position="fixed">
-		<label for="search"></label>
-		<input type="search" name="password" id="search" value="" />
-	</div><!--/SearchForm-->
+	<input type="search" name="password" id="search" value="" />	
+
 	
 	<div data-role="content">					
 		<ul data-role="listview"  data-theme="c" data-dividertheme="b">
@@ -23,7 +27,8 @@
 			<li><a href="">Serviço 8</a></li>
 			<li><a href="">Serviço 9</a></li>
 			<li><a href="">Serviço 10</a></li>
-
+			<li><a href="">Serviço 11</a></li>
+			<li><a href="">Serviço 12</a></li>
 			<li><a href="docs/lists/index.html">List views</a></li>
 		</ul>
 	</div><!-- /content -->
@@ -31,8 +36,8 @@
 	<div data-role="footer" data-position="fixed" data-id="concfooter" >
 			<div data-role="navbar">
 				<ul>
-					<li><a href="config" >Configurações</a></li>
-					<li><a href="login">Login</a></li>
+					<li><a href="config" >Opções</a></li>
+					<li><a href="/auth/login">Login</a></li>
 					<li><a href="historico">Historico</a></li>
 				</ul>
 			</div><!-- /navbar -->
