@@ -61,7 +61,6 @@ class AuthTest(TestCase):
                 username='newuser',
                 password='password',
                 confirm='password'))
-            print session
             assert session.get('auth') == True
             assert session.get('username') == 'newuser'
 
