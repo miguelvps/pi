@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block page_id %} login {% endblock %}
+{% block page_id %} register {% endblock %}
 	
 {% block page_content %}
 	<div data-role="content">	
 		
-		<form action="auth/login" method="post">
+		<form action="auth/register" method="post">
 		
 			<div data-role="fieldcontain">
-				<label for="email">Email:</label>
+				<label for="email">Username:</label>
 				<input type="email" name="email" id="email" value=""  />
 			</div>
 
@@ -17,7 +17,11 @@
 				<input type="password" name="password" id="password" value="" />
 			</div>
 			
-			<button type="submit" data-theme="d">Submit</button>
+			<div class="ui-body ui-body-b">
+				<fieldset class="ui-grid-a">
+					<div class="ui-block-a"><button type="submit" data-theme="d">Submit</button></div>
+				</fieldset>
+			</div>
 
 		</form>
 
