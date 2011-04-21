@@ -52,7 +52,7 @@ def register():
         db.session.add(User(form.username.data, form.password.data))
         db.session.commit()
         session['username'] = form.username.data
-        session['auth'] = True        
+        session['auth'] = True
         return redirect('/')
     return render_template('register.html', form=form)
 
@@ -62,8 +62,6 @@ def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        print user.username
-        print user.password
         if user and user.check_password(form.password.data):
             session['username'] = form.username.data
             session['auth'] = True

@@ -55,14 +55,15 @@ class AuthTest(TestCase):
     def test_register(self):
         with self.client as c:
             rv = c.get('/auth/register')
-            assert "register" in rv
+            assert "register" in rv.data
 
             c.post('/auth/register', data=dict(
-                username='username',
+                username='newuser',
                 password='password',
                 confirm='password'))
+            print session
             assert session.get('auth') == True
-            assert session.get('username') == 'username'
+            assert session.get('username') == 'newuser'
 
 
 if __name__ == '__main__':
