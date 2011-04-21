@@ -6,20 +6,18 @@ from flaskext.testing import TestCase
 from concierge import create_app, db
 from concierge.auth import User
 
+import create_db
 
 class AuthTest(TestCase):
 
-    SQLALCHEMY_DATABASE_URI = "sqlite://"
     TESTING = True
 
     def create_app(self):
         return create_app(self)
 
     def setUp(self):
-        db.create_all()
-        user = User('username', 'password')
-        db.session.add(user)
-        db.session.commit()
+        create_db.reset(fill_fixtures=True)
+        
 
     def tearDown(self):
         db.session.remove()
