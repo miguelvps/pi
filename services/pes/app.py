@@ -46,10 +46,8 @@ class Teacher(db.Model):
 @app.route("/pessoas/", methods=['GET',])
 def teachers():
     teachers = Teacher.query.all()
-    names = ""
-    for t in teachers:
-        names += "<p>" + str(t.id) + " " + t.name + " " + t.emails[0].email + "</p>"
-    return names
+    xml_text= modelxmlserializer.ModelList_xml(teachers).to_xml(SERIALIZER_PARAMETERS).toxml()
+    return Response(response=xml_text, mimetype="application/xml")
 
 
 @app.route("/pessoas/<id>", methods=['GET',])
