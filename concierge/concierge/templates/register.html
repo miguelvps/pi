@@ -1,26 +1,41 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block page_id %} register {% endblock %}
 	
+{% block header %}
+    <div data-role="header" data-backbtn="false">
+        <h1>Sign Up</h1>
+        <a href="/" class="ui-btn-left">Back</a>
+    </div><!-- /header -->
+{% endblock %}
+    
 {% block page_content %}
 	<div data-role="content">	
 		
 		<h2> Registo de utilizador </h2>
 		<form action="/auth/register" method="post">
 		
-			<div data-role="fieldcontain">
-				{{ form.username.label }} {{ form.username(size=20) }}
-			</div>
-
-			<div data-role="fieldcontain">
-				{{ form.password.label }} {{ form.password(size=20) }}
-			</div>
-                       
-            <div data-role="fieldcontain">
-				{{ form.confirm.label }} {{ form.confirm(size=20) }}
-			</div>
-			
-			<button type="submit" data-theme="d">Submit</button>
+            <fieldset>
+				{{ form.username.label }} {{ form.username(size=20) }} 
+                 <span class="error">
+                    {% for error in form.username.errors  %}
+                        {{ error }} 
+                    {% endfor %}
+                </span>  
+				{{ form.password.label }} {{ form.password(size=20) }}  
+                 <span class="error">
+                    {% for error in form.password.errors  %}
+                        {{ error }} 
+                    {% endfor %}
+                </span>  
+				{{ form.confirm.label }} {{ form.confirm(size=20) }}  
+                <span class="error">
+                    {% for error in form.confirm.errors  %}
+                        {{ error }} 
+                    {% endfor %}
+                </span>  
+			</fieldset>
+			<input id="SubmitReg" type="submit" value="Sign up" data-role="button" data-inline="true" data-theme="b" />
 		</form>
 		
 	</div><!-- /content -->
