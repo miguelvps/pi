@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 
 from flask import Module, request, session, render_template, redirect
 from flaskext.wtf import Form, TextField, PasswordField, Required, \
@@ -41,7 +41,7 @@ class RegisterForm(Form):
 
 class LoginForm(Form):
     username = TextField('Username', validators=[Required()])
-    password = TextField('Password', validators=[Required()])
+    password = PasswordField('Password', validators=[Required()])
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -49,8 +49,9 @@ def register():
     form = RegisterForm(request.form)
     if form.validate_on_submit():
         db.session.add(User(form.username.data, form.password.data))
+        db.session.commit()
         session['username'] = form.username.data
-        session['auth'] = True
+        session['auth'] = True        
         return redirect('/')
     return render_template('register.html', form=form)
 
@@ -60,6 +61,8 @@ def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        print user.username
+        print user.password
         if user and user.check_password(form.password.data):
             session['username'] = form.username.data
             session['auth'] = True

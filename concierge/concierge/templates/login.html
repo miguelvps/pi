@@ -7,17 +7,16 @@
 		
 		<h4> Entre na sua conta Concierge. </h4>
 		
-		<form action="auth/login" method="post">
+		<form action="/auth/login" method="post">
 		
 			<div data-role="fieldcontain">
-				<label for="email">Email:</label>
-				<input type="email" name="email" id="email" value=""  />
+				{{ form.username.label }} {{ form.username(size=20) }}
 			</div>
 
 			<div data-role="fieldcontain">
-				<label for="password">Password:</label>
-				<input type="password" name="password" id="password" value="" />
+				{{ form.password.label }} {{ form.password(size=20) }}
 			</div>
+
 			
 			<button type="submit" data-theme="d">Entrar</button>
 
