@@ -3,3 +3,4 @@ WTForms
 Flask
 Flask-SQLAlchemy
 Flask-WTF
+Flask-Testing
