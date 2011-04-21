@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block page_id %} login {% endblock %}
+	
+{% block page_content %}
+	<div data-role="content">	
+		
+		<form action="auth/login" method="post">
+		
+			<div data-role="fieldcontain">
+				<label for="email">Email:</label>
+				<input type="email" name="email" id="email" value=""  />
+			</div>
+
+			<div data-role="fieldcontain">
+				<label for="password">Password:</label>
+				<input type="password" name="password" id="password" value="" />
+			</div>
+			
+			<div class="ui-body ui-body-b">
+				<fieldset class="ui-grid-a">
+					<div class="ui-block-a"><button type="submit" data-theme="d">Submit</button></div>
+				</fieldset>
+			</div>
+
+		</form>
+
+	</div><!-- /content -->
+{% endblock %}
+
