@@ -1,7 +1,10 @@
-from flask import Module, render_template, request, Response, session
-from concierge.auth import User
+from flask import Module, render_template, request, Response, session, redirect
+from concierge.auth import User, requires_auth
 import sys
 from concierge import db
+from flaskext.wtf import Form, TextField, PasswordField, Required, \
+                         Length, EqualTo, ValidationError, IntegerField, BooleanField, NumberRange
+
 
 sys.path.append('../../common/')
 import xml_kinds
@@ -34,21 +37,31 @@ class Service(db.Model):
         self.active= True
         self.owner= user
 
-@services.route('/<id>/', methods=['GET', 'DELETE'])
-def service(id):
-    print id
-    service = Service.query.get_or_404(id)
-    return render_template('service.html', service = service) 
-
-@services.route('/<service_id>/add_favorite',methods=['GET'])    
-def add_bookmark(service_id):
+class ServiceForm(Form):
+    favorite = BooleanField('Favorite')
+    rating = IntegerField('Rating', validators=[Required(),NumberRange(min=1, max=5)])
+            
+@services.route('/<service_id>/', methods=['GET', 'POST'])
+def service(service_id):
+    service = Service.query.get_or_404(service_id)
     user_id = session['id']
-    print Services_users_favorites.query.filter_by(Service_users_favorites.user_id == user_id, Service_users_favorites.service_id == service_id )
-   
-    return redirect('/')
+    favorite = Services_users_favorites.query.filter_by(user_id = user_id, service_id = service_id).first()
+    favorite = bool(favorite)
+    rating = Services_users_ratings.query.filter_by(user_id = user_id, service_id = service_id).first()
+    rating = rating if rating else 0
+    form = ServiceForm(request.form)
+    if form.validate_on_submit():
+        pass
+        #if not rating:
+        #    session.add(Services_users_ratings(user_id = user_id, service_id = service_id, rating = DEFAULT_RATING)))
+        #    session.commit()
+    
+    
+    
 
-        
+    return render_template('service.html', service = service, favorite = favorite, rating = rating, form=form  ) 
 
+     
 @services.route('/api/', methods=['GET', 'POST'])
 def service_list():
     services = Service.query.all()

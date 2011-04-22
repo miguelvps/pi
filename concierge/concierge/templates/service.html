@@ -11,8 +11,19 @@
 
 {% block page_content %}
 	<div data-role="content">
-       <a href="/services/{{service.id}}/add_favorite" data-role="button">Add {{service.name}} to the Favorites List</a> 
-
+        <form action="/auth/register" method="post" name="service_form">
+            <fieldset>
+                {% for field in form %}
+                {{field(placeholder=field.label.text) }}
+                <span class="error">
+                    {% for error in field.errors  %}
+                        {{ error }} 
+                    {% endfor %}
+                </span>  
+                {% endfor %}
+				 
+			</fieldset>
+		</form>
 	</div><!-- /content -->
 		
 {% endblock %}
