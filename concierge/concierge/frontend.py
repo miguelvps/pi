@@ -10,17 +10,18 @@ def index():
     services = Service.query.all()
     return render_template('index.html', services = services)
 
+    
 
 @frontend.route('/historico/')
 def historico():
     return render_template('historico.html')
 
+@frontend.route('/settings/')
+def settings():
+    return render_template('settings.html')
 
-@frontend.route('/login/')
-def login():
-    return render_template('login.html')
+@frontend.route('/bookmark_list/')
+def bookmark_list():
+        return render_template('bookmark_list.html')
+    
 
-
-@frontend.route('/service/')
-def service():
-    return render_template('service.html')

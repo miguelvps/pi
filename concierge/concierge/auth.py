@@ -1,4 +1,4 @@
-﻿from datetime import datetime
+from datetime import datetime
 
 from flask import Module, request, session, render_template, redirect
 from flaskext.wtf import Form, TextField, PasswordField, Required, \
