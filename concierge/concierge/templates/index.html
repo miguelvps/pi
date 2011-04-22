@@ -19,37 +19,28 @@
 		<ul data-role="listview"  data-theme="c" data-dividertheme="b">
 			<!--<li data-role="list-divider">Serviços</li>-->
             {% for service in services %}
-                <li><a href="{{service.url}}">{{service.name}}</a></li>
+                <li><a href="/services/{{service.id}}">{{service.name}}</a></li>
             {% endfor %}
-			<!--<li><a href="service">Serviço 1</a></li>
-			<li><a href="">Serviço 2</a></li>
-			<li><a href="">Serviço 3</a></li>
-			<li><a href="">Serviço 4</a></li>
-			<li><a href="">Serviço 5</a></li>
-			<li><a href="">Serviço 6</a></li>
-			<li><a href="">Serviço 7</a></li>
-			<li><a href="">Serviço 8</a></li>
-			<li><a href="">Serviço 9</a></li>
-			<li><a href="">Serviço 10</a></li>
-			<li><a href="">Serviço 11</a></li>
-			<li><a href="">Serviço 12</a></li>
-			<li><a href="docs/lists/index.html">List views</a></li>-->
 		</ul>
 	</div><!-- /content -->
-
-	<div data-role="footer" data-position="fixed" data-id="concfooter" >
-			<div data-role="navbar">
-				<ul>
-					<li><a href="config">Opções</a></li>
-                    <li>
-                    {% if session.get("auth") == True %}
-					<a href="/auth/logout">Logout</a>
-                    {% else %}
-                    <a href="/auth/login" data-transition="slideup">Login</a>
-                    {% endif %}
-                    </li>
-					<li><a href="historico">Historico</a></li>
-				</ul>
-			</div><!-- /navbar -->
-	</div><!-- /footer -->	
+     
 {% endblock %}
+
+
+{% block footer %}
+                <div data-role="footer" data-position="fixed" data-id="concfooter" >
+                        <div data-role="navbar">
+                            <ul>
+                                <li><a href="settings">Settings</a></li>
+                                <li>
+                                {% if session.get("auth") == True %}
+                                <a href="/auth/logout">Logout</a>
+                                {% else %}
+                                <a href="/auth/login" data-transition="slideup">Login</a>
+                                {% endif %}
+                                </li>
+                                <li><a href="historico">Historico</a></li>
+                            </ul>
+                        </div><!-- /navbar -->
+                </div><!-- /footer -->	      
+            {% endblock %}

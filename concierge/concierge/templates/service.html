@@ -1,39 +1,22 @@
 {% extends "base.html" %}
 
-{% block page_id %} service {% endblock %}
+{% block page_id %} {{service.name}} {% endblock %}
+
+{% block header %}
+    <div data-role="header" data-backbtn="false">
+        <h1>{{service.name}}</h1>
+        <a href="/" class="ui-btn-left">Back</a>
+    </div><!-- /header -->
+{% endblock %}
 
 {% block page_content %}
-	<div data-role="content">	
-		<ul data-role="listview">
-			<li><a href="#index">
-				
-				<h3>Adicionar a Favorito</h3>
-				<p><strong>Adicionar o serviço1 à lista de favoritos.</strong></p>
-				
-			</a></li>
-			<li><a href="#index">
-				
-				<h3>Explorar o serviço1</h3>
-				<p><strong>Explorar directamente as directorias do serviço1</strong></p>
-				
-			</a></li>
-			<li><a href="#index">
-				<h3>Atribuir rating ao serviço1</h3>
-				<p><strong>Atribuir um rating de 1 a 5 ao serviço1</strong></p>
-			</a></li>
-			
-		</ul>
+	<div data-role="content">
+       <a href="/services/{{service.id}}/add_favorite" data-role="button">Add {{service.name}} to the Favorites List</a> 
 
 	</div><!-- /content -->
-
-
-	<div data-role="footer" data-position="fixed" data-id="concfooter" >
-			<div data-role="navbar">
-				<ul>
-					<li><a href="config" >Configurações</a></li>
-					<li><a href="/auth/login">Login</a></li>
-					<li><a href="historico">Historico</a></li>
-				</ul>
-			</div><!-- /navbar -->
-	</div><!-- /footer -->			
+		
 {% endblock %}
+
+{% block footer %} {% endblock %}
+
+

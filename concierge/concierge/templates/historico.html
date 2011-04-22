@@ -1,6 +1,13 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block page_id %} historico {% endblock %}
+
+{% block header %}
+    <div data-role="header" data-backbtn="false">
+        <h1>Histórico</h1>
+        <a href="/" class="ui-btn-left">Back</a>
+    </div><!-- /header -->
+{% endblock %}
 
 {% block page_content %}
 
@@ -19,6 +26,8 @@
 				</ul>
 			</div><!-- /content -->
 {% endblock %}
+
+{% block footer %} {% endblock %}
 
 
 
