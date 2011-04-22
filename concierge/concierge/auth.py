@@ -1,6 +1,7 @@
 ﻿from datetime import datetime
+from functools import wraps
 
-from flask import Module, request, session, render_template, redirect
+from flask import Module, request, session, render_template, redirect, url_for
 from flaskext.wtf import Form, TextField, PasswordField, Required, \
                          Length, EqualTo, ValidationError
 from werkzeug import generate_password_hash, check_password_hash
@@ -45,14 +46,29 @@ class LoginForm(Form):
     password = PasswordField('Password', validators=[Required()])
 
 
+def requires_auth(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        if not session.get('auth'):
+            session['referrer'] = request.url
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorator
+
+
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-        db.session.add(User(form.username.data, form.password.data))
+        user = User(form.username.data, form.password.data)
+        db.session.add(user)
         db.session.commit()
-        session['username'] = form.username.data
+        session['id'] = user.id
+        session['username'] = user.username
         session['auth'] = True
+        referrer = session.pop('referrer', None)
+        if referrer:
+            return redirect(referrer)
         return redirect('/')
     return render_template('register.html', form=form)
 
@@ -63,15 +79,18 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and user.check_password(form.password.data):
-            session['username'] = form.username.data
+            session['id'] = user.id
+            session['username'] = user.username
             session['auth'] = True
+            referrer = session.pop('referrer', None)
+            if referrer:
+                return redirect(referrer)
             return redirect('/')
     return render_template('login.html', form=form)
 
 
 @auth.route('/logout')
+@requires_auth
 def logout():
     session.pop('auth', None)
     return redirect('/')
-
-
