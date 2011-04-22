@@ -15,6 +15,10 @@ def create_app(cfg=None):
 
     db.init_app(app)
 
+    if app.config['DEBUG_TB_ENABLED']:
+        from flaskext.debugtoolbar import DebugToolbarExtension
+        DebugToolbarExtension(app)
+
     from concierge.frontend import frontend
     app.register_module(frontend)
 

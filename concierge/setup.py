@@ -9,6 +9,8 @@ setup(
         'WTForms',
         'Flask',
         'Flask-SQLAlchemy',
-        'Flask-WTF'
+        'Flask-WTF',
+        'Flask-Testing',
+        'Flask-DebugToolbar'
     ]
 )
