@@ -6,6 +6,7 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///concierge.db'
 
 CSRF_ENABLED = False
 
+DEBUG_TB_ENABLED = False
 DEBUG_TB_INTERCEPT_REDIRECTS = True
 DEBUG_TB_PANELS = (
     'flaskext.debugtoolbar.panels.versions.VersionDebugPanel',

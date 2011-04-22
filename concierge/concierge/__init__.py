@@ -15,7 +15,7 @@ def create_app(cfg=None):
 
     db.init_app(app)
 
-    if app.debug:
+    if app.config['DEBUG_TB_ENABLED']:
         from flaskext.debugtoolbar import DebugToolbarExtension
         DebugToolbarExtension(app)
 
