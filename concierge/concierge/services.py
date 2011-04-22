@@ -50,14 +50,17 @@ def service(service_id):
     rating = Services_users_ratings.query.filter_by(user_id = user_id, service_id = service_id).first()
     rating = rating if rating else 0
     form = ServiceForm(request.form)
+ 
+
+    
     if form.validate_on_submit():
-        pass
-        #if not rating:
-        #    session.add(Services_users_ratings(user_id = user_id, service_id = service_id, rating = DEFAULT_RATING)))
-        #    session.commit()
+        session.add(Services_users_ratings(user_id = user_id, service_id = service_id, rating = DEFAULT_RATING)))
+        
+        session.commit()
     
     
-    
+        form.favorite.data = favorite
+        form.rating.data = rating
 
     return render_template('service.html', service = service, favorite = favorite, rating = rating, form=form  ) 
 

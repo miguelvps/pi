@@ -11,18 +11,13 @@
 
 {% block page_content %}
 	<div data-role="content">
-        <form action="/auth/register" method="post" name="service_form">
-            <fieldset>
-                {% for field in form %}
-                {{field(placeholder=field.label.text) }}
-                <span class="error">
-                    {% for error in field.errors  %}
-                        {{ error }} 
-                    {% endfor %}
-                </span>  
-                {% endfor %}
-				 
-			</fieldset>
+            <form action="/services/{{service.id}}" method="post" name="service_form">
+                         
+                <fieldset>
+                    {{form.favorite}} {{form.favorite.label}}
+                    <input type="range" name="{{form.rating.name}}" id="slider" value="{{rating}}" min="1" max="5"  />
+                </fieldset>
+                <input id="SubmitServ" type="submit" value="Save" data-role="button" data-inline="true" data-theme="b" />
 		</form>
 	</div><!-- /content -->
 		
