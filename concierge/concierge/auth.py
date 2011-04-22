@@ -51,7 +51,7 @@ def requires_auth(f):
     def decorator(*args, **kwargs):
         if not session.get('auth'):
             session['referrer'] = request.url
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('.login'))
         return f(*args, **kwargs)
     return decorator
 
