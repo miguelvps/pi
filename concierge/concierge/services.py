@@ -117,3 +117,10 @@ def register():
             except:
                 db.session.rollback()
         return render_template('register_service.html', form=form)
+
+@services.route('/favorites_list')
+@requires_auth
+def fav_list():
+    user_id = session['id']
+    favorites = User.query.get_or_404(user_id).favorite_services
+    return render_template('favorite_list.html',favorites=favorites)
