@@ -54,7 +54,7 @@ def service(service_id):
 
     
     if form.validate_on_submit():
-        session.add(Services_users_ratings(user_id = user_id, service_id = service_id, rating = DEFAULT_RATING)))
+        session.add(Services_users_ratings(user_id = user_id, service_id = service_id, rating = DEFAULT_RATING))
         
         session.commit()
     
