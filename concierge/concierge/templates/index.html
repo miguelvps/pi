@@ -12,8 +12,9 @@
 
 {% block page_content %}
 
-	<input type="search" name="password" id="search" value="" />	
-
+	<form action="/search" method="post">
+	<input type="search" name="search_field" id="search" value="" />	
+	</form>
 	
 	<div data-role="content">					
 		<ul data-role="listview"  data-theme="c" data-dividertheme="b">
