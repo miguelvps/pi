@@ -2,10 +2,11 @@
 
 {% block page_id %} login {% endblock %}
 
+{% block redirect %} data-url="/auth/login" {% endblock %}
 
 {% block header %}
     <div data-role="header" data-backbtn="false">
-        <h1>Entrar</h1>
+        <h1>Sign in</h1>
         <a href="/" class="ui-btn-right" data-transition="slidedown">Cancel</a>
     </div><!-- /header -->
 {% endblock %}
@@ -13,7 +14,7 @@
 {% block page_content %}
 	<div data-role="content">	
 		
-		<h4> Entre na sua conta Concierge. </h4>
+		<h4> LogIn to your concierge account. </h4>
 		
 		<form action="/auth/login" method="post">
         
@@ -28,11 +29,11 @@
                 {% endfor %}	 
 			</fieldset>
 
-			<input id="Submit1" type="submit" value="Entrar" data-role="button" data-inline="true" data-theme="b" />
+			<input id="Submit1" type="submit" value="Sign in" data-role="button" data-inline="true" data-theme="b" />
 
 		</form>
 		<hr />
-		<h4> Não tem conta Concierge? <a href="/auth/register">Registe-se aqui.</a> </h4>
+		<h4> Don't have an account? <a href="/auth/register">Register here.</a> </h4>
 		
 		
 	</div><!-- /content -->
