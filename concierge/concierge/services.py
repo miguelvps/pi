@@ -1,5 +1,4 @@
 import sys
-import urllib
 
 from flask import Module, Response, request, session, render_template
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
@@ -8,6 +7,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from concierge import db
 from concierge.auth import User, requires_auth
+from concierge.service_metadata_parser import ServiceMetadata
 
 sys.path.append('../../common/')
 import xml_kinds
@@ -56,6 +56,10 @@ User.rating_services = association_proxy('service_ratings', 'service',
         creator=lambda s: ServiceRating(service=s))
 
 
+class RegisterForm(Form):
+    metadata_url = TextField('Metada URL', validators=[Required(),URL()])
+
+
 class ServiceForm(Form):
     favorite = BooleanField('Favorite')
     rating = IntegerField('Rating', validators=[NumberRange(min=1, max=5)])
@@ -65,9 +69,9 @@ class ServiceForm(Form):
 def service(service_id):
     service = Service.query.get_or_404(service_id)
     user_id = session['id']
-    favorite = ServiceFavorite.query.filter_by(user_id=user_id, service_id=service_id).get()
+    favorite = ServiceFavorite.query.filter_by(user_id=user_id, service_id=service_id).first()
     favorite = bool(favorite)
-    rating = ServiceRating.query.filter_by(user_id=user_id, service_id=service_id).get()
+    rating = ServiceRating.query.filter_by(user_id=user_id, service_id=service_id).first()
     rating = rating if rating else 0
     form = ServiceForm(request.form)
 
@@ -97,9 +101,6 @@ def service_xml(id):
     if request.method=='DELETE':
         return Response("not implemented yet. 5Y$WY%$")
 
-class RegisterForm(Form):
-    metadata_url = TextField('Metada URL', validators=[Required(),URL()])
-
 
 @services.route('/register/', methods=['GET','POST'])
 @requires_auth
@@ -107,7 +108,11 @@ def register():
         form = RegisterForm(request.form)
         if form.validate_on_submit():
             url = form.metadata_url.data
-            metadata = urllib.urlopen(url).read()
-            print metadata
-            #parser(metadata)
+            metadata = ServiceMetadata(url)
+            service = Service(name=metadata.name, url=metadata.url, active=True, user_id=session['id'])
+            db.session.add(service)
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
         return render_template('register_service.html', form=form)
