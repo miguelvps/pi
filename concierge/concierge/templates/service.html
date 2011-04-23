@@ -2,7 +2,7 @@
 
 {% block page_id %} {{service.name}} {% endblock %}
 
-{% block redirect %} data-url="/service/{{service.id}}" {% endblock %}
+{% block redirect %} data-url="/services/{{service.id}}" {% endblock %}
 
 {% block header %}
     <div data-role="header" data-backbtn="false">
@@ -13,14 +13,19 @@
 
 {% block page_content %}
 	<div data-role="content">
-            <form action="/services/{{service.id}}" method="post" name="service_form">
+            <form action="/services/{{service.id}}/" method="post">
                          
                 <fieldset>
+                    <p> Check/Uncheck this service to favorite it.</p>
                     {{form.favorite}} {{form.favorite.label}}
-                    <input type="range" name="{{form.rating.name}}" id="slider" value="{{rating}}" min="1" max="5"  />
+                    <p>Give it a rating (1 to 5).</p>
+                    <input type="range" name="{{form.rating.name}}" id="slider" value="{{form.rating.data}}" min="1" max="5"  />
+                    {% for error in form.errors  %}
+                        {{ error }} 
+                    {% endfor %}
                 </fieldset>
                 <input id="SubmitServ" type="submit" value="Save" data-role="button" data-inline="true" data-theme="b" />
-		</form>
+            </form>
 	</div><!-- /content -->
 		
 {% endblock %}

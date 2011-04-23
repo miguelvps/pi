@@ -1,6 +1,6 @@
 import sys
 
-from flask import Module, Response, request, session, render_template
+from flask import Module, Response, request, session, render_template, redirect
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -71,19 +71,22 @@ def service(service_id):
     service = Service.query.get_or_404(service_id)
     user_id = session['id']
     favorite = ServiceFavorite.query.filter_by(user_id=user_id, service_id=service_id).first()
-    favorite = bool(favorite)
     rating = ServiceRating.query.filter_by(user_id=user_id, service_id=service_id).first()
     rating = rating if rating else 0
     form = ServiceForm(request.form)
 
     if form.validate_on_submit():
-        session.add(ServiceFavorite(user_id=user_id, service_id=service_id, rating=0))
+        if form.favorite.data and not favorite :
+            db.session.add(ServiceFavorite(user_id=user_id, service_id=service_id))
+        elif not form.favorite.data and favorite:
+            db.session.delete(favorite)
+        db.session.merge(ServiceRating(user_id=user_id, service_id=service_id, rating=form.rating.data))
+        db.session.commit()
+        return redirect('/services/%s' %service_id)
 
-        session.commit()
-        form.favorite.data = favorite
-        form.rating.data = rating
-
-    return render_template('service.html', service = service, favorite = favorite, rating = rating, form=form  ) 
+    form.favorite.data = bool(favorite)
+    form.rating.data = rating.rating
+    return render_template('service.html', service = service, form=form  )
 
 
 @services.route('/api/', methods=['GET', 'POST'])
@@ -122,5 +125,6 @@ def register():
 @requires_auth
 def fav_list():
     user_id = session['id']
-    favorites = User.query.get_or_404(user_id).favorite_services
+    user = User.query.get_or_404(user_id)
+    favorites = user.favorite_services
     return render_template('favorite_list.html',favorites=favorites)
