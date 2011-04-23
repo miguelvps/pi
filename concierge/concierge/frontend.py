@@ -22,6 +22,9 @@ def settings():
 
 @frontend.route('/bookmark_list/')
 def bookmark_list():
-        return render_template('bookmark_list.html')
-    
+    return render_template('bookmark_list.html')
+
+@frontend.route('/search/')
+def bookmark_list():
+    return render_template('search.html')
 
