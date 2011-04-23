@@ -1,9 +1,12 @@
 from flask import Module, render_template, request, Response, session, redirect
 from concierge.auth import User, requires_auth
 import sys
+import urllib
+
 from concierge import db
 from flaskext.wtf import Form, TextField, PasswordField, Required, \
-                         Length, EqualTo, ValidationError, IntegerField, BooleanField, NumberRange
+                         Length, EqualTo, ValidationError, IntegerField, BooleanField, NumberRange,URL
+                         
 
 
 sys.path.append('../../common/')
@@ -40,7 +43,8 @@ class Service(db.Model):
 class ServiceForm(Form):
     favorite = BooleanField('Favorite')
     rating = IntegerField('Rating', validators=[Required(),NumberRange(min=1, max=5)])
-            
+
+@requires_auth    
 @services.route('/<service_id>/', methods=['GET', 'POST'])
 def service(service_id):
     service = Service.query.get_or_404(service_id)
@@ -80,3 +84,18 @@ def service_xml(id):
         return Response(response=xml_text, mimetype="application/xml")
     if request.method=='DELETE':
         return Response("not implemented yet. 5Y$WY%$")
+
+class RegisterForm(Form):
+    metadata_url = TextField('Metada URL', validators=[Required(),URL()])        
+
+@requires_auth        
+@services.route('/register/', methods=['GET','POST'])
+def register():
+        form = RegisterForm(request.form)
+        if form.validate_on_submit():
+            url = form.metadata_url.data
+            metadata = urllib.urlopen(url).read()
+            print metadata
+            #parser(metadata)
+        return render_template('register_service.html', form=form)
+        
