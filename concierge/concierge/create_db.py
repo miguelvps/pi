@@ -13,7 +13,7 @@ def reset(fill_fixtures=False):
     db.create_all()
     if fill_fixtures:
         user = User('username', 'password')
-        service = Service(name='service1', url='http://service.com',
+        service = Service(name='pessoas', url='http://127.0.0.1:5001/static/metadata.xml',
                           user=user, active=True)
         db.session.add(service)
         db.session.add(user)
