@@ -1,0 +1,24 @@
+<service name="pessoas" url="http://concierge.dyndns.org/services/pessoas">
+    <description> Este serviço guarda informação dos docentes</description>
+    <supported_formats>
+        <format>xml</format>
+    </supported_formats>
+
+    <resource url="">
+        <keywords>
+            <keyword>docente</keyword>
+            <keyword>docentes</keyword>
+            <keyword>professor</keyword>
+            <keyword>professores</keyword>
+        </keywords>
+        <method type="GET" >
+            <parameter>query</parameter> 
+        </method>
+        <resource url="pessoas">
+            <method type="GET" >
+                <parameter>start</parameter>
+                <parameter>end</parameter> 
+            </method>
+        </resource >
+    </resource>
+</service>
