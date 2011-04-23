@@ -66,6 +66,7 @@ class ServiceForm(Form):
 
 
 @services.route('/<service_id>/', methods=['GET', 'POST'])
+@requires_auth
 def service(service_id):
     service = Service.query.get_or_404(service_id)
     user_id = session['id']
