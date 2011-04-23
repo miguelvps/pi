@@ -12,9 +12,9 @@ def index():
 
     
 
-@frontend.route('/historico/')
-def historico():
-    return render_template('historico.html')
+@frontend.route('/history/')
+def history():
+    return render_template('history.html')
 
 @frontend.route('/settings/')
 def settings():

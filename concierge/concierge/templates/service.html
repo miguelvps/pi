@@ -2,6 +2,8 @@
 
 {% block page_id %} {{service.name}} {% endblock %}
 
+{% block redirect %} data-url="/service/{{service.id}}" {% endblock %}
+
 {% block header %}
     <div data-role="header" data-backbtn="false">
         <h1>{{service.name}}</h1>
