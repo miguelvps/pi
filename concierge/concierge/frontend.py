@@ -1,5 +1,6 @@
 from flask import Module, render_template
 from concierge.services import Service
+from concierge.service_metadata_parser import ServiceMetadata
 
 
 frontend = Module(__name__, 'frontend')
@@ -21,5 +22,10 @@ def settings():
     return render_template('settings.html')
 
 @frontend.route('/search/')
-def bookmark_list():
+def search():
+    services= Service.query.all()
+    print "services", services
+    metadatas= map(ServiceMetadata, services)
+    print metadatas
+    print [m.global_search() for m in metadatas]
     return render_template('search.html')
