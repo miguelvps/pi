@@ -1,17 +1,3 @@
-API REST PI
-
-Convenções para parametros:
-    query
-    start
-    end
-    sortby
-    lang
-    format
-
-outras convençoes:
-    não usar barras no inicio e fim de URLs 
-    o primeiro supported_format listado é o default
-
 <service name="pessoas" url="http://concierge.dyndns.org/services/pessoas">
     <description> Este serviço guarda informação dos docentes</description>
     <supported_formats>
@@ -19,16 +5,16 @@ outras convençoes:
     </supported_formats>
 
     <resource url="">
+        <keywords>
+            <keyword>docente</keyword>
+            <keyword>docentes</keyword>
+            <keyword>professor</keyword>
+            <keyword>professores</keyword>
+        </keywords>
+        <method type="GET" >
+            <parameter>query</parameter> 
+        </method>
         <resource url="pessoas">
-            <keywords>
-                <keyword>docente</keyword>
-                <keyword>docentes</keyword>
-                <keyword>professor</keyword>
-                <keyword>professores</keyword>
-            </keywords>
-            <method type="GET" >
-                <parameter>query</parameter> 
-            </method>
             <method type="GET" >
                 <parameter>start</parameter>
                 <parameter>end</parameter> 
