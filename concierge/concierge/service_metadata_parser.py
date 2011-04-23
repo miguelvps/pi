@@ -64,13 +64,16 @@ class ServiceMetadata(object):
         urlloader = urllib2.build_opener()
         page = urlloader.open(url).read()
         xml_object= parseString(page)
-        self.description, self.formats, self.resource= self.parse(xml_object)
+        self.name, self.url, self.description, self.formats, self.resource= self.parse(xml_object)
 
     def parse(self, xml_object):
-        '''returns description, formats, resource'''
+        '''returns name, url, description, formats, resource'''
         services_xml= xml_object.getElementsByTagName('service')
         assert len(services_xml)==1
         service_xml= services_xml[0]
+
+        name= service_xml.attributes['name'].childNodes[0].nodeValue
+        url= service_xml.attributes['url'].childNodes[0].nodeValue
         
         descriptions_xml= service_xml.getElementsByTagName('description')
         assert 0<=len(descriptions_xml)<=1
@@ -87,4 +90,4 @@ class ServiceMetadata(object):
         root_resource_xml= root_resources_xml[0]
         root_resource= ServiceMetadataResource(root_resource_xml, None)
 
-        return description, formats, root_resource
+        return name, url, description, formats, root_resource
