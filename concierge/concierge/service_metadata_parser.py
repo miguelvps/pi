@@ -96,10 +96,10 @@ class ServiceMetadata(object):
 
         return name, url, description, formats, root_resource
     
-    def global_search():
+    def global_search(self):
         '''returns the global search method'''
         MSRT= ServiceMetadataResourceMethod
         root_methods= self.resource.methods
-        search_methods= filter(lambda m: m.type==MSRT.GET and MSRT.QUERY in m.parameters)
+        search_methods= filter(lambda m: m.type==MSRT.GET and MSRT.QUERY in m.parameters, root_methods)
         assert len(search_methods)==1
         return search_methods[0]
