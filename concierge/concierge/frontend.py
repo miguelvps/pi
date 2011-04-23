@@ -24,4 +24,3 @@ def settings():
 def bookmark_list():
         return render_template('bookmark_list.html')
     
-
