@@ -1,29 +1,6 @@
-example_metadata='''
-    <service name="pessoas" url="http://concierge.dyndns.org/services/pessoas">
-    <description> Este servico guarda informacao dos docentes</description>
-    <supported_formats>
-        <format>xml</format>
-    </supported_formats>
+from xml.dom.minidom import parse, parseString
+import urllib2
 
-    <resource url="">
-        <keywords>
-            <keyword>docente</keyword>
-            <keyword>docentes</keyword>
-            <keyword>professor</keyword>
-            <keyword>professores</keyword>
-        </keywords>
-        <method type="GET" >
-            <parameter>query</parameter> 
-        </method>
-        <resource url="pessoas">
-            <method type="GET" >
-                <parameter>start</parameter>
-                <parameter>end</parameter> 
-            </method>
-        </resource >
-    </resource>
-</service>
-'''
 
 def myGetElementsByTagName(xml_object, tagname, recursive=True):
     if recursive:
@@ -32,8 +9,6 @@ def myGetElementsByTagName(xml_object, tagname, recursive=True):
         return [e for e in xml_object.childNodes if hasattr(e, 'tagName') and e.tagName== tagname]
 
 
-from xml.dom.minidom import parse, parseString
-import urllib2
 class ServiceMetadataResourceMethod(object):
     GET, POST, PUT, DELETE, = range(4)
     method_dictionary= {'GET':GET, 'get':GET, 'POST':POST, 'post':POST, 'PUT':PUT, 'put':PUT, 'DELETE':DELETE, 'delete':DELETE, }
@@ -89,13 +64,16 @@ class ServiceMetadata(object):
         urlloader = urllib2.build_opener()
         page = urlloader.open(url).read()
         xml_object= parseString(page)
-        self.description, self.formats, self.resource= self.parse(xml_object)
+        self.name, self.url, self.description, self.formats, self.resource= self.parse(xml_object)
 
     def parse(self, xml_object):
-        '''returns description, formats, resource'''
+        '''returns name, url, description, formats, resource'''
         services_xml= xml_object.getElementsByTagName('service')
         assert len(services_xml)==1
         service_xml= services_xml[0]
+
+        name= service_xml.attributes['name'].childNodes[0].nodeValue
+        url= service_xml.attributes['url'].childNodes[0].nodeValue
         
         descriptions_xml= service_xml.getElementsByTagName('description')
         assert 0<=len(descriptions_xml)<=1
@@ -112,4 +90,4 @@ class ServiceMetadata(object):
         root_resource_xml= root_resources_xml[0]
         root_resource= ServiceMetadataResource(root_resource_xml, None)
 
-        return description, formats, root_resource
+        return name, url, description, formats, root_resource
