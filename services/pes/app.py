@@ -44,26 +44,16 @@ class Teacher(db.Model):
     faxes = db.relationship('Fax', backref='person')
 
 
-@app.route("/search/<query>")
-def search(query):
-    teachers = Teacher.query.outerjoin(Email, Phone, Fax) \
-                      .filter(or_(Teacher.name.like('%{0}%'.format(query)),
-                                  Email.email.like('%{0}%'.format(query)), \
-                                  Phone.phone.like('%{0}%'.format(query)), \
-                                  Fax.fax.like('%{0}%'.format(query)))) \
-                      .all()
-    xml_text= modelxmlserializer.ModelList_xml(teachers).to_xml(SERIALIZER_PARAMETERS).toxml()
-    return Response(response=xml_text, mimetype="application/xml")
 
-
-@app.route("/search")
-def searchqs():
+@app.route("/")
+def search():
     query = request.args.get('query', '')
+    s= '%{0}%'.format(query)
     teachers = Teacher.query.outerjoin(Email, Phone, Fax) \
-                      .filter(or_(Teacher.name.like('%{0}%'.format(query)),
-                                  Email.email.like('%{0}%'.format(query)), \
-                                  Phone.phone.like('%{0}%'.format(query)), \
-                                  Fax.fax.like('%{0}%'.format(query)))) \
+                      .filter(or_(Teacher.name.like(s),
+                                  Email.email.like(s), \
+                                  Phone.phone.like(s), \
+                                  Fax.fax.like(s))) \
                       .all()
     xml_text= modelxmlserializer.ModelList_xml(teachers).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(response=xml_text, mimetype="application/xml")
