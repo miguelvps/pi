@@ -12,13 +12,24 @@
 
 {% block page_content %}
 
-	<form action="/search" method="post">
-        <fieldset>
-            <input type="search" name="search_field" id="search" placeholder="Your Query Here" value=""/>
-        </fieldset>
-    </form>
-	
-	<div data-role="content">					
+    <div data-role="header" data-position="inline" data-theme="c">
+        <form action="/search" method="post">
+            <fieldset>
+                <input type="search" name="search_field" id="search" placeholder="Your Query Here" value=""/>
+            </fieldset>
+            <!--
+            <div class="ui-btn-right">
+            <select data-native-menu="false" data-icon="gear" data-theme="a" id="select-choice-11"  tabindex="-1">
+                    <option></option>
+                    <option value="edit">Global Query</option>
+                    <option value="delete">Favorites Query</option>
+            </select>
+            </div>-->
+        </form>
+    </div>
+
+
+	<div data-role="content">
 		<ul data-role="listview"  data-theme="c" data-dividertheme="b">
 			<!--<li data-role="list-divider">Serviços</li>-->
             {% for service in services %}
@@ -31,19 +42,19 @@
 
 
 {% block footer %}
-                <div data-role="footer" data-position="fixed" data-id="concfooter" >
-                        <div data-role="navbar">
-                            <ul>
-                                <li><a href="settings">Settings</a></li>
-                                <li>
-                                {% if session.get("auth") == True %}
-                                <a href="/auth/logout">Logout</a>
-                                {% else %}
-                                <a href="/auth/login" data-transition="slideup">Login</a>
-                                {% endif %}
-                                </li>
-                                <li><a href="history">History</a></li>
-                            </ul>
-                        </div><!-- /navbar -->
-                </div><!-- /footer -->	      
-            {% endblock %}
+    <div data-role="footer" data-position="fixed" data-id="concfooter" >
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="settings">Settings</a></li>
+                    <li>
+                    {% if session.get("auth") == True %}
+                    <a href="/auth/logout">Logout</a>
+                    {% else %}
+                    <a href="/auth/login" data-transition="slideup">Login</a>
+                    {% endif %}
+                    </li>
+                    <li><a href="history">History</a></li>
+                </ul>
+            </div><!-- /navbar -->
+    </div><!-- /footer -->
+{% endblock %}
