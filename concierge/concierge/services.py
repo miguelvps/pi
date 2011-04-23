@@ -44,8 +44,8 @@ class ServiceForm(Form):
     favorite = BooleanField('Favorite')
     rating = IntegerField('Rating', validators=[Required(),NumberRange(min=1, max=5)])
 
-@requires_auth    
 @services.route('/<service_id>/', methods=['GET', 'POST'])
+@requires_auth
 def service(service_id):
     service = Service.query.get_or_404(service_id)
     user_id = session['id']
@@ -88,8 +88,8 @@ def service_xml(id):
 class RegisterForm(Form):
     metadata_url = TextField('Metada URL', validators=[Required(),URL()])        
 
-@requires_auth        
 @services.route('/register/', methods=['GET','POST'])
+@requires_auth
 def register():
         form = RegisterForm(request.form)
         if form.validate_on_submit():
