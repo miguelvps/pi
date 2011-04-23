@@ -16,8 +16,7 @@ def index():
 def history():
     return render_template('history.html')
 
+
 @frontend.route('/settings/')
 def settings():
     return render_template('settings.html')
-
-
