@@ -1,29 +1,6 @@
-example_metadata='''
-    <service name="pessoas" url="http://concierge.dyndns.org/services/pessoas">
-    <description> Este servico guarda informacao dos docentes</description>
-    <supported_formats>
-        <format>xml</format>
-    </supported_formats>
+from xml.dom.minidom import parse, parseString
+import urllib2
 
-    <resource url="">
-        <keywords>
-            <keyword>docente</keyword>
-            <keyword>docentes</keyword>
-            <keyword>professor</keyword>
-            <keyword>professores</keyword>
-        </keywords>
-        <method type="GET" >
-            <parameter>query</parameter> 
-        </method>
-        <resource url="pessoas">
-            <method type="GET" >
-                <parameter>start</parameter>
-                <parameter>end</parameter> 
-            </method>
-        </resource >
-    </resource>
-</service>
-'''
 
 def myGetElementsByTagName(xml_object, tagname, recursive=True):
     if recursive:
@@ -32,8 +9,6 @@ def myGetElementsByTagName(xml_object, tagname, recursive=True):
         return [e for e in xml_object.childNodes if hasattr(e, 'tagName') and e.tagName== tagname]
 
 
-from xml.dom.minidom import parse, parseString
-import urllib2
 class ServiceMetadataResourceMethod(object):
     GET, POST, PUT, DELETE, = range(4)
     method_dictionary= {'GET':GET, 'get':GET, 'POST':POST, 'post':POST, 'PUT':PUT, 'put':PUT, 'DELETE':DELETE, 'delete':DELETE, }
