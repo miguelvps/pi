@@ -20,7 +20,4 @@ def historico():
 def settings():
     return render_template('settings.html')
 
-@frontend.route('/bookmark_list/')
-def bookmark_list():
-        return render_template('bookmark_list.html')
-    
+
