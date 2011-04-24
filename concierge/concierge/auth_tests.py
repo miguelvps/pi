@@ -34,12 +34,12 @@ class AuthTest(TestCase):
 
         utc = datetime.utcnow()
         user = User('newuser', 'randompw')
+        db.session.add(user)
+        db.session.commit()
         assert datetime.utcnow() > user.created > utc
         assert user.username == 'newuser'
         assert user.check_password('randompw') == True
         assert user.check_password('wrongpw') == False
-        db.session.add(user)
-        db.session.commit()
 
         user = User.query.filter_by(username='newuser').first()
         assert user.username == 'newuser'

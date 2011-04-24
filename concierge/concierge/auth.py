@@ -15,15 +15,13 @@ auth = Module(__name__, 'auth')
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(256), unique=True)
-    password = db.Column(db.String(256))
-    created = db.Column(db.DateTime)
-    last_seen = db.Column(db.DateTime)
+    password = db.Column(db.String(54)) # enough for sha1$hash
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, username, password):
         self.username = username
         self.password = generate_password_hash(password)
-        self.created = datetime.utcnow()
-        self.last_seen = datetime.utcnow()
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
