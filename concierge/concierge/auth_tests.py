@@ -70,6 +70,13 @@ class AuthTest(TestCase):
                 password='password'))
             assert session.get('auth') == True
             assert session.get('username') == 'username'
+            assert session.permanent == False
+
+            c.post(url_for('auth.login'), data=dict(
+                username='username',
+                password='password',
+                remember=True))
+            assert session.permanent == True
 
             c.get(url_for('auth.logout'))
             assert session.get('auth') == None
@@ -79,7 +86,8 @@ class AuthTest(TestCase):
 
             c.post(url_for('auth.login'), data=dict(
                 username='username',
-                password='wrongpw'))
+                password='wrongpw',
+                remember=True))
             assert session.get('auth') == None
 
             c.post(url_for('auth.login'), data=dict(
@@ -108,11 +116,36 @@ class AuthTest(TestCase):
             c.post(url_for('auth.register'), data=dict(
                 username='newuser',
                 password='newpass',
-                confirm='newpass'))
+                confirm='newpass',
+                remember=None))
             assert session.get('auth') == True
             assert session.get('username') == 'newuser'
             user = User.query.filter_by(username='newuser').first()
             assert user.username == 'newuser'
+            assert session.permanent == False
+
+            c.post(url_for('auth.register'), data=dict(
+                username='remember',
+                password='remember',
+                confirm='remember',
+                remember=True))
+            assert session.permanent == True
+
+    def test_last_seen(self):
+        with self.client as c:
+            utc = datetime.utcnow()
+            c.post(url_for('auth.login'), data=dict(
+                username='username',
+                password='password',
+                remember=True))
+            user = User.query.filter_by(username='username').first()
+            assert datetime.utcnow() > user.last_seen > utc
+
+            utc = datetime.utcnow()
+            c.get('/')
+            user = User.query.filter_by(username='username').first()
+            assert datetime.utcnow() > user.last_seen > utc
+
 
 
 if __name__ == '__main__':

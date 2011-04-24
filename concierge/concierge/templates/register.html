@@ -1,39 +1,40 @@
 {% extends "base.html" %}
 
 {% block page_id %} register {% endblock %}
-	
-{% block redirect %} data-url="/auth/register" {% endblock %}
- 
+
+{% block redirect %} data-url="{{ url_for('auth.register') }}" {% endblock %}
+
 {% block header %}
-    <div data-role="header" data-backbtn="false">
-        <h1>Sign Up</h1>
-        <a href="/" class="ui-btn-left">Back</a>
-    </div><!-- /header -->
+<div data-role="header" data-backbtn="false">
+    <h1>Sign Up</h1>
+    <a href="/" class="ui-btn-left">Back</a>
+</div><!-- /header -->
 {% endblock %}
-    
+
 {% block page_content %}
-	<div data-role="content">	
-		
-		<h2> User Register </h2>
-		<form action="/auth/register" method="post" name="reg_form">
-		
-            <fieldset>
-                {% for field in form %}
-                {{field(placeholder=field.label.text) }}
-                <span class="error">
-                    {% for error in field.errors  %}
-                        {{ error }} 
-                    {% endfor %}
-                </span>  
+<div data-role="content">
+    <h2> User Register </h2>
+    <form action="{{ url_for('auth.register') }}" method="POST">
+        <fieldset>
+            {{ csrf }}
+            {{ form.username(placeholder=form.username.label.text) }}
+            <span class="error">
+                {% for error in form.username.errors  %}
+                {{ error }}
                 {% endfor %}
-				 
-			</fieldset>
-			<input id="SubmitReg" type="submit" value="Sign up" data-role="button" data-inline="true" data-theme="b" />
-		</form>
-		
-	</div><!-- /content -->
+            </span>
+            {{ form.password(placeholder=form.password.label.text) }}
+            <span class="error">
+                {% for error in form.password.errors  %}
+                {{ error }}
+                {% endfor %}
+            </span>
+            {{ form.confirm(placeholder=form.confirm.label.text) }}
+            {{ form.remember }} {{ form.remember.label }}
+            <input type="submit" value="Sign up" data-role="button" data-inline="true" data-theme="b" />
+        </fieldset>
+    </form>
+</div><!-- /content -->
 {% endblock %}
 
 {% block footer %} {% endblock %}
-
-
