@@ -108,6 +108,8 @@ def login():
             if referrer:
                 return redirect(referrer)
             return redirect('/')
+
+    form.username.data = session.get('username')
     return render_template('login.html', form=form)
 
 
