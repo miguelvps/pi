@@ -7,6 +7,7 @@ setup(
     install_requires=[
         'SQLAlchemy',
         'WTForms',
+        'blinker',
         'Flask',
         'Flask-SQLAlchemy',
         'Flask-WTF',
