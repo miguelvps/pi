@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 
 from flask import Module, Response, request, session, render_template, redirect
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
@@ -43,9 +44,11 @@ class ServiceRating(db.Model):
 
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(xml_kinds.service_name(256), unique=True)
     url = db.Column(xml_kinds.service_url(256), unique=True)
-    active= db.Boolean()
+    name = db.Column(xml_kinds.service_name(256), unique=True)
+    description = db.Column(db.Text)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    active = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     user = db.relationship('User', backref='services')
