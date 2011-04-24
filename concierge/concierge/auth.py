@@ -1,4 +1,4 @@
-﻿from datetime import datetime
+from datetime import datetime
 from functools import wraps
 
 from flask import Module, request, session, g, render_template, redirect, url_for
