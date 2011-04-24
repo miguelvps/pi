@@ -47,6 +47,16 @@ class LoginForm(Form):
     remember = BooleanField('Remember me')
 
 
+def requires_auth(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        if not session.get('auth') and not hasattr(g, 'user'):
+            session['referrer'] = request.url
+            return redirect(url_for('auth.login'))
+        return f(*args, **kwargs)
+    return decorator
+
+
 @auth.before_app_request
 def before_request():
     if session.get('auth'):
@@ -62,16 +72,6 @@ def after_request(response):
         db.session.merge(g.user)
         db.session.commit()
     return response
-
-
-def requires_auth(f):
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        if not session.get('auth'):
-            session['referrer'] = request.url
-            return redirect(url_for('auth.login'))
-        return f(*args, **kwargs)
-    return decorator
 
 
 @auth.route('/register', methods=['GET', 'POST'])
