@@ -1,7 +1,7 @@
 ﻿from datetime import datetime
 from functools import wraps
 
-from flask import Module, request, session, render_template, redirect, url_for
+from flask import Module, request, session, g, render_template, redirect, url_for
 from flaskext.wtf import Form, TextField, PasswordField, Required, \
                          Length, EqualTo, ValidationError
 from werkzeug import generate_password_hash, check_password_hash
@@ -43,6 +43,12 @@ class RegisterForm(Form):
 class LoginForm(Form):
     username = TextField('Username', validators=[Required()])
     password = PasswordField('Password', validators=[Required()])
+
+
+@auth.before_app_request
+def before_request():
+    if session.get('auth'):
+        g.user = User.query.filter_by(username=session['username']).first()
 
 
 def requires_auth(f):
