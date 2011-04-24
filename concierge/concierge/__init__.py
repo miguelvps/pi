@@ -9,8 +9,8 @@ def create_app(cfg=None):
     app = Flask(__name__)
 
     app.config.from_object('concierge.config')
-    if cfg: app.config.from_object(cfg)
     app.config.from_envvar('CONCIERGE_SETTINGS', silent=True)
+    if cfg: app.config.from_object(cfg)
 
     db.init_app(app)
 
