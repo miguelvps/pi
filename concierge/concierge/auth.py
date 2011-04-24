@@ -50,7 +50,9 @@ class LoginForm(Form):
 @auth.before_app_request
 def before_request():
     if session.get('auth'):
-        g.user = User.query.filter_by(username=session['username']).first()
+        user = User.query.filter_by(username=session['username']).first()
+        if user:
+            g.user = user
 
 
 @auth.after_app_request
