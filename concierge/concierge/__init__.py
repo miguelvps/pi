@@ -10,8 +10,7 @@ def create_app(cfg=None):
 
     app.config.from_object('concierge.config')
     if cfg: app.config.from_object(cfg)
-    try: app.config.from_envvar('CONCIERGE_SETTINGS')
-    except: pass
+    app.config.from_envvar('CONCIERGE_SETTINGS', silent=True)
 
     db.init_app(app)
 
