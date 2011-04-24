@@ -1,66 +1,118 @@
 import unittest
+from datetime import datetime
 
-from flask import session
+from flask import session, url_for
 from flaskext.testing import TestCase
 
 from concierge import create_app, db
-from concierge.auth import User
+from concierge.auth import User, requires_auth
 
-import create_db
 
 class AuthTest(TestCase):
 
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
     def create_app(self):
         return create_app(self)
 
     def setUp(self):
-        create_db.reset(fill_fixtures=True)
-        
+        db.create_all()
+        user = User('username', 'password')
+        db.session.add(user)
+        db.session.commit()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
 
     def test_user(self):
-        user = User.query.filter_by(username='username').first()
-        assert user.username == 'username'
-        assert user.check_password('password') == True
+        user = User('username', 'randompw')
+        db.session.add(user)
+        self.assertRaises(Exception, db.session.commit)
+        db.session.rollback()
+
+        utc = datetime.utcnow()
+        user = User('newuser', 'randompw')
+        assert datetime.utcnow() > user.created > utc
+        assert user.username == 'newuser'
+        assert user.check_password('randompw') == True
         assert user.check_password('wrongpw') == False
+        db.session.add(user)
+        db.session.commit()
+
+        user = User.query.filter_by(username='newuser').first()
+        assert user.username == 'newuser'
+        assert datetime.utcnow() > user.created > utc
+        assert user.check_password('randompw') == True
+        assert user.check_password('wrongpw') == False
+
+        user = User.query.filter_by(username='wronguser').first()
+        assert user == None
+
+    def test_requires_auth(self):
+        @requires_auth
+        def require_auth():
+            return ""
+        with self.client:
+            rv = require_auth()
+            assert rv.status_code == 302
+            assert ('Location', url_for('auth.login')) in rv.header_list
+
+            session['auth'] = True
+            rv = require_auth()
+            assert rv == ""
 
     def test_login_logout(self):
         with self.client as c:
-            c.post('/auth/login', data=dict(
+            c.post(url_for('auth.login'), data=dict(
                 username='username',
                 password='password'))
             assert session.get('auth') == True
             assert session.get('username') == 'username'
 
-            c.get('/auth/logout', follow_redirects=True)
+            c.get(url_for('auth.logout'))
             assert session.get('auth') == None
 
-            c.post('/auth/login', data=dict(
+            c.get(url_for('auth.logout'))
+            assert session.get('auth') == None
+
+            c.post(url_for('auth.login'), data=dict(
                 username='username',
                 password='wrongpw'))
             assert session.get('auth') == None
 
-            c.post('/auth/login', data=dict(
+            c.post(url_for('auth.login'), data=dict(
                 username='wronguser',
                 password='password'))
             assert session.get('auth') == None
 
     def test_register(self):
         with self.client as c:
-            rv = c.get('/auth/register')
-            assert "register" in rv.data
+            c.post(url_for('auth.register'), data=dict(
+                username='username',
+                password='randompw',
+                confirm='randompw'))
+            assert session.get('auth') == None
+            user = User.query.filter_by(username='username').first()
+            assert user.check_password('password') == True
 
-            c.post('/auth/register', data=dict(
+            c.post(url_for('auth.register'), data=dict(
                 username='newuser',
-                password='password',
-                confirm='password'))
+                password='newpass',
+                confirm='badconfirm'))
+            assert session.get('auth') == None
+            user = User.query.filter_by(username='newuser').first()
+            assert user == None
+
+            c.post(url_for('auth.register'), data=dict(
+                username='newuser',
+                password='newpass',
+                confirm='newpass'))
             assert session.get('auth') == True
             assert session.get('username') == 'newuser'
+            user = User.query.filter_by(username='newuser').first()
+            assert user.username == 'newuser'
 
 
 if __name__ == '__main__':
