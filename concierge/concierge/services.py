@@ -76,7 +76,7 @@ def service(service_id):
     user_id = session['id']
     favorite = ServiceFavorite.query.filter_by(user_id=user_id, service_id=service_id).first()
     rating = ServiceRating.query.filter_by(user_id=user_id, service_id=service_id).first()
-    rating = rating if rating else 0
+    rating = rating.rating if rating else 0
     form = ServiceForm(request.form)
 
     if form.validate_on_submit():
@@ -89,7 +89,7 @@ def service(service_id):
         return redirect('/services/%s' %service_id)
 
     form.favorite.data = bool(favorite)
-    form.rating.data = rating.rating
+    form.rating.data = rating
     return render_template('service.html', service = service, form=form  )
 
 
