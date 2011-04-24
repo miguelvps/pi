@@ -1,35 +1,34 @@
 <!DOCTYPE html>
-<html> 
-	<head>
-	
-		<title>Concierge</title> 
+<html>
+    <head>
+        <title>Concierge</title> 
 
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
-        <link rel="stylesheet" href="static/style.css"  type="text/css"/>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
+        <link rel="stylesheet" href="/static/style.css"  type="text/css"/>
         <script src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
         <script type="text/javascript">
             $('.ui-page').live('pagehide',function(){ $(this).remove(); });
         </script>
-	</head> 
+    </head>
 
-	<body> 
-		<!-- Start of first page -->
-		<div data-role="page" id="{% block page_id %}{% endblock %}" {% block redirect %} {% endblock %}>
+    <body>
+        <!-- Start of first page -->
+        <div data-role="page" id="{% block page_id %}{% endblock %}" {% block redirect %} {% endblock %}>
 
-			{% block header %}
-			<div data-role="header" data-position="fixed" data-id="concheader" data-backbtn="false">
-				<h1>Concierge</h1>				
-			</div><!-- /header -->
-			{% endblock %}
-			
-			{% block page_content %}{% endblock %}
+            {% block header %}
+            <div data-role="header" data-position="fixed" data-id="concheader" data-backbtn="false">
+                <h1>Concierge</h1>
+            </div><!-- /header -->
+            {% endblock %}
+
+            {% block page_content %}{% endblock %}
 
             {% block footer %}
                 <div data-role="footer" data-position="fixed" data-id="concfooter" >
                         <div data-role="navbar">
                             <ul>
-                                <li><a href="settings">Settings</a></li>
+                                <li><a href="/settings">Settings</a></li>
                                 <li>
                                 {% if session.get("auth") == True %}
                                 <a href="/auth/logout">Logout</a>
@@ -37,12 +36,12 @@
                                 <a href="/auth/login" data-transition="slideup">Login</a>
                                 {% endif %}
                                 </li>
-                                <li><a href="historico">Historico</a></li>
+                                <li><a href="/historico">Historico</a></li>
                             </ul>
                         </div><!-- /navbar -->
-                </div><!-- /footer -->	      
+                </div><!-- /footer -->
             {% endblock %}
-            
-		</div><!-- /page -->
-	</body>
+
+        </div><!-- /page -->
+    </body>
 </html>
