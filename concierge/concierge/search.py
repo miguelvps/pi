@@ -5,6 +5,9 @@ from concierge.service_metadata_parser import ServiceMetadata, ServiceMetadataRe
 from flaskext.wtf import Form, Required
 from flaskext.wtf.html5 import SearchField
 
+from xml.etree import ElementTree
+import xml_types
+
 
 search = Module(__name__, 'search')
 
@@ -29,7 +32,18 @@ def match_search_to_methods_keywords(query, methods):
             except:
                 pass    #no match
     return queries_methods
-    
+
+def result_xml_to_text(xml, prefix=''):
+    if type(xml)==str or type(xml)==unicode:
+        #this is xml in string format
+        xml= ElementTree.fromstring(xml.encode('utf-8'))
+        
+    if xml.get('type')== xml_types.LIST_TYPE:
+        html_children= [result_xml_to_text( c, prefix+'\t') for c in xml.getchildren() ]
+        return ("\n"+prefix).join( html_children )
+    else:
+        return xml.text
+           
 @search.route('/search/', methods=['POST'])
 def search_view():
     form = SearchForm(request.form)
@@ -41,12 +55,13 @@ def search_view():
         services_urls= [s.url for s in services]
         metadatas= map(ServiceMetadata, services_urls)
         search_methods= [m.global_search() for m in metadatas]
-        
         matches = match_search_to_methods_keywords(query, search_methods)
         if len(matches)==0:
             #no keywords match
-            results=[]
+            results_xml=[]
         else:
-            results= [method.execute(query= query) for query, method in matches]
-        return render_template('search.html', search_results=results)
+            results_xml= [method.execute(query= query) for query, method in matches]
+        search_results= map(result_xml_to_text, results_xml)
+        print "ohno", search_results
+        return render_template('search.html', search_results=search_results)
     

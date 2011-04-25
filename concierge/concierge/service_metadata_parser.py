@@ -44,6 +44,7 @@ class ServiceMetadataResourceMethod(object):
         call_url= method_url +  "?" + "&".join( final_parameters )
         urlloader = urllib2.build_opener()
         page = urlloader.open(call_url).read()
+        page= page.decode('utf-8')
         return page
         
 class ServiceMetadataResource(object):
