@@ -7,6 +7,16 @@
 {% block header %}
 	<div data-role="header"  data-id="concheader" data-backbtn="false">
 		<h1>Concierge</h1>
+
+		<div data-role="header" data-position="inline" data-theme="c">
+				<form action="/search" method="post">
+					<fieldset>
+						<input type="search" name="search_field" id="search" placeholder="Your Query Here" value=""/>
+					</fieldset>
+				</form>
+				<a href="index.html" data-role="button" data-icon="tool" data-iconpos="notext" class="ui-btn-right">Options</a> 
+		</div>
+
 	</div><!-- /header -->
 {% endblock %}
 
@@ -38,19 +48,20 @@
 
 
 {% block footer %}
-                <div data-role="footer" data-position="fixed" data-id="concfooter" >
-                        <div data-role="navbar">
-                            <ul>
-                                <li><a href="settings">Settings</a></li>
-                                <li>
-                                {% if session.get("auth") == True %}
-                                <a href="/auth/logout">Logout</a>
-                                {% else %}
-                                <a href="/auth/login" data-transition="slideup">Login</a>
-                                {% endif %}
-                                </li>
-                                <li><a href="history">History</a></li>
-                            </ul>
-                        </div><!-- /navbar -->
-                </div><!-- /footer -->	      
-            {% endblock %}
+    <div data-role="footer" data-position="fixed" data-id="concfooter" >
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="settings">Settings</a></li>
+                    <li>
+                    {% if session.get("auth") == True %}
+                    <a href="/auth/logout">Logout</a>
+                    {% else %}
+                    <a href="/auth/login" data-transition="slideup">Login</a>
+                    {% endif %}
+                    </li>
+                    <li><a href="history">History</a></li>
+                </ul>
+		 </div><!-- /navbar -->
+    </div><!-- /footer -->
+           
+{% endblock %}
