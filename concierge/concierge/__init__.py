@@ -21,6 +21,10 @@ def create_app(cfg=None):
     from concierge.frontend import frontend
     app.register_module(frontend)
 
+    from concierge.search import search
+    app.register_module(search)
+
+
     from concierge.services import services
     app.register_module(services, url_prefix='/services')
 
