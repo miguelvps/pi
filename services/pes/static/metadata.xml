@@ -1,4 +1,4 @@
-<service name="pessoas" url="http://concierge.dyndns.org/services/pessoas">
+<service name="pessoas" url="http://concierge.dyndns.org/services/pessoas/">
     <description>Este serviço guarda informação dos docentes</description>
     <supported_formats>
         <format>xml</format>

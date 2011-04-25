@@ -28,8 +28,28 @@ class ServiceMetadataResourceMethod(object):
         parameters= [self.parameter_dictionary[p.childNodes[0].nodeValue] for p in parameterlist_xml]
         return method_type, parameters
 
+    def execute(self, **args):
+        '''takes a dictionary of method parameters, executes the method
+        and returns response'''
+        if self.type!=self.GET:
+            raise NotImplementedError("Can't execute a service method that is not a GET")
+        method_url= self.resource.full_url()
+        received_parameters= args
+        needed_parameters= self.parameters
+        
+        #all received parameters must be method parameters
+        assert all([r in needed_parameters for r in received_parameters.keys()])
+        parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
+        final_parameters= "=".join( zip(needed_parameters, parameters_values) )
+
+        call_url= method_url +  "?" + "&".join( final_parameters )
+        urlloader = urllib2.build_opener()
+        page = urlloader.open(url).read()
+        return page
+        
 class ServiceMetadataResource(object):
-    def __init__(self, xml_object, parent_resource):
+    def __init__(self, xml_object, parent_resource, service_object):
+        self.service= service_object
         self.parent= parent_resource
         self.url, self.keywords, self.methods, self.resources = self.parse(xml_object)
 
@@ -53,13 +73,24 @@ class ServiceMetadataResource(object):
         methods= [ServiceMetadataResourceMethod(method, self) for method in methodlist_xml]
         
         resourcelist_xml= root_resources_xml= myGetElementsByTagName(xml_object,'resource', recursive=False)
-        resources= [ServiceMetadataResource(r, self) for r in resourcelist_xml]
-
+        resources= [ServiceMetadataResource(r, self, self.service) for r in resourcelist_xml]
+        
         return url, keywords, methods, resources
-
-    def full_url():
-        return parent.full_url()+self.url if self.parent else ""
-
+    
+    def full_url(self):
+        return self.parent.full_url()+self.url+"/" if self.parent else self.service.url
+    
+    def find_methods(self, recursive= False, filter_function= (lambda x: True) ):
+        '''returns the methods of the resource and (optionally) subresources.
+        Optionally filtered by a filter function (with the method as parameter).
+        A call to resource.find_methods() with no parameters should give 
+        a list equal to resource.methods'''
+        methods= filter( filter_function, self.methods)
+        if recursive:
+            for subres in self.resources:
+                methods.extend( subres.find_methods(recursive, filter_function))
+        return methods
+        
 
 class ServiceMetadata(object):
     XML,JSON= range(2)
@@ -92,14 +123,14 @@ class ServiceMetadata(object):
         root_resources_xml= myGetElementsByTagName(service_xml,'resource', recursive=False)
         assert len(root_resources_xml)==1
         root_resource_xml= root_resources_xml[0]
-        root_resource= ServiceMetadataResource(root_resource_xml, None)
+        root_resource= ServiceMetadataResource(root_resource_xml, None, self)
 
         return name, url, description, formats, root_resource
     
     def global_search(self):
         '''returns the global search method'''
         MSRT= ServiceMetadataResourceMethod
-        root_methods= self.resource.methods
-        search_methods= filter(lambda m: m.type==MSRT.GET and MSRT.QUERY in m.parameters, root_methods)
+        filter_f= lambda m: m.type==MSRT.GET and MSRT.QUERY in m.parameters
+        search_methods= self.resource.find_methods( filter_function= filter_f)
         assert len(search_methods)==1
         return search_methods[0]
