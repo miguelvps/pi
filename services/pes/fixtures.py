@@ -1,6 +1,6 @@
 import csv
 
-from app import db, Teacher, Email
+from pes.app import db, Teacher, Email
 
 
 db.drop_all()

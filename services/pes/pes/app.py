@@ -1,13 +1,11 @@
-import sys
 from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
-sys.path.append('../../common/')
-import xml_kinds
-import modelxmlserializer
-from xmlserializer_parameters import SERIALIZER_PARAMETERS
+from common import xml_kinds
+from common import modelxmlserializer
+from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
 
 
 app = Flask(__name__)
