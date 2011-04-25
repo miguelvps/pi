@@ -1,7 +1,8 @@
 import sys
 from datetime import datetime
 
-from flask import Module, Response, request, session, render_template, redirect
+from flask import Module, Response, request, session, g, \
+                  render_template, redirect, url_for
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL
 from sqlalchemy.orm import backref
@@ -21,13 +22,10 @@ from xmlserializer_parameters import SERIALIZER_PARAMETERS
 services = Module(__name__, 'services')
 
 
-class ServiceFavorite(db.Model):
-    service_id = db.Column(db.Integer, db.ForeignKey('service.id'),
-                           primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-
-    service = db.relationship('Service', backref='user_favorites')
-    user = db.relationship('User', backref='service_favorites')
+service_favorites = db.Table('service_favorites',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('service_id', db.Integer, db.ForeignKey('service.id')),
+)
 
 
 class ServiceRating(db.Model):
@@ -37,9 +35,9 @@ class ServiceRating(db.Model):
     rating = db.Column(db.Integer)
 
     service = db.relationship('Service', backref=backref('user_ratings',
-        collection_class=attribute_mapped_collection('service')))
-    user = db.relationship('User', backref=backref('service_ratings',
         collection_class=attribute_mapped_collection('user')))
+    user = db.relationship('User', backref=backref('service_ratings',
+        collection_class=attribute_mapped_collection('service')))
 
 
 class Service(db.Model):
@@ -52,13 +50,11 @@ class Service(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     user = db.relationship('User', backref='services')
-    favorite_users = association_proxy('user_favorites', 'user',
-            creator=lambda u: ServiceFavorite(user=u))
+    users_favorite = db.relation('User', secondary=service_favorites,
+                                 backref='favorite_services')
     rating_users = association_proxy('user_ratings', 'rating',
             creator=lambda u, r: ServiceRating(user=u, rating=r))
 
-User.favorite_services = association_proxy('service_favorites', 'service',
-        creator=lambda s: ServiceFavorite(service=s))
 User.rating_services = association_proxy('service_ratings', 'rating',
         creator=lambda s, r: ServiceRating(service=s, rating=r))
 
@@ -72,28 +68,26 @@ class ServiceForm(Form):
     rating = IntegerField('Rating', validators=[NumberRange(min=1, max=5)])
 
 
-@services.route('/<service_id>/', methods=['GET', 'POST'])
+@services.route('/<id>/', methods=['GET', 'POST'])
 @requires_auth
-def service(service_id):
-    service = Service.query.get_or_404(service_id)
-    user_id = session['id']
-    favorite = ServiceFavorite.query.filter_by(user_id=user_id, service_id=service_id).first()
-    rating = ServiceRating.query.filter_by(user_id=user_id, service_id=service_id).first()
-    rating = rating.rating if rating else 0
+def service(id):
+    user = g.user
+    service = Service.query.get_or_404(id)
     form = ServiceForm(request.form)
 
     if form.validate_on_submit():
-        if form.favorite.data and not favorite :
-            db.session.add(ServiceFavorite(user_id=user_id, service_id=service_id))
-        elif not form.favorite.data and favorite:
-            db.session.delete(favorite)
-        db.session.merge(ServiceRating(user_id=user_id, service_id=service_id, rating=form.rating.data))
+        if form.favorite.data and service not in user.favorite_services:
+            user.favorite_services.append(service)
+        elif not form.favorite.data and service in user.favorite_services:
+            user.favorite_services.remove(service)
+        user.rating_services[service] = form.rating.data
         db.session.commit()
-        return redirect('/services/%s' %service_id)
 
-    form.favorite.data = bool(favorite)
-    form.rating.data = rating
-    return render_template('service.html', service = service, form=form  )
+        return redirect(url_for('service', id=id))
+
+    form.favorite.data = service in user.favorite_services
+    form.rating.data = user.rating_services.get(service)
+    return render_template('service.html', service=service, form=form)
 
 
 @services.route('/api/', methods=['GET', 'POST'])
