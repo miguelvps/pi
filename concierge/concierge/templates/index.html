@@ -9,23 +9,23 @@
 		<h1>Concierge</h1>
 
 		<div data-role="header" data-position="inline" data-theme="c">
-
-			<form action="/search/" method="post">
-
-						{% for field in search_form %}
-							{{field(placeholder=field.label.text) }}
-							<span class="error">
-								{% for error in field.errors  %}
-									{{ error }}
-								{% endfor %}
-							</span>
-						{% endfor %}
-			</form>
-			<select name="select-choice-11" id="select-choice-11" data-icon="gear" data-iconpos="notext" data-native-menu="false" >
-				<option value="global">Global Query</option>
-				<option value="favorites">Favorites Query</option>
-			</select>
-			<!--<a href="index.html" data-role="button" data-icon="tool" data-iconpos="notext" class="ui-btn-right">Options</a>--> 				
+				<form action="/search/" method="post">
+							{% for field in search_form %}
+								{{field(placeholder=field.label.text) }}
+								<span class="error">
+									{% for error in field.errors  %}
+										{{ error }}
+									{% endfor %}
+								</span>
+							{% endfor %}
+					<label for="search_query">
+						<select  data-icon="gear" data-iconpos="notext" data-native-menu="false">
+							<option value="global">Global Query</option>
+							<option value="favorites">Favorites Query</option>
+						</select>
+					</label>
+				</form>
+			<!--<a href="index.html" data-role="button" data-icon="tool" data-iconpos="notext" class="ui-btn-right">Options</a>	-->			
 		</div>
 
 	</div><!-- /header -->
