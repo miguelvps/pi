@@ -14,8 +14,15 @@
 
 	<form action="/search" method="post">
         <fieldset>
-            <input type="search" name="search_field" id="search" placeholder="Your Query Here" value=""/>
-        </fieldset>
+	{% for field in search_form %}
+                {{field(placeholder=field.label.text) }}
+                <span class="error">
+                    {% for error in field.errors  %}
+                        {{ error }} 
+                    {% endfor %}
+                </span>  
+                {% endfor %}	 
+	</fieldset>
     </form>
 	
 	<div data-role="content">					
