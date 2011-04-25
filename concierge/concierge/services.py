@@ -3,7 +3,9 @@ import sys
 from flask import Module, Response, request, session, render_template, redirect
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL
+from sqlalchemy.orm import backref
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from concierge import db
 from concierge.auth import User, requires_auth
@@ -19,7 +21,8 @@ services = Module(__name__, 'services')
 
 
 class ServiceFavorite(db.Model):
-    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), primary_key=True)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'),
+                           primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
 
     service = db.relationship('Service', backref='user_favorites')
@@ -27,12 +30,15 @@ class ServiceFavorite(db.Model):
 
 
 class ServiceRating(db.Model):
-    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), primary_key=True)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'),
+                           primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     rating = db.Column(db.Integer)
 
-    service = db.relationship('Service', backref='user_ratings')
-    user = db.relationship('User', backref='service_ratings')
+    service = db.relationship('Service', backref=backref('user_ratings',
+        collection_class=attribute_mapped_collection('service')))
+    user = db.relationship('User', backref=backref('service_ratings',
+        collection_class=attribute_mapped_collection('user')))
 
 
 class Service(db.Model):
@@ -45,15 +51,13 @@ class Service(db.Model):
     user = db.relationship('User', backref='services')
     favorite_users = association_proxy('user_favorites', 'user',
             creator=lambda u: ServiceFavorite(user=u))
-    rating_users = association_proxy('user_ratings', 'user',
-            creator=lambda u: ServiceRating(user=u))
+    rating_users = association_proxy('user_ratings', 'rating',
+            creator=lambda u, r: ServiceRating(user=u, rating=r))
 
-# TODO: try backref() in proxys
-#       how to set rating field in m2m, dic-based collection ?
 User.favorite_services = association_proxy('service_favorites', 'service',
         creator=lambda s: ServiceFavorite(service=s))
-User.rating_services = association_proxy('service_ratings', 'service',
-        creator=lambda s: ServiceRating(service=s))
+User.rating_services = association_proxy('service_ratings', 'rating',
+        creator=lambda s, r: ServiceRating(service=s, rating=r))
 
 
 class RegisterForm(Form):
