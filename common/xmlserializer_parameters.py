@@ -35,7 +35,7 @@ def list_xml_filter(model_list):
 def list_xml_tagname(model_list):
   return 'entity'
 def list_xml_atributes(model_list):
-  return {'kind': "list"}
+  return {'type': "list"}
 
 '''
 serializer_parameters is a list of 3 lists.

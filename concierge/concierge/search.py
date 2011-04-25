@@ -1,10 +1,12 @@
 from flask import Module, render_template, request, Response
 from concierge.services import Service
-from concierge.service_metadata_parser import ServiceMetadata
-
+from concierge.service_metadata_parser import ServiceMetadata, ServiceMetadataResourceMethod
 
 from flaskext.wtf import Form, Required
 from flaskext.wtf.html5 import SearchField
+
+from xml.etree import ElementTree
+import xml_types
 
 
 search = Module(__name__, 'search')
@@ -30,22 +32,36 @@ def match_search_to_methods_keywords(query, methods):
             except:
                 pass    #no match
     return queries_methods
-    
-@search.route('/search/', methods=['GET','POST'])
-def search_view():
 
+def result_xml_to_text(xml, prefix=''):
+    if type(xml)==str or type(xml)==unicode:
+        #this is xml in string format
+        xml= ElementTree.fromstring(xml.encode('utf-8'))
+        
+    if xml.get('type')== xml_types.LIST_TYPE:
+        html_children= [result_xml_to_text( c, prefix+'\t') for c in xml.getchildren() ]
+        return ("\n"+prefix).join( html_children )
+    else:
+        return xml.text
+           
+@search.route('/search/', methods=['POST'])
+def search_view():
     form = SearchForm(request.form)
     
     if form.validate_on_submit():
-        return render_template('search.html')
-        query= form.search_query
+        query= form.search_query.data
         
         services= Service.query.all()
         services_urls= [s.url for s in services]
         metadatas= map(ServiceMetadata, services_urls)
         search_methods= [m.global_search() for m in metadatas]
-        
-        tmp= match_search_to_methods_keywords(query, search_methods)
-        #return Response(response= tmp)
-        return render_template('search.html')
-    return render_template('seds.html')
+        matches = match_search_to_methods_keywords(query, search_methods)
+        if len(matches)==0:
+            #no keywords match
+            results_xml=[]
+        else:
+            results_xml= [method.execute(query= query) for query, method in matches]
+        search_results= map(result_xml_to_text, results_xml)
+        print "ohno", search_results
+        return render_template('search.html', search_results=search_results)
+    

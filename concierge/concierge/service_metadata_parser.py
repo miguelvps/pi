@@ -12,7 +12,7 @@ def myGetElementsByTagName(xml_object, tagname, recursive=True):
 class ServiceMetadataResourceMethod(object):
     GET, POST, PUT, DELETE, = range(4)
     method_dictionary= {'GET':GET, 'get':GET, 'POST':POST, 'post':POST, 'PUT':PUT, 'put':PUT, 'DELETE':DELETE, 'delete':DELETE, }
-    QUERY, START, END= range(3)
+    QUERY, START, END= 'query','start','end'
     parameter_dictionary= {'QUERY':QUERY, 'query':QUERY, 'START':START, 'start':START, 'END':END, 'end':END}
     
     def __init__(self, xml_object, resource):
@@ -40,11 +40,11 @@ class ServiceMetadataResourceMethod(object):
         #all received parameters must be method parameters
         assert all([r in needed_parameters for r in received_parameters.keys()])
         parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
-        final_parameters= "=".join( zip(needed_parameters, parameters_values) )
-
+        final_parameters= ["=".join(x) for x in zip(needed_parameters, parameters_values) ]
         call_url= method_url +  "?" + "&".join( final_parameters )
         urlloader = urllib2.build_opener()
-        page = urlloader.open(url).read()
+        page = urlloader.open(call_url).read()
+        page= page.decode('utf-8')
         return page
         
 class ServiceMetadataResource(object):
