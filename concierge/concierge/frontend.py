@@ -1,5 +1,6 @@
 from flask import Module, render_template, request, Response
 from concierge.services import Service
+from concierge.search import SearchForm
 
 
 
