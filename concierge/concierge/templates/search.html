@@ -13,9 +13,7 @@
 {% block page_content %}
 	<div data-role="content">	
 		search results:
-		{% for result in search_results %}
-		    <pre>"{{ result }}"</pre>
-		{% endfor %}
+		{{ search_results|safe }}
 	</div><!-- /content -->
 {% endblock %}
 

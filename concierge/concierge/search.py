@@ -18,7 +18,6 @@ class SearchForm(Form):
 def match_search_to_methods_keywords(query, methods):
     '''assumes word separated by single space.
     returns list of pairs of (query, method)'''
-    print "query", query
     queries_methods=[]
     for method in methods:
         splited_query= query.split(' ')
@@ -33,16 +32,18 @@ def match_search_to_methods_keywords(query, methods):
                 pass    #no match
     return queries_methods
 
-def result_xml_to_text(xml, prefix=''):
+
+def result_xml_to_text(xml, header=True):
     if type(xml)==str or type(xml)==unicode:
         #this is xml in string format
         xml= ElementTree.fromstring(xml.encode('utf-8'))
         
     if xml.get('type')== xml_types.LIST_TYPE:
-        html_children= [result_xml_to_text( c, prefix+'\t') for c in xml.getchildren() ]
-        return ("\n"+prefix).join( html_children )
+        html_children= "".join(map(result_xml_to_text, xml.getchildren()) )
+        header_html= '<h3>%s</h3>' % (xml.get('kind') or "List") if header else ''
+        return '<div data-role="collapsible" data-collapsed="true" >%s%s</div>' % (header_html,html_children)
     else:
-        return xml.text
+        return '<div data-role="collapsible" data-collapsed="true" ><h3>%s</h3><p>%s</p></div>' % (xml.get('kind') or "attribute", xml.text)
            
 @search.route('/search/', methods=['POST'])
 def search_view():
@@ -61,7 +62,6 @@ def search_view():
             results_xml=[]
         else:
             results_xml= [method.execute(query= query) for query, method in matches]
-        search_results= map(result_xml_to_text, results_xml)
-        print "ohno", search_results
+        search_results= "".join(map(result_xml_to_text, results_xml))
         return render_template('search.html', search_results=search_results)
     
