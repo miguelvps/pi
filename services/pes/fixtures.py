@@ -10,7 +10,7 @@ reader = csv.reader(open('docentes.csv', 'r'), delimiter=',')
 for row in reader:
     id = row[0]
     name = row[1].decode('utf-8')
-    print name
+    print name.encode('utf-8')
     email = row[2].decode('utf-8')
 
     teacher = Teacher.query.get(id)
