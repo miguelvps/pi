@@ -13,10 +13,9 @@ from concierge import db
 from concierge.auth import User, requires_auth
 from concierge.service_metadata_parser import ServiceMetadata
 
-sys.path.append('../../common/')
-import xml_kinds
-import modelxmlserializer
-from xmlserializer_parameters import SERIALIZER_PARAMETERS
+from common import xml_kinds
+from common import modelxmlserializer
+from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
 
 
 services = Module(__name__, 'services')

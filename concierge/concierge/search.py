@@ -6,7 +6,7 @@ from flaskext.wtf import Form, Required
 from flaskext.wtf.html5 import SearchField
 
 from xml.etree import ElementTree
-import xml_types
+from common import xml_types
 
 
 search = Module(__name__, 'search')
