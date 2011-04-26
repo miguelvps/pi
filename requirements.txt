@@ -1,6 +1,7 @@
 SQLAlchemy
 WTForms
 blinker
+Fabric
 Flask
 Flask-SQLAlchemy
 Flask-WTF
