@@ -1,13 +1,5 @@
-from xml.dom.minidom import parse, parseString
 import urllib2
-
-
-def myGetElementsByTagName(xml_object, tagname, recursive=True):
-    if recursive:
-        return xml_object.getElementsByTagName(tagname)
-    else:
-        return [e for e in xml_object.childNodes if hasattr(e, 'tagName') and e.tagName== tagname]
-
+from xml.etree import ElementTree
 
 class ServiceMetadataResourceMethod(object):
     GET, POST, PUT, DELETE, = range(4)
@@ -21,11 +13,11 @@ class ServiceMetadataResourceMethod(object):
         
     def parse(self, xml_object):
         '''returns method_type, parameters'''
-        method_type_str= xml_object.attributes['type'].value
+        method_type_str= xml_object.get('type')
         method_type= self.method_dictionary[method_type_str]
 
-        parameterlist_xml= xml_object.getElementsByTagName('parameter')
-        parameters= [self.parameter_dictionary[p.childNodes[0].nodeValue] for p in parameterlist_xml]
+        parameterlist_xml= xml_object.findall('parameter')
+        parameters= [self.parameter_dictionary[p.text] for p in parameterlist_xml]
         return method_type, parameters
 
     def execute(self, **args):
@@ -55,24 +47,19 @@ class ServiceMetadataResource(object):
 
     def parse(self, xml_object):
         '''returns url, keywords, methods, subresources'''
-        url= xml_object.attributes['url'].value
+        url= xml_object.get('url')
         if self.parent==None:
             assert url==""
         else:
             assert url!=""
         
-        keywordslists_xml= xml_object.getElementsByTagName('keywords')
-        assert 0<=len(keywordslists_xml)<=1
-        if len(keywordslists_xml)==1:
-            keywords_xml= keywordslists_xml[0].getElementsByTagName('keyword')
-            keywords= [k.childNodes[0].nodeValue for k in keywords_xml]
-        else:
-            keywords=[]
+        keywords_xml= xml_object.find('keywords')
+        keywords= [k.text for k in keywords_xml.getchildren()] if keywords_xml else []
         
-        methodlist_xml= xml_object.getElementsByTagName('method') 
+        methodlist_xml= xml_object.findall('method') 
         methods= [ServiceMetadataResourceMethod(method, self) for method in methodlist_xml]
         
-        resourcelist_xml= root_resources_xml= myGetElementsByTagName(xml_object,'resource', recursive=False)
+        resourcelist_xml= xml_object.findall('resource')
         resources= [ServiceMetadataResource(r, self, self.service) for r in resourcelist_xml]
         
         return url, keywords, methods, resources
@@ -98,31 +85,24 @@ class ServiceMetadata(object):
     def __init__(self, url):
         urlloader = urllib2.build_opener()
         page = urlloader.open(url).read()
-        xml_object= parseString(page)
+        xml_object= ElementTree.fromstring(page)
         self.name, self.url, self.description, self.formats, self.resource= self.parse(xml_object)
 
     def parse(self, xml_object):
         '''returns name, url, description, formats, resource'''
-        services_xml= xml_object.getElementsByTagName('service')
-        assert len(services_xml)==1
-        service_xml= services_xml[0]
+        service_xml= xml_object
+        assert service_xml.tag=='service'
 
-        name= service_xml.attributes['name'].childNodes[0].nodeValue
-        url= service_xml.attributes['url'].childNodes[0].nodeValue
+        name= service_xml.get('name')
+        url= service_xml.get('url')
         
-        descriptions_xml= service_xml.getElementsByTagName('description')
-        assert 0<=len(descriptions_xml)<=1
-        description= descriptions_xml[0].childNodes[0].nodeValue if len(descriptions_xml)==1 else ""
+        descriptions_xml= service_xml.find('description')
+        description= descriptions_xml.text if descriptions_xml else ""
 
-        formats_lists_xml= service_xml.getElementsByTagName('supported_formats')
-        assert len(formats_lists_xml)==1
-        formats_xml= formats_lists_xml[0].getElementsByTagName('format')
-        formats= [self.format_dictionary[f.childNodes[0].nodeValue] for f in formats_xml]
+        formats_xml= service_xml.find('supported_formats')
+        formats= [f.text for f in formats_xml.getchildren()]
         
-        
-        root_resources_xml= myGetElementsByTagName(service_xml,'resource', recursive=False)
-        assert len(root_resources_xml)==1
-        root_resource_xml= root_resources_xml[0]
+        root_resource_xml= service_xml.find('resource')
         root_resource= ServiceMetadataResource(root_resource_xml, None, self)
 
         return name, url, description, formats, root_resource
