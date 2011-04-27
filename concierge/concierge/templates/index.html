@@ -5,7 +5,7 @@
 {% block redirect %} data-url="/" {% endblock %}
 
 {% block header %}
-	<div data-role="header"  data-id="concheader" data-backbtn="false">
+	<div data-role="header"  data-id="concheader" data-backbtn="false" >
 		<h1>Concierge</h1>
 
 		<div data-role="header" data-position="inline" data-theme="c">
@@ -35,11 +35,27 @@
 
 	
 	<div data-role="content">					
-		<ul data-role="listview"  data-theme="c" data-dividertheme="b">
+		<ul data-role="listview"  data-theme="c" data-dividertheme="b" data-inset="True">
 			<!--<li data-role="list-divider">Serviços</li>-->
             {% for service in services %}
                 <li><a href="/services/{{service.id}}">{{service.name}}</a></li>
             {% endfor %}
+			<li><a href="#">Departamentos</a></li>
+			<li><a href="#">Espaços</a></li>
+			<li><a href="#">Transportes</a></li>
+			<li><a href="#">Biblioteca</a></li>
+			<li><a href="#">Informações Processuais</a></li>
+			<li><a href="#">Ementas</a></li>
+			<li><a href="#">Eventos</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
+			<li><a href="#">ServiçoX</a></li>
 		</ul>
 	</div><!-- /content -->
      
