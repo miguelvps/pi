@@ -41,9 +41,9 @@ def result_xml_to_text(xml, header=True):
     if xml.get('type')== xml_types.LIST_TYPE:
         html_children= "".join(map(result_xml_to_text, xml.getchildren()) )
         header_html= '<h3>%s</h3>' % (xml.get('kind') or "List") if header else ''
-        return '<div data-role="collapsible" data-collapsed="true" >%s%s</div>' % (header_html,html_children)
+        return '<div data-role="collapsible" data-collapsed="false" >%s%s</div>' % (header_html,html_children)
     else:
-        return '<div data-role="collapsible" data-collapsed="true" ><h3>%s</h3><p>%s</p></div>' % (xml.get('kind') or "attribute", xml.text)
+        return '<div data-role="collapsible" data-collapsed="false" ><h3>%s</h3><p>%s</p></div>' % (xml.get('kind') or "attribute", xml.text)
            
 @search.route('/search/', methods=['POST'])
 def search_view():
