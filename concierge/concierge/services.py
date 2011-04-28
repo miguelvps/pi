@@ -11,7 +11,7 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from concierge import db
 from concierge.auth import User, requires_auth
-from concierge.service_metadata_parser import ServiceMetadata
+from concierge.service_metadata_parser import serviceMetadataFromXML
 
 from common import xml_kinds
 from common import modelxmlserializer
@@ -112,7 +112,7 @@ def register():
         form = RegisterForm(request.form)
         if form.validate_on_submit():
             url = form.metadata_url.data
-            metadata = ServiceMetadata(url)
+            metadata = serviceMetadataFromXML(url)
             service = Service(name=metadata.name, url=url, active=True, user_id=session['id'])
             db.session.add(service)
             try:
