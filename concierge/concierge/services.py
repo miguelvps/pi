@@ -89,23 +89,6 @@ def service(id):
     return render_template('service.html', service=service, form=form)
 
 
-@services.route('/api/', methods=['GET', 'POST'])
-def service_list():
-    services = Service.query.all()
-    xml_text= modelxmlserializer.ModelList_xml(services).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
-    return Response(response=xml_text, mimetype="application/xml")
-
-
-@services.route('/api/<id>', methods=['GET', 'DELETE'])
-def service_xml(id):
-    if request.method=='GET':
-        service = Service.query.get_or_404(id)
-        xml_text= modelxmlserializer.Model_Serializer(service).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
-        return Response(response=xml_text, mimetype="application/xml")
-    if request.method=='DELETE':
-        return Response("not implemented yet. 5Y$WY%$")
-
-
 @services.route('/register/', methods=['GET','POST'])
 @requires_auth
 def register():
