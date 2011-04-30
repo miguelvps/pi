@@ -24,6 +24,8 @@ def create_app(cfg=None):
     from concierge.search import search
     app.register_module(search)
 
+    from concierge.services_models import services_models
+    app.register_module(services_models)
 
     from concierge.services import services
     app.register_module(services, url_prefix='/services')

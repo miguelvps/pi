@@ -1,19 +1,19 @@
 import sys
-from datetime import datetime
 
+from concierge.auth import requires_auth, User
+from concierge.services_models import Service
 from flask import Module, Response, request, session, g, \
                   render_template, redirect, url_for
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL
-from sqlalchemy.orm import backref
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.orm.collections import attribute_mapped_collection
+
+
+
 
 from concierge import db
-from concierge.auth import User, requires_auth
+
 from concierge.service_metadata_parser import serviceMetadataFromXML
 
-from common import xml_kinds
 from common import modelxmlserializer
 from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
 
@@ -21,41 +21,8 @@ from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
 services = Module(__name__, 'services')
 
 
-service_favorites = db.Table('service_favorites',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('service_id', db.Integer, db.ForeignKey('service.id')),
-)
 
 
-class ServiceRating(db.Model):
-    service_id = db.Column(db.Integer, db.ForeignKey('service.id'),
-                           primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    rating = db.Column(db.Integer)
-
-    service = db.relationship('Service', backref=backref('user_ratings',
-        collection_class=attribute_mapped_collection('user')))
-    user = db.relationship('User', backref=backref('service_ratings',
-        collection_class=attribute_mapped_collection('service')))
-
-
-class Service(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(xml_kinds.service_url(256), unique=True)
-    name = db.Column(xml_kinds.service_name(256), unique=True)
-    description = db.Column(db.Text)
-    created = db.Column(db.DateTime, default=datetime.utcnow)
-    active = db.Column(db.Boolean, default=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    user = db.relationship('User', backref='services')
-    users_favorite = db.relation('User', secondary=service_favorites,
-                                 backref='favorite_services')
-    rating_users = association_proxy('user_ratings', 'rating',
-            creator=lambda u, r: ServiceRating(user=u, rating=r))
-
-User.rating_services = association_proxy('service_ratings', 'rating',
-        creator=lambda s, r: ServiceRating(service=s, rating=r))
 
 
 class RegisterForm(Form):
@@ -65,6 +32,10 @@ class RegisterForm(Form):
 class ServiceForm(Form):
     favorite = BooleanField('Favorite')
     rating = IntegerField('Rating', validators=[NumberRange(min=1, max=5)])
+
+
+
+
 
 
 @services.route('/<id>/', methods=['GET', 'POST'])
@@ -96,7 +67,7 @@ def register():
         if form.validate_on_submit():
             url = form.metadata_url.data
             metadata = serviceMetadataFromXML(url)
-            service = Service(name=metadata.name, url=url, active=True, user_id=session['id'])
+            service = Service(name=metadata.name, url=url, active=True, user_id=session['id'], service_metadata=[metadata])
             db.session.add(service)
             try:
                 db.session.commit()

@@ -1,5 +1,5 @@
 from flask import Module, render_template, request, Response
-from concierge.services import Service
+from concierge.services_models import Service
 from concierge.service_metadata_parser import ServiceMetadata, ServiceMetadataResourceMethod
 
 from flaskext.wtf import Form, Required
@@ -53,8 +53,7 @@ def search_view():
         query= form.search_query.data
         
         services= Service.query.all()
-        services_urls= [s.url for s in services]
-        metadatas= map(ServiceMetadata, services_urls)
+        metadatas= [s.service_metadata for s in services]
         search_methods= [m.global_search() for m in metadatas]
         matches = match_search_to_methods_keywords(query, search_methods)
         if len(matches)==0:
