@@ -38,7 +38,7 @@ User.rating_services = association_proxy('service_ratings', 'rating',
 
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(xml_kinds.service_url(256), unique=True)
+    metadata_url = db.Column(xml_kinds.service_url(256), unique=True)
     name = db.Column(xml_kinds.service_name(256), unique=True)
     description = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.utcnow)
