@@ -67,7 +67,7 @@ def register():
         if form.validate_on_submit():
             url = form.metadata_url.data
             metadata = serviceMetadataFromXML(url)
-            service = Service(name=metadata.name, metadata_url=url, active=True, user_id=session['id'], service_metadata=[metadata])
+            service = Service(name=metadata.name, metadata_url=url, active=True, user_id=session['id'], service_metadata=metadata)
             db.session.add(service)
             try:
                 db.session.commit()

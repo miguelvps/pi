@@ -7,7 +7,7 @@ from datetime import datetime
 
 from concierge import db
 from concierge.auth import User
-from common import xml_kinds
+from common import xml_kinds, rest_methods, rest_method_parameters, rest_return_formats
 
 services_models = Module(__name__, 'services')
 
@@ -66,7 +66,7 @@ class ServiceMetadataResourceMethod_parameters(db.Model):
 class ServiceMetadataResourceMethod(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     resource_id= db.Column(db.Integer, db.ForeignKey('service_metadata_resource.id'))
-    type= db.Column(db.String)
+    type= db.Column(db.Integer)
     parameters= db.relationship('ServiceMetadataResourceMethod_parameters')
     
     def __init__(self, resource, type, parameters):
@@ -75,7 +75,7 @@ class ServiceMetadataResourceMethod(db.Model):
     def execute(self, **args):
         '''takes a dictionary of method parameters, executes the method
         and returns response'''
-        if self.type!=self.GET:
+        if self.type!=rest_methods.GET:
             raise NotImplementedError("Can't execute a service method that is not a GET")
         method_url= self.resource.full_url()
         received_parameters= args
@@ -102,7 +102,7 @@ class ServiceMetadataResource(db.Model):
     parent_id= db.Column(db.Integer, db.ForeignKey('service_metadata_resource.id'))
     url= db.Column(db.String)
     keywords= db.relationship('ServiceMetadataResource_keywords')
-    methods= db.relationship('ServiceMetadataResourceMethod')
+    methods= db.relationship('ServiceMetadataResourceMethod', backref="resource")
     resources= db.relationship('ServiceMetadataResource')
     
     
@@ -148,14 +148,14 @@ class ServiceMetadata(db.Model):
         
     def global_search(self):
         '''returns the global search method'''
-        MSRT= ServiceMetadataResourceMethod
-        filter_f= lambda m: m.type==MSRT.GET and MSRT.QUERY in m.parameters
+        
+        filter_f= lambda m: m.type==rest_methods.GET and rest_method_parameters.QUERY in [p.parameter for p in m.parameters]
         search_methods= self.resources[0].find_methods( filter_function= filter_f)
         assert len(search_methods)==1
         return search_methods[0]
 
     def set_root_resource(self, root_resource):
-        self.root_resource= root_resource
+        self.resources= [root_resource]
 
 #END OF METADATA TABLES ------------------------------------------------
 
