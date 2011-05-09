@@ -50,7 +50,7 @@ class Service(db.Model):
                                  backref='favorite_services')
     rating_users = association_proxy('user_ratings', 'rating',
             creator=lambda u, r: ServiceRating(user=u, rating=r))
-    service_metadata= db.relationship('ServiceMetadata', lazy='dynamic', uselist=False)
+    service_metadata= db.relationship('ServiceMetadata', uselist=False)
     
 
 
@@ -150,7 +150,7 @@ class ServiceMetadata(db.Model):
         '''returns the global search method'''
         MSRT= ServiceMetadataResourceMethod
         filter_f= lambda m: m.type==MSRT.GET and MSRT.QUERY in m.parameters
-        search_methods= self.resource.find_methods( filter_function= filter_f)
+        search_methods= self.resources[0].find_methods( filter_function= filter_f)
         assert len(search_methods)==1
         return search_methods[0]
 
