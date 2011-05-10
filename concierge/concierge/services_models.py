@@ -7,7 +7,7 @@ from datetime import datetime
 
 from concierge import db
 from concierge.auth import User
-from common import xml_kinds, rest_methods, rest_method_parameters, rest_return_formats
+from common import xml_kinds, rest_methods, rest_method_parameters
 
 import urllib2
 services_models = Module(__name__, 'services')
