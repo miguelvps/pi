@@ -1,3 +1,3 @@
 from constant_generator import constant_generator
-l=['QUERY', 'START', 'END']
+l=['query', 'start', 'end']
 constant_generator( l, locals())

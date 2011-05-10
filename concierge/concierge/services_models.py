@@ -9,6 +9,7 @@ from concierge import db
 from concierge.auth import User
 from common import xml_kinds, rest_methods, rest_method_parameters, rest_return_formats
 
+import urllib2
 services_models = Module(__name__, 'services')
 
 #START OF SERVICE_USER MISC STUFF --------------------------------------
@@ -72,19 +73,18 @@ class ServiceMetadataResourceMethod(db.Model):
     def __init__(self, resource, type, parameters):
         self.resource, self.type, self.parameters= resource, type, parameters
 
-    def execute(self, **args):
+    def execute(self, received_parameters):
         '''takes a dictionary of method parameters, executes the method
         and returns response'''
         if self.type!=rest_methods.GET:
             raise NotImplementedError("Can't execute a service method that is not a GET")
         method_url= self.resource.full_url()
-        received_parameters= args
-        needed_parameters= self.parameters
-        
+        needed_parameters= [p.parameter for p in self.parameters]
+        needed_parameters_names= [rest_method_parameters.reverse[p] for p in needed_parameters]
         #all received parameters must be method parameters
         assert all([r in needed_parameters for r in received_parameters.keys()])
         parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
-        final_parameters= ["=".join(x) for x in zip(needed_parameters, parameters_values) ]
+        final_parameters= ["=".join(x) for x in zip(needed_parameters_names, parameters_values) ]
         call_url= method_url +  "?" + "&".join( final_parameters )
         urlloader = urllib2.build_opener()
         page = urlloader.open(call_url).read()
@@ -103,7 +103,7 @@ class ServiceMetadataResource(db.Model):
     url= db.Column(db.String)
     keywords= db.relationship('ServiceMetadataResource_keywords')
     methods= db.relationship('ServiceMetadataResourceMethod', backref="resource")
-    resources= db.relationship('ServiceMetadataResource')
+    resources= db.relationship('ServiceMetadataResource', backref=backref('parent', remote_side='ServiceMetadataResource.id'))
     
     
     def __init__(self, parent, service_object, url, keywords, methods=[], child_resources=[]):
@@ -141,7 +141,7 @@ class ServiceMetadata(db.Model):
     url= db.Column(db.String)
     description= db.Column(db.String)
     formats= db.relationship('ServiceMetadata_formats')
-    resources= db.relationship('ServiceMetadataResource')
+    resources= db.relationship('ServiceMetadataResource', backref='service')
     
     def __init__(self, name, url, description, formats, root_resource=None):
         self.name, self.url, self.description, self.formats, self.resource= name, url, description, formats, root_resource

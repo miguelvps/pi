@@ -6,7 +6,7 @@ from flaskext.wtf import Form, Required
 from flaskext.wtf.html5 import SearchField
 
 from xml.etree import ElementTree
-from common import xml_types
+from common import xml_types, rest_method_parameters
 
 
 search = Module(__name__, 'search')
@@ -21,7 +21,7 @@ def match_search_to_methods_keywords(query, methods):
     queries_methods=[]
     for method in methods:
         splited_query= query.split(' ')
-        for keyword in method.resource.keywords:
+        for keyword in [k.keyword for k in method.resource.keywords]:
             try:
                 i= splited_query.index(keyword)
                 method_query_splitted= splited_query[:]
@@ -60,7 +60,6 @@ def search_view():
             #no keywords match
             results_xml=[]
         else:
-            results_xml= [method.execute(query= query) for query, method in matches]
+            results_xml= [method.execute({rest_method_parameters.QUERY: query}) for query, method in matches]
         search_results= "".join(map(result_xml_to_text, results_xml))
         return render_template('search.html', search_results=search_results)
-    
