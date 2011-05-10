@@ -7,6 +7,7 @@ from flaskext.wtf.html5 import SearchField
 
 from xml.etree import ElementTree
 from common import xml_types, rest_method_parameters
+from common.search import match_keywords_to_something
 
 
 search = Module(__name__, 'search')
@@ -14,23 +15,12 @@ search = Module(__name__, 'search')
 
 class SearchForm(Form):
     search_query = SearchField('query', validators=[Required()])
-    
+
 def match_search_to_methods_keywords(query, methods):
     '''assumes word separated by single space.
     returns list of pairs of (query, method)'''
-    queries_methods=[]
-    for method in methods:
-        splited_query= query.split(' ')
-        for keyword in [k.keyword for k in method.resource.keywords]:
-            try:
-                i= splited_query.index(keyword)
-                method_query_splitted= splited_query[:]
-                method_query_splitted.pop(i)
-                method_query= " ".join(method_query_splitted)
-                queries_methods.append( (method_query, method) )
-            except:
-                pass    #no match
-    return queries_methods
+    keywords_methods=[([k.keyword for k in method.resource.keywords], method) for method in methods]
+    return match_keywords_to_something(query, keywords_methods)
 
 
 def result_xml_to_text(xml, header=True):
