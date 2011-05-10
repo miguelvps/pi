@@ -31,7 +31,8 @@ def install():
         virtualenv('pip install -r requirements.txt')
         virtualenv('python setup.py develop')
         virtualenv('pip install gunicorn')
-        virtualenv('python fixtures.py')
+        virtualenv('python manager.py resetdb')
+        virtualenv('python manager.py fixtures')
 
 def uninstall():
     stop()
