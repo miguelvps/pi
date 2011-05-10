@@ -64,6 +64,6 @@ def search_aux(query):
         #no keywords match
         results_xml=[]
     else:
-        results_xml= [method.execute({rest_method_parameters.QUERY: query}) for query, method in matches]
+        results_xml= [method.execute({rest_method_parameters.QUERY: query}) for ignoreme, method in matches]
     search_results= "".join(map(result_xml_to_text, results_xml))
     return render_template('search.html', search_results=search_results)

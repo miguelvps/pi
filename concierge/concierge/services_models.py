@@ -9,7 +9,7 @@ from concierge import db
 from concierge.auth import User
 from common import xml_kinds, rest_methods, rest_method_parameters
 
-import urllib2
+import urllib
 
 services_models = Module(__name__, 'services')
 
@@ -120,11 +120,9 @@ class ResourceMethod(db.Model):
         #all received parameters must be method parameters
         assert all([r in needed_parameters for r in received_parameters.keys()])
         parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
-        final_parameters= ["=".join(x) for x in zip(needed_parameters_names, parameters_values) ]
-        call_url= method_url +  "?" + "&".join( final_parameters )
-        urlloader = urllib2.build_opener()
-        page = urlloader.open(call_url).read()
-        page= page.decode('utf-8')
+        parameters_kv= dict(zip(needed_parameters_names, parameters_values))
+        params= urllib.urlencode(parameters_kv)
+        page = urllib.urlopen(method_url + "?" + params).read().decode('utf-8')
         return page
 
 

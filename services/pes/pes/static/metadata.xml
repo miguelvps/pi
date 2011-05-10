@@ -10,6 +10,14 @@
             <keyword>docentes</keyword>
             <keyword>professor</keyword>
             <keyword>professores</keyword>
+            <keyword>email</keyword>
+            <keyword>mail</keyword>
+            <keyword>phone</keyword>
+            <keyword>telefone</keyword>
+            <keyword>tel</keyword>
+            <keyword>fax</keyword>
+            <keyword>pessoa</keyword>
+            <keyword>pessoas</keyword>
         </keywords>
         <method type="GET" >
             <parameter>query</parameter> 

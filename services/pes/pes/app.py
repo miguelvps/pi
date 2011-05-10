@@ -6,7 +6,10 @@ from sqlalchemy.orm import joinedload
 from common import xml_kinds
 from common import modelxmlserializer
 from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
+from common.search import match_keywords_to_something
 
+import urllib
+import itertools
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pes.db'
@@ -19,8 +22,9 @@ class Email(db.Model):
     email = db.Column( xml_kinds.email(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
+    @staticmethod
     def search_result(query):
-        emails = Email.query.filter(Email.email.like(s)).all()
+        emails = Email.query.filter(Email.email.like(query)).all()
         return [f.person for f in emails]
 
 
@@ -31,8 +35,9 @@ class Phone(db.Model):
     phone = db.Column( xml_kinds.phone(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
+    @staticmethod
     def search_result(query):
-        phones = Phone.query.filter(Phone.phone.like(s)).all()
+        phones = Phone.query.filter(Phone.phone.like(query)).all()
         return [f.person for f in phones]
 
 
@@ -41,9 +46,10 @@ class Fax(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fax = db.Column( xml_kinds.fax(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
-    
+
+    @staticmethod
     def search_result(query):
-        faxes = Fax.query.filter(Fax.fax.like(s)).all()
+        faxes = Fax.query.filter(Fax.fax.like(query)).all()
         return [f.person for f in faxes]
 
 
@@ -58,8 +64,9 @@ class Teacher(db.Model):
     phones = db.relationship('Phone', backref='person')
     faxes = db.relationship('Fax', backref='person')
 
+    @staticmethod
     def search_result(query):
-        teachers = Teacher.query.outerjoin(Email, Phone, Fax).filter(Teacher.name.like(s)).all()
+        teachers = Teacher.query.options(joinedload('emails'), joinedload('phones'), joinedload('faxes')).filter(Teacher.name.like(query)).all()
         return teachers
         
 
@@ -68,15 +75,19 @@ class Teacher(db.Model):
 
 @app.route("/")
 def search():
-    query = request.args.get('query', '')
-    s= '%{0}%'.format(query)
-    teachers = Teacher.query.outerjoin(Email, Phone, Fax) \
-                      .filter(or_(Teacher.name.like(s),
-                                  Email.email.like(s), \
-                                  Phone.phone.like(s), \
-                                  Fax.fax.like(s))) \
-                      .all()
-    xml_text= modelxmlserializer.ModelList_xml(teachers).to_xml(SERIALIZER_PARAMETERS).toxml()
+    query_quoted = request.args.get('query', '')
+    query= urllib.unquote_plus(query_quoted)
+        
+    models= [Phone, Email, Fax, Teacher]
+    keywords_models= [(model.keywords, model) for model in models]
+    queries_models= match_keywords_to_something(query, keywords_models)
+
+    results=[]
+    for targeted_query, model in queries_models:
+        db_query= '%{0}%'.format(targeted_query)
+        results.append(model.search_result(db_query))
+    results= [t for t in itertools.chain(*results)]
+    xml_text= modelxmlserializer.ModelList_xml(results).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(response=xml_text, mimetype="application/xml")
 
 
