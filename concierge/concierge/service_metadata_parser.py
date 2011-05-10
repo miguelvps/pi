@@ -54,7 +54,6 @@ def parse_metadata(xml_object):
     root_resource_xml= service_xml.find('resource')
     root_resource= parse_metadataResource(root_resource_xml, None, service_metadata)
     service_metadata.set_root_resource(root_resource)
-    print "print 123",service_metadata.resources
     db.session.add(service_metadata)
     db.session.commit()
     return service_metadata

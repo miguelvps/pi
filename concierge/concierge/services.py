@@ -74,7 +74,7 @@ def register():
             except:
                 db.session.rollback()
         return render_template('register_service.html', form=form)
-
+    
 @services.route('/favorites_list')
 @requires_auth
 def fav_list():

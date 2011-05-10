@@ -8,6 +8,7 @@ from werkzeug import generate_password_hash, check_password_hash
 
 from concierge import db
 
+from sqlalchemy.orm import backref
 
 auth = Module(__name__, 'auth')
 
@@ -25,6 +26,16 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+
+class HistoryEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+    query = db.Column(db.String(50))
+
+    user = db.relationship(User, backref=backref('user_history', order_by=created))
+
 
 
 class RegisterForm(Form):

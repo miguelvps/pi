@@ -13,41 +13,23 @@
 
 {% block page_content %}
 
-			<div data-role="content">	
-			
-				<ul data-role="listview"  data-theme="c" data-dividertheme="b">
-					<!--<li data-role="list-divider">Serviços</li>-->
-					<li><a href="index.html">Pesquisa 1</a></li>
-					<li><a href="index.html">Pesquisa 2</a></li>
-					<li><a href="index.html">Pesquisa 3</a></li>
-					<li><a href="index.html">Pesquisa 4</a></li>
-					<li><a href="index.html">List views</a></li>
-					<li class="ui-body ui-body-b">
-						<button type="submit" data-theme="a">Delete history</button>
-					</li>
-				</ul>
-			</div><!-- /content -->
+    <div data-role="content">					
+        <ul data-role="listview"  data-theme="c" data-dividertheme="b">
+            {% for entry in history %}
+            <li><a href="/search/{{entry.query}}">{{entry.query}}</a></li>
+            {% endfor %}
+            <li>        
+                <form action="/history/" method="post">
+        			<fieldset>
+        				<button type="submit" data-theme="a" name="submit" value="submit-value">Clear History
+                        </button>
+		        	</fieldset>
+	        	</form>
+		</ul>
+
+    </div><!-- /content -->
+
 {% endblock %}
 
 {% block footer %} {% endblock %}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	<body> 
-
-
-
-	</body>
