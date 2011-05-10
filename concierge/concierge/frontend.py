@@ -1,8 +1,8 @@
-from flask import Module, render_template, request, Response
+from flask import Module, render_template, request, Response, session
 from concierge.services_models import Service
 from concierge.search import SearchForm
-
-
+from concierge.auth import User, requires_auth
+from concierge import db
 
 
 frontend = Module(__name__, 'frontend')
@@ -15,10 +15,23 @@ def index():
     return render_template('index.html', services = services, search_form=searchform)
 
     
-
-@frontend.route('/history/')
+@frontend.route('/history/', methods=['GET', 'POST'])
+@requires_auth
 def history():
-    return render_template('history.html')
+    user_id = session['id']
+    user = User.query.get_or_404(user_id)
+    history = user.user_history
+
+    if request.method =='POST': 
+
+        for entry in history:   #clear user history 
+            db.session.delete(entry)
+        db.session.commit()
+    
+    history = user.user_history #update object
+    return render_template('history.html', history=history)
+
+
 
 
 @frontend.route('/settings/')
