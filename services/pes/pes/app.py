@@ -14,24 +14,41 @@ db = SQLAlchemy(app)
 
 
 class Email(db.Model):
+    keywords= ['email','mail']
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column( xml_kinds.email(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
+    def search_result(query):
+        emails = Email.query.filter(Email.email.like(s)).all()
+        return [f.person for f in emails]
+
+
 
 class Phone(db.Model):
+    keywords= ['phone','telefone', 'tel']
     id = db.Column(db.Integer, primary_key=True)
     phone = db.Column( xml_kinds.phone(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
+    def search_result(query):
+        phones = Phone.query.filter(Phone.phone.like(s)).all()
+        return [f.person for f in phones]
+
 
 class Fax(db.Model):
+    keywords= ['fax']
     id = db.Column(db.Integer, primary_key=True)
     fax = db.Column( xml_kinds.fax(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
+    
+    def search_result(query):
+        faxes = Fax.query.filter(Fax.fax.like(s)).all()
+        return [f.person for f in faxes]
 
 
 class Teacher(db.Model):
+    keywords= ['pessoa','professor']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column( xml_kinds.name(1024) )
     birth_date = db.Column( xml_kinds.birthdate )
@@ -40,6 +57,12 @@ class Teacher(db.Model):
     emails = db.relationship('Email', backref='person')
     phones = db.relationship('Phone', backref='person')
     faxes = db.relationship('Fax', backref='person')
+
+    def search_result(query):
+        teachers = Teacher.query.outerjoin(Email, Phone, Fax).filter(Teacher.name.like(s)).all()
+        return teachers
+        
+
 
 
 
