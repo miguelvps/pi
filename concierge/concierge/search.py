@@ -1,12 +1,12 @@
 from flask import Module, render_template, request, Response
-from concierge.services import Service
+from concierge.services_models import Service
 from concierge.service_metadata_parser import ServiceMetadata, ServiceMetadataResourceMethod
 
 from flaskext.wtf import Form, Required
 from flaskext.wtf.html5 import SearchField
 
 from xml.etree import ElementTree
-from common import xml_types
+from common import xml_types, rest_method_parameters
 
 
 search = Module(__name__, 'search')
@@ -21,7 +21,7 @@ def match_search_to_methods_keywords(query, methods):
     queries_methods=[]
     for method in methods:
         splited_query= query.split(' ')
-        for keyword in method.resource.keywords:
+        for keyword in [k.keyword for k in method.resource.keywords]:
             try:
                 i= splited_query.index(keyword)
                 method_query_splitted= splited_query[:]
@@ -53,15 +53,13 @@ def search_view():
         query= form.search_query.data
         
         services= Service.query.all()
-        services_urls= [s.url for s in services]
-        metadatas= map(ServiceMetadata, services_urls)
+        metadatas= [s.service_metadata for s in services]
         search_methods= [m.global_search() for m in metadatas]
         matches = match_search_to_methods_keywords(query, search_methods)
         if len(matches)==0:
             #no keywords match
             results_xml=[]
         else:
-            results_xml= [method.execute(query= query) for query, method in matches]
+            results_xml= [method.execute({rest_method_parameters.QUERY: query}) for query, method in matches]
         search_results= "".join(map(result_xml_to_text, results_xml))
         return render_template('search.html', search_results=search_results)
-    
