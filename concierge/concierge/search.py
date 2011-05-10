@@ -1,8 +1,5 @@
-
-from flask import Module, render_template, request, Response, session, redirect
+from flask import Module, request, session, render_template, redirect
 from concierge.services_models import Service
-
-from concierge.service_metadata_parser import ServiceMetadata, ServiceMetadataResourceMethod
 
 from concierge.auth import HistoryEntry
 from concierge import db
@@ -17,7 +14,6 @@ from common.search import match_keywords_to_something
 
 search = Module(__name__, 'search')
 
-
 class SearchForm(Form):
     search_query = SearchField('query', validators=[Required(), Length(min=1)])
 
@@ -27,12 +23,11 @@ def match_search_to_methods_keywords(query, methods):
     keywords_methods=[([k.keyword for k in method.resource.keywords], method) for method in methods]
     return match_keywords_to_something(query, keywords_methods)
 
-
 def result_xml_to_text(xml, header=True):
     if type(xml)==str or type(xml)==unicode:
         #this is xml in string format
         xml= ElementTree.fromstring(xml.encode('utf-8'))
-        
+
     if xml.get('type')== xml_types.LIST_TYPE:
         html_children= "".join(map(result_xml_to_text, xml.getchildren()) )
         header_html= '<h3>%s</h3>' % (xml.get('kind') or "List") if header else ''
@@ -40,7 +35,6 @@ def result_xml_to_text(xml, header=True):
     else:
         return '<div data-role="collapsible" data-collapsed="false" ><h3>%s</h3><p>%s</p></div>' % (xml.get('kind') or "attribute", xml.text)
 
-           
 
 @search.route('/search/<search_query>')
 def search_history(search_query):
@@ -53,7 +47,6 @@ def search_view():
 
     if  form.validate_on_submit():
         query= form.search_query.data
-
         #creates the entry in the user_history if the user is logged in
         if session.get('auth'):
             hstr_entry = HistoryEntry(user_id=session['id'], query=query)
@@ -64,16 +57,13 @@ def search_view():
     return redirect('/')   #null string case
 
 def search_aux(query):
-
     services= Service.query.all()
-    services_urls= [s.url for s in services]
-    metadatas= map(ServiceMetadata, services_urls)
-    search_methods= [m.global_search() for m in metadatas]
+    search_methods= [m.global_search() for m in services]
     matches = match_search_to_methods_keywords(query, search_methods)
     if len(matches)==0:
         #no keywords match
         results_xml=[]
     else:
-        results_xml= [method.execute(query= query) for query, method in matches]
+        results_xml= [method.execute({rest_method_parameters.QUERY: query}) for query, method in matches]
     search_results= "".join(map(result_xml_to_text, results_xml))
     return render_template('search.html', search_results=search_results)

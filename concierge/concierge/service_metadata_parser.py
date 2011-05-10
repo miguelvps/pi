@@ -1,7 +1,6 @@
 import urllib2
 from xml.etree import ElementTree
-from concierge.services_models import *
-from concierge import db
+from concierge.services_models import Service, ServiceFormat, ServiceResource, ResourceKeyword, ResourceMethod, MethodParameter
 from common import rest_methods, rest_return_formats, rest_method_parameters
 
 def xmlFromUrl(url):
@@ -13,31 +12,27 @@ def serviceMetadataFromXML(metadata_url):
     xml_object= xmlFromUrl(metadata_url)
     return parse_metadata(xml_object)
 
-
-
 def parse_metadataResourceMethod(xml_object, parent_resource):
     '''returns method_type, parameters'''
     method_type_str= xml_object.get('type')
     method_type= getattr(rest_methods,method_type_str)
     parameterlist_xml= xml_object.findall('parameter')
-    parameters= [ServiceMetadataResourceMethod_parameters(parameter=getattr(rest_method_parameters, p.text)) for p in parameterlist_xml]
-    method= ServiceMetadataResourceMethod(parent_resource, method_type, parameters)
-    db.session.add(method)
+    parameters= [MethodParameter(parameter=getattr(rest_method_parameters, p.text)) for p in parameterlist_xml]
+    method= ResourceMethod(type=method_type, parameters=parameters)
     return method
 
-def parse_metadataResource(xml_object, parent_resource, service_object):
+def parse_metadataResource(xml_object):
     '''returns url, keywords, methods, subresources'''
     url= xml_object.get('url')
     keywords_xml= xml_object.find('keywords')
-    keywords= [ServiceMetadataResource_keywords(keyword=k.text)  for k in keywords_xml.getchildren()] if keywords_xml else []    
-    resource= ServiceMetadataResource( parent_resource, service_object, url, keywords)
+    keywords= [ResourceKeyword(keyword=k.text) for k in keywords_xml.getchildren()] if keywords_xml is not None else []
+    resource= ServiceResource(url=url, keywords=keywords)
     resourcelist_xml= xml_object.findall('resource')
-    child_resources= [parse_metadataResource(r, resource, service_object) for r in resourcelist_xml]
-    resource.set_child_resources(child_resources)
-    methodlist_xml= xml_object.findall('method') 
-    methods= [parse_metadataResourceMethod(method, resource) for method in methodlist_xml]
-    resource.set_methods(methods)
-    db.session.add(resource)
+    for r in [parse_metadataResource(resource_xml) for resource_xml in resourcelist_xml]:
+        resource.resources.append(r)
+    methodlist_xml= xml_object.findall('method')
+    for m in [parse_metadataResourceMethod(method, resource) for method in methodlist_xml]:
+        resource.methods.append(m)
     return resource
 
 def parse_metadata(xml_object):
@@ -47,13 +42,13 @@ def parse_metadata(xml_object):
     name= service_xml.get('name')
     url= service_xml.get('url')
     descriptions_xml= service_xml.find('description')
-    description= descriptions_xml.text if descriptions_xml else ""
+    description= descriptions_xml.text if descriptions_xml is not None else ""
     formats_xml= service_xml.find('supported_formats')
-    formats= [ServiceMetadata_formats(format=getattr(rest_return_formats, f.text)) for f in formats_xml.getchildren()]
-    service_metadata= ServiceMetadata(name, url, description, formats, None)
+    formats= [ServiceFormat(format=getattr(rest_return_formats, f.text)) for f in formats_xml.getchildren()]
+
+
     root_resource_xml= service_xml.find('resource')
-    root_resource= parse_metadataResource(root_resource_xml, None, service_metadata)
-    service_metadata.set_root_resource(root_resource)
-    db.session.add(service_metadata)
-    db.session.commit()
+    root_resource= parse_metadataResource(root_resource_xml)
+
+    service_metadata= Service(name=name, url=url, description=description, formats=formats, resources=[root_resource])
     return service_metadata

@@ -1,5 +1,3 @@
-import sys
-
 from concierge.auth import requires_auth, User
 from concierge.services_models import Service
 from flask import Module, Response, request, session, g, \
@@ -13,9 +11,6 @@ from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
 from concierge import db
 
 from concierge.service_metadata_parser import serviceMetadataFromXML
-
-from common import modelxmlserializer
-from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
 
 
 services = Module(__name__, 'services')
@@ -63,18 +58,19 @@ def service(id):
 @services.route('/register/', methods=['GET','POST'])
 @requires_auth
 def register():
-        form = RegisterForm(request.form)
-        if form.validate_on_submit():
-            url = form.metadata_url.data
-            metadata = serviceMetadataFromXML(url)
-            service = Service(name=metadata.name, metadata_url=url, active=True, user_id=session['id'], service_metadata=metadata)
-            db.session.add(service)
-            try:
-                db.session.commit()
-            except:
-                db.session.rollback()
-        return render_template('register_service.html', form=form)
-    
+    form = RegisterForm(request.form)
+    if form.validate_on_submit():
+        url = form.metadata_url.data
+        service = serviceMetadataFromXML(url)
+        service.metadata_url = url
+        service.user = g.user
+        db.session.add(service)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+    return render_template('register_service.html', form=form)
+
 @services.route('/favorites_list')
 @requires_auth
 def fav_list():

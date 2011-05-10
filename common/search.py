@@ -18,6 +18,4 @@ def match_keywords_to_something(query, l):
                 result.append( (processed_query, v) )
             except:
                 pass    #no match
-    from common.debug_console import console
-    exec(console)
     return result
