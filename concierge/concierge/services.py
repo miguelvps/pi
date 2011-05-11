@@ -1,10 +1,9 @@
-from flask import Module, request, session, g, \
-                  render_template, redirect, url_for
+from flask import Module, request, g, render_template, redirect, url_for
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL, ValidationError
 
 from concierge import db
-from concierge.auth import requires_auth, User
+from concierge.auth import requires_auth
 from concierge.services_models import Service
 from concierge.service_metadata_parser import serviceMetadataFromXML
 
@@ -62,10 +61,9 @@ def register():
     return render_template('register_service.html', form=form)
 
 
-@services.route('/favorites_list')
+@services.route('/favorites')
 @requires_auth
-def fav_list():
-    user_id = session['id']
-    user = User.query.get_or_404(user_id)
+def favorites():
+    user = g.user
     favorites = user.favorite_services
-    return render_template('favorite_list.html',favorites=favorites)
+    return render_template('favorites.html',favorites=favorites)
