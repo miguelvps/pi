@@ -6,11 +6,11 @@ from common import rest_methods, rest_return_formats, rest_method_parameters
 def xmlFromUrl(url):
     urlloader = urllib2.build_opener()
     page = urlloader.open(url).read()
-    return ElementTree.fromstring(page)
+    return page
 
 def serviceMetadataFromXML(metadata_url):
-    xml_object= xmlFromUrl(metadata_url)
-    return parse_metadata(xml_object)
+    xml= xmlFromUrl(metadata_url)
+    return parse_metadata(xml)
 
 def parse_metadataResourceMethod(xml_object, parent_resource):
     '''returns method_type, parameters'''
@@ -33,9 +33,9 @@ def parse_metadataResource(xml_object):
     resource.methods = [parse_metadataResourceMethod(method, resource) for method in methodlist_xml]
     return resource
 
-def parse_metadata(xml_object):
+def parse_metadata(xml):
     '''returns name, url, description, formats, resource'''
-    service_xml= xml_object
+    service_xml = ElementTree.fromstring(xml)
     assert service_xml.tag=='service'
     name= service_xml.get('name')
     url= service_xml.get('url')
