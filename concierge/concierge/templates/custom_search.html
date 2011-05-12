@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block page_id %} custom_search {% endblock %}
+
+{% block redirect %} data-url="/custom_search" {% endblock %}
+
+{% block header %}
+	<div data-role="header"  data-id="concheader" data-backbtn="false" >
+    
+        <a href="/" class="ui-btn-left">Back</a>
+		<h1>Concierge</h1>
+
+	</div><!-- /header -->
+{% endblock %}
+
+{% block page_content %}
+
+	
+	<div data-role="content">
+
+        <form action="/custom_search/" method="post">
+
+                {{search_form.search_query}}
+                <span class="error">
+                    {% for error in search_form.search_query.errors  %}
+                        {{ error }}
+                    {% endfor %}
+                </span>
+
+            <div data-role="fieldcontain">
+                <fieldset data-role="controlgroup">
+                    {{search_form.csrf}}
+                    {% for field in search_form if field != search_form.search_query 
+                        and field != search_form.csrf %}
+                        {{field}}  {{field.label}} 
+                    {% endfor %}                    
+                </fieldset>
+            </div>
+
+        </form>
+	</div><!-- /content -->
+
+{% endblock %}
+
+
+{% block footer %}
+    <div data-role="footer" data-position="fixed" data-id="concfooter" >
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="settings">Settings</a></li>
+                    <li>
+                    {% if session.get("auth") == True %}
+                    <a href="/auth/logout">Logout</a>
+                    {% else %}
+                    <a href="/auth/login" data-transition="slideup">Login</a>
+                    {% endif %}
+                    </li>
+                    <li><a href="/history/">History</a></li>
+                </ul>
+		 </div><!-- /navbar -->
+    </div><!-- /footer -->
+           
+{% endblock %}
