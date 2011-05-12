@@ -15,6 +15,12 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pes.db'
 db = SQLAlchemy(app)
 
+serializer_params= SERIALIZER_PARAMETERS
+serializer_params['model']['show']= lambda a:   \
+    a.model_class.__name__!="Email" and         \
+    a.model_class.__name__!="Phone" and         \
+    a.model_class.__name__!="Fax"
+
 
 class Email(db.Model):
     keywords= ['email','mail']
@@ -70,9 +76,6 @@ class Teacher(db.Model):
         return teachers
         
 
-
-
-
 @app.route("/")
 def search():
     query_quoted = request.args.get('query', '')
@@ -101,7 +104,7 @@ def teachers():
 @app.route("/pessoas/<id>", methods=['GET',])
 def teacher(id):
     teacher = Teacher.query.options(joinedload('emails'), joinedload('phones'), joinedload('faxes')).get_or_404(id)
-    xml_text= modelxmlserializer.Model_Serializer(teacher).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
+    xml_text= modelxmlserializer.Model_Serializer(teacher).to_xml(serializer_params).toprettyxml()
     return Response(response=xml_text, mimetype="application/xml")
 
 
