@@ -20,6 +20,8 @@ serializer_params['model']['show']= lambda a:   \
     a.model_class.__name__!="Email" and         \
     a.model_class.__name__!="Phone" and         \
     a.model_class.__name__!="Fax"
+#only show xml element "list" in lists of Teacher, other lists get appended to parent's xml
+serializer_params['list']['show']=lambda a: len(a.l)>0 and a.l[0].__class__.__name__=="Teacher"
 
 
 class Email(db.Model):
@@ -104,6 +106,7 @@ def teachers():
 @app.route("/pessoas/<id>", methods=['GET',])
 def teacher(id):
     teacher = Teacher.query.options(joinedload('emails'), joinedload('phones'), joinedload('faxes')).get_or_404(id)
+    #import ipdb ; ipdb.set_trace()
     xml_text= modelxmlserializer.Model_Serializer(teacher).to_xml(serializer_params).toprettyxml()
     return Response(response=xml_text, mimetype="application/xml")
 
