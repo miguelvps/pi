@@ -1,10 +1,10 @@
-from flaskext.script import Manager
+from flaskext.script import Manager, Server
 
 from pes.app import app, db
 
 
 manager = Manager(app)
-
+manager.add_command("runserver", Server(port = 5001))
 
 @manager.command
 def syncdb():
