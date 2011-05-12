@@ -1,36 +1,27 @@
-from concierge.auth import requires_auth, User
-from concierge.services_models import Service
-from flask import Module, Response, request, session, g, \
-                  render_template, redirect, url_for
+from flask import Module, request, g, render_template, redirect, url_for
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
-                         Required, NumberRange, URL
-
-
-
+                         Required, NumberRange, URL, ValidationError
 
 from concierge import db
-
+from concierge.auth import requires_auth
+from concierge.services_models import Service
 from concierge.service_metadata_parser import serviceMetadataFromXML
 
 
 services = Module(__name__, 'services')
 
 
-
-
-
-
 class RegisterForm(Form):
-    metadata_url = TextField('Metada URL', validators=[Required(),URL()])
+    metadata_url = TextField('Metada URL', validators=[Required(), URL()])
+
+    def validate_metadata_url(form, field):
+        if Service.query.filter_by(metadata_url=form.metadata_url.data).first():
+            raise ValidationError('This service is already registered')
 
 
 class ServiceForm(Form):
     favorite = BooleanField('Favorite')
     rating = IntegerField('Rating', validators=[NumberRange(min=1, max=5)])
-
-
-
-
 
 
 @services.route('/<id>/', methods=['GET', 'POST'])
@@ -64,17 +55,15 @@ def register():
         service = serviceMetadataFromXML(url)
         service.metadata_url = url
         service.user = g.user
+
         db.session.add(service)
-        try:
-            db.session.commit()
-        except:
-            db.session.rollback()
+        db.session.commit()
     return render_template('register_service.html', form=form)
 
-@services.route('/favorites_list')
+
+@services.route('/favorites')
 @requires_auth
-def fav_list():
-    user_id = session['id']
-    user = User.query.get_or_404(user_id)
+def favorites():
+    user = g.user
     favorites = user.favorite_services
-    return render_template('favorite_list.html',favorites=favorites)
+    return render_template('favorites.html',favorites=favorites)
