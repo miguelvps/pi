@@ -19,6 +19,17 @@ class ModelList_xml(object):
 			for model in self.l:
 				xml.appendChild( Model_Serializer(model).to_xml(parameters) )
 			return xml
+			models_xml_tmp=[Model_Serializer(model).to_xml(parameters) for model in models]
+			models_xml=[]
+			for model_xml in models_xml_tmp:
+				if model_xml!=None:
+					if type(model_xml)!=type([]):
+						#is a model xml node
+						models_xml.append(model_xml)
+					else:
+						#is a list of atribute's xml nodes
+						models_xml.extend(model_xml)
+			return AwesomeXml( t(self), a(self) ).appendChild(models_xml) if s(self) else models_xml
 		return None
 
 class Model_Atribute_Serializer(object):
@@ -71,10 +82,10 @@ class Model_Serializer(object):
 		self.atributes= [Model_Atribute_Serializer(model_obj, name) for name in atribute_names]
 
 	def to_xml(self, parameters):
+		#import ipdb; ipdb.set_trace()
 		f, t, a, s= get_serializer_parameters_for(parameters, 'model')
 		if f(self):
-			xml= AwesomeXml( t(self), a(self) )
-			for atr in self.atributes:
-				xml.appendChild(atr.to_xml(parameters))
-			return xml
+			atrs_xml=[atr.to_xml(parameters) for atr in self.atributes]
+			atrs_xml= filter(lambda a:a!=None, atrs_xml)
+			return AwesomeXml( t(self), a(self) ).appendChild(atrs_xml) if s(self) else atrs_xml
 		return None
