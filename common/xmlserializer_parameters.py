@@ -22,6 +22,9 @@ def atribute_xml_atributes(atr):
   else:
     return {'kind': k, 'type': "INTERNAL_DB_VALUE"}
 
+def atribute_xml_show(atr):
+    return True
+
   
 def model_xml_filter(model):
   return True
@@ -29,28 +32,61 @@ def model_xml_tagname(model):
   return "entity"
 def model_xml_atributes(model):
   return {'kind': model.model_class.__name__, 'type': LIST_TYPE}
+def model_xml_show(model):
+    return True
 
 def list_xml_filter(model_list):
   return True
-def list_xml_tagname(model_list):
+def list_xml_tagname(model_list) :
   return 'entity'
 def list_xml_atributes(model_list):
   return {'type': "list"}
+def list_xml_show(atr):
+    return True
+
+def get_serializer_parameters_for(parameters, mal):
+    p= parameters[mal]
+    return p['filter'], p['tagname'], p['atributes'], p['show']
 
 '''
-serializer_parameters is a list of 3 lists.
-list 1 - model parameters
-list 2 - atribute parameters
-list 3 - list parameter
-each of these lists has 3 elements:
-el 1 - filter function
-el 2 - tagname function
-el 3 - atribute function
+let MAL be an Model, Atribute or List (of models)
+
+serializer_parameters is a dictionary of 3 dictionaries.
+
+model: model parameters
+atribute: dictionary of model parameters
+list: the dictionary of parameters
+
+each of these dictionaries has 4 key-value pairs:
+
+filter:     function that specifies if the MAL and it's atributes are processed
+tagname:    function that specifies the MAL xml tagname
+atributes:   function that specifies the MAL xml atributes
+show:       function that specifies if the MAL itself appears in the xml, or only it's subelements
 '''
+
 
 SERIALIZER_PARAMETERS= \
-  [
-  [model_xml_filter, model_xml_tagname, model_xml_atributes],
-  [atribute_xml_filter, atribute_xml_tagname, atribute_xml_atributes],
-  [list_xml_filter, list_xml_tagname, list_xml_atributes],
-  ]
+{
+'model':
+    {
+    'filter':   model_xml_filter,
+    'tagname':  model_xml_tagname,
+    'atributes':model_xml_atributes,
+    'show':     model_xml_show,
+    },
+'atribute':
+    {
+    'filter':     atribute_xml_filter,
+    'tagname':    atribute_xml_tagname,
+    'atributes':  atribute_xml_atributes,
+    'show':       atribute_xml_show,
+    },
+'list':
+    {
+    'filter':     list_xml_filter,
+    'tagname':    list_xml_tagname,
+    'atributes':  list_xml_atributes,
+    'show':       list_xml_show,
+    },
+}

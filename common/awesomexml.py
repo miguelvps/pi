@@ -20,15 +20,19 @@ class AwesomeXml:
 
 	def appendChild(self, tagname, attributes={}):
 		if tagname==None:
-			return None
-		if self.content:
+			pass
+		elif self.content:
 			raise Exception("Can't append a child to a node with content")
-		if type(tagname)==type(self):
-			el= tagname
+		elif type(tagname)==type(self):
+			#this is an AwesomeXml, append it directly
+			self.subelements.append(tagname)
+		elif type(tagname)==type([]):
+			#this is a list of AwesomeXml (or list of lists, etc). append all of them
+			map(self.appendChild, tagname)
 		else:
-			el= AwesomeXml(tagname, attributes)
-		self.subelements.append(el)
-		return el
+			#this is a tagname and attributes, create a AwesomeXml and append it
+			elf.subelements.append( AwesomeXml(tagname, attributes) )
+		return self
 
 	def toxml(self):
 		attributes= " ".join(['%s="%s"'%(k,v) for k,v in self.attributes.items()])
