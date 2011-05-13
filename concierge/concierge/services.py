@@ -25,24 +25,24 @@ class ServiceForm(Form):
 
 
 @services.route('/<id>/', methods=['GET', 'POST'])
-@requires_auth
 def service(id):
-    user = g.user
+    user = getattr(g, 'user', None)
     service = Service.query.get_or_404(id)
     form = ServiceForm(request.form)
 
-    if form.validate_on_submit():
-        if form.favorite.data and service not in user.favorite_services:
-            user.favorite_services.append(service)
-        elif not form.favorite.data and service in user.favorite_services:
-            user.favorite_services.remove(service)
-        user.rating_services[service] = form.rating.data
-        db.session.commit()
+    if user:
+        if form.validate_on_submit():
+            if form.favorite.data and service not in user.favorite_services:
+                user.favorite_services.append(service)
+            elif not form.favorite.data and service in user.favorite_services:
+                user.favorite_services.remove(service)
+            user.rating_services[service] = form.rating.data
+            db.session.commit()
 
-        return redirect(url_for('service', id=id))
+            return redirect(url_for('service', id=id))
 
-    form.favorite.data = service in user.favorite_services
-    form.rating.data = user.rating_services.get(service)
+        form.favorite.data = service in user.favorite_services
+        form.rating.data = user.rating_services.get(service)
     return render_template('service.html', service=service, form=form)
 
 

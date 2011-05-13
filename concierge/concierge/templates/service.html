@@ -1,33 +1,57 @@
 {% extends "base.html" %}
 
-{% block page_id %} {{service.name}} {% endblock %}
+{% block page_id %}{{service.name}}{% endblock %}
 
 {% block redirect %} data-url="/services/{{service.id}}" {% endblock %}
 
 {% block header %}
-    <div data-role="header" data-backbtn="false">
-        <h1>{{service.name}}</h1>
-        <a href="/" class="ui-btn-left">Back</a>
-    </div><!-- /header -->
+<div data-role="header" data-backbtn="false">
+    <h1>{{service.name}}</h1>
+    <a href="/" class="ui-btn-left">Back</a>
+</div><!-- /header -->
 {% endblock %}
 
 {% block page_content %}
-	<div data-role="content">
-            <form action="/services/{{service.id}}/" method="post">
-                         
-                <fieldset>
-                    <p> Check/Uncheck this service to favorite it.</p>
-                    {{form.favorite}} {{form.favorite.label}}
-                    <p>Give it a rating (1 to 5).</p>
-                    <input type="range" name="{{form.rating.name}}" id="slider" value="{{form.rating.data}}" min="1" max="5"  />
-                    {% for error in form.errors  %}
-                        {{ error }} 
-                    {% endfor %}
-                </fieldset>
-                <input id="SubmitServ" type="submit" value="Save" data-role="button" data-inline="true" data-theme="b" />
-            </form>
-	</div><!-- /content -->
-		
+
+<div data-role="content">
+    <form action="/services/{{service.id}}/" method="post">
+        <fieldset>
+            <p> Check/Uncheck this service to favorite it.</p>
+            {{form.favorite}} {{form.favorite.label}}
+            <p>Give it a rating (1 to 5).</p>
+            <input type="range" name="{{form.rating.name}}" id="slider" value="{{form.rating.data}}" min="1" max="5"  />
+            {% for error in form.errors  %}
+            {{ error }}
+            {% endfor %}
+        </fieldset>
+        <input id="submit" type="submit" value="Save" data-role="button" data-inline="true" data-theme="b" />
+    </form>
+</div><!-- /content -->
+
+<script type="text/javascript">
+var auth = false;
+{% if g.user %}
+    auth = true;
+{% endif %}
+$('#{{service.name}}').live('pagecreate',function(event){
+    if (!auth) {
+        $('input[name="{{form.rating.name}}"]').val(localStorage.getItem("rating.{{service.id}}")).slider("refresh");
+        $('input[name="{{form.favorite.name}}"]').attr("checked", localStorage.getItem("favorite.{{service.id}}")).checkboxradio("refresh");
+    }
+});
+$("form").submit(function(e) {
+    if (!auth) {
+        var rating = $('input[name="{{form.rating.name}}"]').val();
+        if (rating != "")
+            localStorage.setItem("rating.{{service.id}}", rating);
+            favorite = $('input[name="{{form.favorite.name}}"]').attr("checked");
+        if (favorite != "")
+            localStorage.setItem("favorite.{{service.id}}", favorite);
+        return false;
+    }
+});
+</script>
+
 {% endblock %}
 
 {% block footer %} {% endblock %}
