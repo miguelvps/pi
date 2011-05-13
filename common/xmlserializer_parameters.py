@@ -9,7 +9,7 @@ def descends(class1, parent_class):
 def atribute_xml_filter(atr):
   is_kind= descends(atr.atr_class, xml_kind)        #is a xml_kind
   is_model_list= atr.is_model_list()     #is a list of models (relationship)
-  is_empty= (atr.atr_obj==None) or (is_model_list and len(atr.atr_obj)==0)  #value is null, or model list is empty
+  is_empty= (atr.atr_obj==None) and not is_model_list  #value is null, or model list is empty
   return not is_empty and (is_kind or is_model_list)
 
 def atribute_xml_tagname(atr):
@@ -37,7 +37,7 @@ def model_xml_show(model):
     return True
 
 def list_xml_filter(model_list):
-  return True
+  return len(model_list)>0
 def list_xml_tagname(model_list) :
   return 'entity'
 def list_xml_atributes(model_list):

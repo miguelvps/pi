@@ -20,6 +20,9 @@ class ModelList_xml(object):
 			return AwesomeXml( t(self), a(self) ).appendChild(models_xml) if s(self) else models_xml
 		return None
 
+	def __len__(self):
+		return self.l.__len__()
+
 class Model_Atribute_Serializer(object):
 	TRUE_ATRIBUTE, MODEL_LIST_ATRIBUTE= range(2)
 	def __init__(self, model_obj, atr_name):
