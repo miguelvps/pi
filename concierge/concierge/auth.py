@@ -74,6 +74,8 @@ def before_request():
         user = User.query.filter_by(username=session['username']).first()
         if user:
             g.user = user
+        else:
+            session.pop('auth', None)
 
 
 @auth.after_app_request
