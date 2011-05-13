@@ -1,13 +1,13 @@
 import inspect
-import xml_kinds
+from xml_kinds import xml_kind, get_model_kind
 from xml_types import LIST_TYPE
 import sqlalchemy
 
-
-kinds= [ x for x in vars(xml_kinds).values() if inspect.isclass(x) and sqlalchemy.types.AbstractType in inspect.getmro(x)]
+def descends(class1, parent_class):
+    return inspect.isclass(class1) and parent_class in inspect.getmro(class1)
 
 def atribute_xml_filter(atr):
-  is_kind= atr.atr_class in kinds        #is a xml_kind
+  is_kind= descends(atr.atr_class, xml_kind)        #is a xml_kind
   is_model_list= atr.is_model_list()     #is a list of models (relationship)
   is_empty= (atr.atr_obj==None) or (is_model_list and len(atr.atr_obj)==0)  #value is null, or model list is empty
   return not is_empty and (is_kind or is_model_list)
@@ -31,7 +31,8 @@ def model_xml_filter(model):
 def model_xml_tagname(model):
   return "entity"
 def model_xml_atributes(model):
-  return {'kind': model.model_class.__name__, 'type': LIST_TYPE}
+    kind= get_model_kind(model.model_class)
+    return {'kind': kind.__name__, 'type': kind.type}
 def model_xml_show(model):
     return True
 

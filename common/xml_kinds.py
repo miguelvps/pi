@@ -3,6 +3,14 @@ import xml_types
 
 class xml_kind(object): pass
 
+def set_model_kind(model_class, kind):
+    model_class.kind= kind
+
+def get_model_kind(model_class):
+    return getattr(model_class,'kind',None)
+
+
+
 K= xml_kind
 SB= sqlalchemy.types.Boolean
 SD= sqlalchemy.types.Date
@@ -10,7 +18,8 @@ SS= sqlalchemy.types.String
 
 
 #PES
-class birthdate (SD, K):   type = xml_types.DATETIME_TYPE
+class person    (K):     type = xml_types.LIST_TYPE
+class birthdate (SD, K): type = xml_types.DATETIME_TYPE
 class name      (SS, K): type = xml_types.STRING_TYPE
 class office    (SS, K): type = xml_types.STRING_TYPE
 class contact   (SS, K): type = xml_types.STRING_TYPE

@@ -76,7 +76,8 @@ class Teacher(db.Model):
     def search_result(query):
         teachers = Teacher.query.options(joinedload('emails'), joinedload('phones'), joinedload('faxes')).filter(Teacher.name.like(query)).all()
         return teachers
-        
+
+xml_kinds.set_model_kind(Teacher, xml_kinds.person)
 
 @app.route("/")
 def search():
