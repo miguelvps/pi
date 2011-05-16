@@ -93,7 +93,10 @@ def search():
         db_query= '%{0}%'.format(targeted_query)
         results.append(model.search_result(db_query))
     results= [t for t in itertools.chain(*results)]
-    xml_text= modelxmlserializer.ModelList_xml(results).to_xml(SERIALIZER_PARAMETERS).toxml()
+    if len(results) == 0:
+        xml_text = ""
+    else :
+        xml_text= modelxmlserializer.ModelList_xml(results).to_xml(SERIALIZER_PARAMETERS).toxml() 
     return Response(response=xml_text, mimetype="application/xml")
 
 
