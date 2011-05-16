@@ -133,18 +133,18 @@ class AuthTest(TestCase):
 
     def test_last_seen(self):
         with self.client as c:
-            utc = datetime.utcnow()
+            start = datetime.utcnow()
             c.post(url_for('auth.login'), data=dict(
                 username='username',
                 password='password',
                 remember=True))
             user = User.query.filter_by(username='username').first()
-            assert datetime.utcnow() > user.last_seen > utc
+            end = datetime.utcnow()
+            assert end > user.last_seen > start
 
-            utc = datetime.utcnow()
             c.get('/')
             user = User.query.filter_by(username='username').first()
-            assert datetime.utcnow() > user.last_seen > utc
+            assert end > user.last_seen > start
 
 
 
