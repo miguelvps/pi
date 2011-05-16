@@ -6,12 +6,30 @@ import HTMLParser
 import itertools
 from BeautifulSoup import BeautifulSoup
 
-from flask import Flask
+from flask import Flask, Response
 
 unescape = HTMLParser.HTMLParser().unescape
 
 app = Flask(__name__)
 
+class Book(object):
+    def __init__(self, title, author=None, publisher=None, isbn=None, notes=None):
+        self.title = title
+        self.author = author
+        self.publisher = publisher
+        self.isbn = isbn
+        self.notes = notes
+
+    def xml(self):
+        xml = ''
+        xml += '<entity kind="book" type="list" representative="%s">' % self.title
+        xml +=     '<entity kind="title" type="string">%s</entity>' % self.title
+        xml +=     '<entity kind="author" type="string">%s</entity>' % self.author if self.author else ''
+        xml +=     '<entity kind="publisher" type="string">%s</entity>' % self.publisher if self.publisher else ''
+        xml +=     '<entity kind="isbn" type="string">%s</entity>' % self.isbn if self.isbn else ''
+        xml +=     '<entity kind="notes" type="string">%s</entity>' % self.notes if self.notes else ''
+        xml += '</entity>'
+        return xml
 
 def normalize(kv):
     if (kv[0] == u'Autor'):
@@ -19,7 +37,7 @@ def normalize(kv):
     if (kv[0] == u'Título'):
         return ('title', kv[1])
     if (kv[0] == u'Publicação'):
-        return ('publish', kv[1])
+        return ('publisher', kv[1])
     if (kv[0] == u'Notas gerais'):
         return ('notes', kv[1])
     if (kv[0] == u'ISBN'):
@@ -48,11 +66,14 @@ def library_search(query, start=0, amount=20):
                 kv = normalize((key,value))
                 if kv:
                     book[kv[0]] = kv[1]
-        books.append(book)
+        books.append(Book(**book))
     return books
 
 @app.route("/search/<query>")
 def search(query):
     books = library_search(query)
-    return str(books)
-
+    xml =  '<entity type="list">'
+    for book in books:
+        xml += book.xml()
+    xml += '</entity>'
+    return Response(response=xml, mimetype="application/xml")
