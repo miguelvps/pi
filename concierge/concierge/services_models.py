@@ -95,6 +95,16 @@ class ServiceResource(db.Model):
                 methods.extend( subres.find_methods(recursive, filter_function))
         return methods
 
+    def get_resource_by_url(self, url):
+        if type(url)== str or type(url)==unicode:
+            url= url.split('/')
+
+        local_resource_name= url[0]
+        local_resource= filter(lambda r:r.url==local_resource_name, self.resources)[0]
+        if len(url)==1:
+            return local_resource
+        else:
+            return local_resource.get_resource_by_url(url[1:])
 
 class ResourceKeyword(db.Model):
     id = db.Column(db.Integer, primary_key=True)
