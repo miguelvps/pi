@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 
-from flask import Module, request, session, g, render_template, redirect, url_for
+from flask import Module, request, session, g, render_template, redirect, \
+                  make_response, url_for
 from flaskext.wtf import Form, TextField, PasswordField, BooleanField, \
                          Required, Length, EqualTo, ValidationError
 from werkzeug import generate_password_hash, check_password_hash
@@ -81,9 +82,13 @@ def before_request():
 @auth.after_app_request
 def after_request(response):
     if hasattr(g, 'user'):
-        g.user.last_seen = datetime.utcnow()
-        db.session.merge(g.user)
-        db.session.commit()
+        if not request.cookies.get('online'):
+            time = datetime.utcnow()
+            response.set_cookie('online', value='1', max_age=None,
+                                expires=time+timedelta(minutes=5))
+            g.user.last_seen = datetime.utcnow()
+            db.session.merge(g.user)
+            db.session.commit()
     return response
 
 
@@ -129,5 +134,7 @@ def login():
 @auth.route('/logout')
 @requires_auth
 def logout():
-    session.pop('auth', None)
-    return redirect('/')
+    session.pop('auth')
+    response = make_response(redirect('/'))
+    response.delete_cookie('online')
+    return response
