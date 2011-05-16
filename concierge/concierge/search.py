@@ -23,17 +23,20 @@ def match_search_to_methods_keywords(query, methods):
     keywords_methods=[([k.keyword for k in method.resource.keywords], method) for method in methods]
     return match_keywords_to_something(query, keywords_methods)
 
-def result_xml_to_text(xml, header=True):
+def result_xml_to_text(xml):
     if type(xml)==str or type(xml)==unicode:
         #this is xml in string format
         xml= ElementTree.fromstring(xml.encode('utf-8'))
 
     if xml.get('type')== xml_types.LIST_TYPE:
         html_children= "".join(map(result_xml_to_text, xml.getchildren()) )
-        header_html= '<h3>%s</h3>' % (xml.get('kind') or "List") if header else ''
-        return '<div data-role="collapsible" data-collapsed="false" >%s%s</div>' % (header_html,html_children)
+        r, k = xml.get('representative'), xml.get('kind')
+        list_str= "%s: %s" % (k,r) if (k and r) else k or "List"
+        list_header= '<h3>%s</h3>' % list_str
+        data_collapsed= "true" if k else "false"
+        return '<div data-role="collapsible" data-collapsed="%s" >%s%s</div>' % (data_collapsed, list_header,html_children)
     else:
-        return '<div data-role="collapsible" data-collapsed="false" ><h3>%s</h3><p>%s</p></div>' % (xml.get('kind') or "attribute", xml.text)
+        return '<p>%s</p>' % (xml.get('kind') + ": "+ xml.text )
 
 
 @search.route('/custom_search/', methods=['GET', 'POST'])

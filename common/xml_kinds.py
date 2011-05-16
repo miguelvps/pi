@@ -18,7 +18,6 @@ SS= sqlalchemy.types.String
 
 
 #PES
-class person    (K):     type = xml_types.LIST_TYPE
 class birthdate (SD, K): type = xml_types.DATETIME_TYPE
 class name      (SS, K): type = xml_types.STRING_TYPE
 class office    (SS, K): type = xml_types.STRING_TYPE
@@ -26,6 +25,8 @@ class contact   (SS, K): type = xml_types.STRING_TYPE
 class email     (SS, K): type = xml_types.EMAIL_TYPE
 class phone     (SS, K): type = xml_types.STRING_TYPE
 class fax       (SS, K): type = xml_types.STRING_TYPE
+class person    (K):     type = xml_types.LIST_TYPE ; representative = name
+
 
 #CONCIERGE - SERVICES
 class service_name  (SS, K): type = xml_types.STRING_TYPE
