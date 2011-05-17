@@ -6,7 +6,7 @@ import HTMLParser
 import itertools
 from BeautifulSoup import BeautifulSoup
 
-from flask import Flask, Response
+from flask import Flask, Response, request
 
 unescape = HTMLParser.HTMLParser().unescape
 
@@ -49,7 +49,7 @@ def normalize(kv):
 # RecPag=10 -> number of records per page
 # Form=COMP -> display type {COMP, LISTA, ...}
 def library_search(query, start=0, amount=20):
-    url = "http://biblioteca.fct.unl.pt:8888/docbweb/pesqres.asp?Base=ISBD&Form=COMP&StartRec=%s&RecPag=%s&SearchTxt=%s" % (start, amount, urllib.quote(query))
+    url = "http://biblioteca.fct.unl.pt:8888/docbweb/pesqres.asp?Base=ISBD&Form=COMP&StartRec=%s&RecPag=%s&SearchTxt=%s" % (start, amount, urllib.quote(query.replace(' ', '+')))
     books = []
     page = urllib.urlopen(url).read()
     xml = BeautifulSoup(page)
@@ -69,8 +69,13 @@ def library_search(query, start=0, amount=20):
         books.append(Book(**book))
     return books
 
-@app.route("/search/<query>")
-def search(query):
+keywords = [ u'biblioteca', u'livro', u'livros', u'catalogo', u'catálogo',
+             u'catalogos', u'catálogos' ]
+
+@app.route("/")
+def search():
+    query = urllib.unquote_plus(request.args.get('query', ''))
+    query = ' '.join([q for q in query.split(' ') if q not in keywords])
     books = library_search(query)
     xml =  '<entity type="list">'
     for book in books:
