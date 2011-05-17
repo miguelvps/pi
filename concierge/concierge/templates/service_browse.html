@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block page_id %} service_browse {% endblock %}
+
+{% block redirect %} data-url="/service_browse" {% endblock %}
+
+{% block header %}
+	<div data-role="header"  data-id="concheader" data-backbtn="false" >
+		<h1>{{ service.name }}</h1>
+    </div>
+
+{% endblock %}
+
+{% block page_content %}
+
+	
+	<div data-role="content">					
+		<ul data-role="listview"  data-theme="c" data-dividertheme="b" data-inset="True">
+            {% for r in resource.resources %}
+                <li><a href="/services/{{service.id}}">{{r.url+"/"}}</a></li>
+            {% endfor %}
+		</ul>
+	</div><!-- /content -->
+
+{% endblock %}
+
+
+{% block footer %}
+  
+{% endblock %}

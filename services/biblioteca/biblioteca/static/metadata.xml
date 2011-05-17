@@ -1,0 +1,20 @@
+<service name="Biblioteca" url="http://127.0.0.1:5002/">
+    <supported_formats>
+        <format>xml</format>
+    </supported_formats>
+
+    <resource url="">
+        <keywords>
+            <keyword>biblioteca</keyword>
+            <keyword>livro</keyword>
+            <keyword>livros</keyword>
+            <keyword>catalogo</keyword>
+            <keyword>catálogo</keyword>
+            <keyword>catalogos</keyword>
+            <keyword>catálogos</keyword>
+        </keywords>
+        <method type="GET" >
+            <parameter>query</parameter>
+        </method>
+    </resource>
+</service>

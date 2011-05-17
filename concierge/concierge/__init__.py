@@ -33,4 +33,7 @@ def create_app(cfg=None):
     from concierge.auth import auth
     app.register_module(auth, url_prefix='/auth')
 
+    from concierge.service_browse import service_browse
+    app.register_module(service_browse)
+
     return app
