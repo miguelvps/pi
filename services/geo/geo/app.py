@@ -9,7 +9,7 @@ db = SQLAlchemy(app)
 
 class PlacemarkType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    type_name= db.Column(db.String(64), primary_key=True)
+    type_name= db.Column(db.String(64))
 
 class Placemark(db.Model):
     keywords= []
@@ -17,6 +17,7 @@ class Placemark(db.Model):
     folder= db.Column(db.String(128))
     name= db.Column(xml_kinds.geo_name(128))
     abreviation= db.Column(db.String(32))
+    type_id= db.Column( db.Integer, db.ForeignKey('placemark_type.id'))
     type= db.relationship('PlacemarkType')
     geowkt= db.Column(db.String(8192))
 
