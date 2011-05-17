@@ -35,13 +35,14 @@ class Course(db.Model):
     name = db.Column( xml_kinds.course_name(1024) )
     acronym = db.Column( xml_kinds.course_acronym(255) )
     dep_id = db.Column ( db.Integer, db.ForeignKey('department.id') )
-
+    type_id = db.Column( db.Integer, db.ForeignKey('course_type.id') ) 
+    
     type = db.relationship('CourseType')
     subjects = db.relationship('Subject', secondary=course_subjects, backref='courses')
 
 
 #Subject
-class Subject_Period(db.Model):
+class SubjectPeriod(db.Model):
     keyword= [] #TODO define keywords
     id = db.Column(db.Integer, primary_key=True )
     period = db.Column( xml_kinds.subject_period(255)  )
@@ -53,9 +54,6 @@ class Subject(db.Model):
     acronym = db.Column( xml_kinds.subject_acronym(255) )
     regent = db.Column( xml_kinds.subject_regent(1024) )
     coordinator = db.Column( xml_kinds.subject_coordinator(1024) )
+    period_id = db.Column( db.Integer, db.ForeignKey('subject_period.id') ) 
     
-    period = db.relationship('Subject_Period')
-
-
-app.run()
-
+    period = db.relationship('SubjectPeriod')
