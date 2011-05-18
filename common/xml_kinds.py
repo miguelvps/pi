@@ -35,4 +35,9 @@ class service_active(SB, K): type = xml_types.BOOLEAN_TYPE
 
 #GEO
 class geo_name(SS, K): type = xml_types.STRING_TYPE
+class geo_folder(SS, K): type = xml_types.STRING_TYPE
+class geo_abreviation(SS, K): type = xml_types.STRING_TYPE
+class geo_wkt(SS, K): type = xml_types.STRING_TYPE
+
+
 class geo_placemark(K): type = xml_types.LIST_TYPE ; representative = geo_name
