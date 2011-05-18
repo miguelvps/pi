@@ -25,7 +25,7 @@ class contact   (SS, K): type = xml_types.STRING_TYPE
 class email     (SS, K): type = xml_types.EMAIL_TYPE
 class phone     (SS, K): type = xml_types.STRING_TYPE
 class fax       (SS, K): type = xml_types.STRING_TYPE
-class person    (K):     type = xml_types.LIST_TYPE ; representative = name
+class person    (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.name)
 
 #ORG
 
@@ -33,12 +33,12 @@ class person    (K):     type = xml_types.LIST_TYPE ; representative = name
 class course_name       (SS, K): type = xml_types.STRING_TYPE
 class course_acronym    (SS, K): type = xml_types.STRING_TYPE 
 class course_type       (SS, K): type = xml_types.STRING_TYPE
-class course            (K):     type = xml_types.LIST_TYPE ; representative = course_name
+class course            (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.course_name)
 
 ##DEPARTMENT
 class dep_name          (SS, K): type = xml_types.STRING_TYPE
 class dep_acronym       (SS, K): type = xml_types.STRING_TYPE 
-class department        (K):     type = xml_types.LIST_TYPE ; representative = dep_name
+class department        (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.dep_name)
 
 ##SUBJECT
 class subject_name        (SS, K): type = xml_types.STRING_TYPE
@@ -46,7 +46,7 @@ class subject_acronym     (SS, K): type = xml_types.STRING_TYPE
 class subject_period      (SS, K): type = xml_types.STRING_TYPE
 class subject_regent      (SS, K): type = xml_types.STRING_TYPE  
 class subject_coordinator (SS, K): type = xml_types.STRING_TYPE  
-class subject             (K):     type = xml_types.LIST_TYPE ; representative = subject_name
+class subject             (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.subject_name)
 
 #CONCIERGE - SERVICES
 class service_name  (SS, K): type = xml_types.STRING_TYPE
@@ -60,4 +60,4 @@ class geo_abreviation(SS, K): type = xml_types.STRING_TYPE
 class geo_wkt(SS, K): type = xml_types.STRING_TYPE
 
 
-class geo_placemark(K): type = xml_types.LIST_TYPE ; representative = geo_name
+class geo_placemark(K): type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: "%s (%s)" % (obj.name, obj.folder))

@@ -32,10 +32,7 @@ def model_xml_tagname(model):
   return "entity"
 def model_xml_atributes(model):
     kind= get_model_kind(model.model_class)
-    rc= kind.representative
-    r= filter(lambda a: a.atr_class==rc, model.atributes)
-    assert len(r)==1
-    r_str= r[0].atr_obj
+    r_str= kind.representative(model.model_obj)
     return {'kind': kind.__name__, 'type': kind.type, 'representative': r_str}
 def model_xml_show(model):
     return True
