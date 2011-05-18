@@ -6,7 +6,7 @@ from sqlalchemy.orm import joinedload
 from common import xml_kinds
 from common import modelxmlserializer
 from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
-from common.search import match_keywords_to_something
+from common import search
 
 import urllib
 import itertools
@@ -30,11 +30,8 @@ class Email(db.Model):
     email = db.Column( xml_kinds.email(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
-    @staticmethod
-    def search_result(query):
-        emails = Email.query.filter(Email.email.like(query)).all()
-        return [f.person for f in emails]
-
+    search_atributes= ["email"]
+    search_representative="person"
 
 
 class Phone(db.Model):
@@ -43,10 +40,8 @@ class Phone(db.Model):
     phone = db.Column( xml_kinds.phone(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
 
-    @staticmethod
-    def search_result(query):
-        phones = Phone.query.filter(Phone.phone.like(query)).all()
-        return [f.person for f in phones]
+    search_atributes= ["Phone"]
+    earch_representative="person"
 
 
 class Fax(db.Model):
@@ -54,50 +49,30 @@ class Fax(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fax = db.Column( xml_kinds.fax(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('teacher.id'))
-
-    @staticmethod
-    def search_result(query):
-        faxes = Fax.query.filter(Fax.fax.like(query)).all()
-        return [f.person for f in faxes]
-
+    
+    search_atributes= ["fax"]
+    earch_representative="person"
 
 class Teacher(db.Model):
-    keywords= ['pessoa','professor']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column( xml_kinds.name(1024) )
     birth_date = db.Column( xml_kinds.birthdate )
     office = db.Column( xml_kinds.office(64) )
-
     emails = db.relationship('Email', backref='person')
     phones = db.relationship('Phone', backref='person')
     faxes = db.relationship('Fax', backref='person')
-
-    @staticmethod
-    def search_result(query):
-        teachers = Teacher.query.options(joinedload('emails'), joinedload('phones'), joinedload('faxes')).filter(Teacher.name.like(query)).all()
-        return teachers
+    
+    keywords= ['pessoa','professor']
+    search_joins= ["emails", "phones", "faxes"]
+    search_atributes= ["name"]
 
 xml_kinds.set_model_kind(Teacher, xml_kinds.person)
 
 @app.route("/")
-def search():
-    query_quoted = request.args.get('query', '')
-    query= urllib.unquote_plus(query_quoted)
-        
-    models= [Phone, Email, Fax, Teacher]
-    keywords_models= [(model.keywords, model) for model in models]
-    queries_models= match_keywords_to_something(query, keywords_models)
-
-    results=[]
-    for targeted_query, model in queries_models:
-        db_query= '%{0}%'.format(targeted_query)
-        results.append(model.search_result(db_query))
-    results= [t for t in itertools.chain(*results)]
-    if len(results) == 0:
-        xml_text = ""
-    else :
-        xml_text= modelxmlserializer.ModelList_xml(results).to_xml(SERIALIZER_PARAMETERS).toxml() 
-    return Response(response=xml_text, mimetype="application/xml")
+def search_method():
+    q = request.args.get('query', '')   #quoted query
+    xml= search.service_search_xmlresponse([Teacher, Email, Fax, Phone], q, SERIALIZER_PARAMETERS)
+    return Response(response=xml, mimetype="application/xml")
 
 
 @app.route("/pessoas/", methods=['GET',])
