@@ -1,4 +1,4 @@
-from flask import Module, request, session, render_template, redirect
+from flask import Module, request, session, render_template, redirect, g
 from concierge.services_models import Service
 
 from concierge.auth import HistoryEntry
@@ -44,13 +44,13 @@ def custom_search():
     services = Service.query.all()
 
     class CustomSearchForm(Form):
-        search_query = SearchField('query', validators=[Required(), Length(min=1)])
+        search_query = SearchField('Search', validators=[Required(), Length(min=1)])
         variables = locals()
         for service in services:
             variables[service.name] = BooleanField(service.name)
         
     form = CustomSearchForm(request.form)
-    
+
     services_names = [ service.name for service in services]
     service_dict = dict(zip(services_names, services))
     
@@ -68,7 +68,19 @@ def custom_search():
             db.session.commit()
         
         return search_aux(query, received_services)  
-
+        
+    favorite_check = request.args.get('check_favorites', '')   # 
+    
+        
+    if favorite_check:
+        user = g.user
+        favorites = user.favorite_services
+        favorite_services_names = [ service.name for service in favorites ]
+        for field in form:
+            if field != form.search_query:
+                if field.name in favorite_services_names:
+                    field.data = True
+    
     return render_template('custom_search.html', search_form=form)
 
 
