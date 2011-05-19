@@ -71,7 +71,8 @@ xml_kinds.set_model_kind(Teacher, xml_kinds.person)
 @app.route("/")
 def search_method():
     q = request.args.get('query', '')   #quoted query
-    xml= search.service_search_xmlresponse([Teacher, Email, Fax, Phone], q, SERIALIZER_PARAMETERS)
+    model_list= [Teacher, Email, Fax, Phone]
+    xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
     return Response(response=xml, mimetype="application/xml")
 
 
