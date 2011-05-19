@@ -1,8 +1,10 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
 from common import xml_kinds
 from common import modelxmlserializer
 from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
+from common import search
+
 
 
 app = Flask(__name__)
@@ -18,26 +20,32 @@ course_subjects = db.Table('course_subjects',
 
 # DEPARTMENT
 class Department(db.Model):
-    keyword=[] # TODO: define keywords
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(xml_kinds.dep_name(255))
 
     courses =  db.relationship('Course', backref='department')
+
+    keywords = ['departamento', 'departamentos']
+    search_atributes = ['name']
 
 xml_kinds.set_model_kind(Department, xml_kinds.department)
 
 
 # COURSE
 class CourseType(db.Model):
-    keyword= [] #TODO define keywords
+    keywords = ['licenciatura', 'licenciaturas', 'mestrado', 'mestrados',
+               'douturamento', 'douturamento']
     id = db.Column(db.Integer, primary_key=True)
     name= db.Column(xml_kinds.course_type(255))
 
     courses = db.relationship('Course', backref='type')
 
+    search_atributes = ['name']
+    search_representative = 'courses'
+
 
 class Course(db.Model):
-    keyword=[] # TODO: define keywords
+    keywords=['curso', 'cursos']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(xml_kinds.course_name(255))
     acronym = db.Column(xml_kinds.course_acronym(10))
@@ -46,20 +54,26 @@ class Course(db.Model):
 
     subjects = db.relationship('Subject', secondary=course_subjects, backref='courses')
 
+    search_atributes = ['name', 'acronym']
+    search_join = ['type']
+
 xml_kinds.set_model_kind(Course, xml_kinds.course)
 
 
 # Subject
 class SubjectPeriod(db.Model):
-    keyword= [] # TODO: define keywords
+    keywords= ['anual', 'semestre', 'trimestre']
     id = db.Column(db.Integer, primary_key=True)
     period = db.Column(xml_kinds.subject_period(255))
 
     subjects = db.relationship('Subject', backref='period')
 
+    search_atributes = ['period']
+    search_representative = 'subjects'
+
 
 class Subject(db.Model):
-    keyword=[] # TODO: define keywords
+    keywords=['cadeira', 'cadeiras', 'disciplina', 'disciplinas']
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(xml_kinds.subject_name(255))
     acronym = db.Column(xml_kinds.subject_acronym(10))
@@ -67,44 +81,50 @@ class Subject(db.Model):
     coordinator = db.Column(xml_kinds.subject_coordinator(255))
     period_id = db.Column(db.Integer, db.ForeignKey('subject_period.id'))
 
+    search_atributes = ['name', 'acronym']
+    search_join = ['period']
+
 xml_kinds.set_model_kind(Subject, xml_kinds.subject)
 
 
 @app.route('/')
-def search():
-    pass
+def s():
+    q = request.args.get('query', '')   #quoted query
+    xml= search.service_search_xmlresponse([Department, Course, CourseType, Subject, SubjectPeriod], q, SERIALIZER_PARAMETERS)
+    return Response(response=xml, mimetype="application/xml")
 
-@app.route('/departments')
+
+@app.route('/departamentos')
 def departments():
     departments = Department.query.all()
     xml_text= modelxmlserializer.ModelList_xml(departments).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(xml_text, mimetype='application/xml')
 
-@app.route('/department/<id>')
+@app.route('/departamentos/<id>')
 def department(id):
     department = Department.query.get_or_404(id)
     xml_text= modelxmlserializer.Model_Serializer(department).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
     return Response(xml_text, mimetype='application/xml')
 
-@app.route('/courses')
+@app.route('/cursos')
 def courses():
     courses = Course.query.all()
     xml_text= modelxmlserializer.ModelList_xml(courses).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(xml_text, mimetype='application/xml')
 
-@app.route('/courses/<id>')
+@app.route('/cursos/<id>')
 def course(id):
     course = Course.query.get_or_404(id)
     xml_text= modelxmlserializer.Model_Serializer(course).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
     return Response(xml_text, mimetype='application/xml')
 
-@app.route('/subjects')
+@app.route('/cadeiras')
 def subjects():
     subjects = Subject.query.all()
     xml_text= modelxmlserializer.ModelList_xml(subjects).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(xml_text, mimetype='application/xml')
 
-@app.route('/subjects/<id>')
+@app.route('/cadeiras/<id>')
 def subject(id):
     subject = Subject.query.get_or_404(id)
     xml_text= modelxmlserializer.Model_Serializer(subject).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
