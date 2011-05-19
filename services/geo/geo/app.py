@@ -13,9 +13,9 @@ class PlacemarkType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type_name= db.Column(xml_kinds.geo_placemarktypename(64))
 
-    keywords= ["edificios", "salas"]
+    keywords= ['edificios', 'salas']
     search_atributes= ["type_name"]
-    search_representative="Placemark"
+    search_representative="placemark"
 
 class Placemark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -23,12 +23,12 @@ class Placemark(db.Model):
     name= db.Column(xml_kinds.geo_name(128))
     abreviation= db.Column(xml_kinds.geo_abreviation(32))
     type_id= db.Column( db.Integer, db.ForeignKey('placemark_type.id'))
-    type= db.relationship('PlacemarkType')
+    type= db.relationship('PlacemarkType', backref='placemark')
     geowkt= db.Column(xml_kinds.geo_wkt(8192))
 
-    keywords= ['sitio','place', 'placemark', 'edificio', 'sala' ]
+    keywords= ['sitio','place', 'placemark', 'sala', 'edificio']
     search_joins= ["type"]
-    search_atributes= ["folder", "name", "abreviation"]
+    search_atributes= ["name", "abreviation"]
 
 xml_kinds.set_model_kind(Placemark, xml_kinds.geo_placemark)
 xml_kinds.set_model_kind(PlacemarkType, xml_kinds.geo_placemarktype)
