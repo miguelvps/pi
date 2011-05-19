@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 
 class PlacemarkType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    type_name= db.Column(db.String(64))
+    type_name= db.Column(xml_kinds.geo_placemarktypename(64))
 
     keywords= ["edificios", "salas"]
     search_atributes= ["type_name"]
@@ -31,6 +31,7 @@ class Placemark(db.Model):
     search_atributes= ["folder", "name", "abreviation"]
 
 xml_kinds.set_model_kind(Placemark, xml_kinds.geo_placemark)
+xml_kinds.set_model_kind(PlacemarkType, xml_kinds.geo_placemarktype)
 
 @app.route("/placemark/", methods=['GET',])
 def placemark():
