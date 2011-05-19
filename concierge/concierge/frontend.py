@@ -38,3 +38,6 @@ def history():
 def settings():
     return render_template('settings.html')
 
+@frontend.route('/map/')
+def map():
+    return render_template('map.html')
