@@ -9,8 +9,8 @@ ALLOWED_ATRIBUTE_TYPES= [sqlalchemy.types.Date, sqlalchemy.types.String]
 
 class ModelList_xml(object):
 	def __init__(self, l):
-		assert hasattr(l, '__iter__')
-		self.l= l
+		self.l= l if l else []
+		assert hasattr(self.l, '__iter__')
 	
 	def to_xml(self, parameters):
 		f, t, a, s= get_serializer_parameters_for(parameters, 'list')
