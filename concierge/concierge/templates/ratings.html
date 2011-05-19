@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block page_id %} ratings {% endblock %}
+
+{% block redirect %} data-url="/services/ratings" {% endblock %}
+
+{% block header %}
+    <div data-role="header" data-backbtn="false">
+        <h1>Ratings</h1>
+        <a href="/settings" class="ui-btn-left">Back</a>
+    </div><!-- /header -->
+{% endblock %}
+	
+{% block page_content %}
+	<div data-role="content">					
+        <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset=True>
+            <li data-role="list-divider">Ratings</li>
+            {% for service,rating in ratings.items() %}
+                <li><a href="/services/{{service.id}}">
+                    <h3>{{service.name}}</h3> 
+                    <span class="ui-li-count">{{rating}}</span>
+                </a></li>
+            {% endfor %}
+		</ul>
+	</div><!-- /content -->
+{% endblock %}
+
+{% block footer %} {% endblock %}
