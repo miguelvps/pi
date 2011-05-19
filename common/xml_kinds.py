@@ -29,24 +29,24 @@ class person    (K):     type = xml_types.LIST_TYPE ; representative = staticmet
 
 #ORG
 
+##DEPARTMENT
+class dep_name          (SS, K): type = xml_types.STRING_TYPE
+class dep_acronym       (SS, K): type = xml_types.STRING_TYPE 
+class department        (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.name)
+
 ##COURSE
 class course_name       (SS, K): type = xml_types.STRING_TYPE
 class course_acronym    (SS, K): type = xml_types.STRING_TYPE 
 class course_type       (SS, K): type = xml_types.STRING_TYPE
-class course            (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.course_name)
-
-##DEPARTMENT
-class dep_name          (SS, K): type = xml_types.STRING_TYPE
-class dep_acronym       (SS, K): type = xml_types.STRING_TYPE 
-class department        (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.dep_name)
+class course            (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.name)
 
 ##SUBJECT
 class subject_name        (SS, K): type = xml_types.STRING_TYPE
-class subject_acronym     (SS, K): type = xml_types.STRING_TYPE 
+class subject_acronym     (SS, K): type = xml_types.STRING_TYPE
 class subject_period      (SS, K): type = xml_types.STRING_TYPE
 class subject_regent      (SS, K): type = xml_types.STRING_TYPE  
 class subject_coordinator (SS, K): type = xml_types.STRING_TYPE  
-class subject             (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.subject_name)
+class subject             (K):     type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.name)
 
 #CONCIERGE - SERVICES
 class service_name  (SS, K): type = xml_types.STRING_TYPE
