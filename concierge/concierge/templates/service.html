@@ -43,10 +43,12 @@ $("form").submit(function(e) {
     if (!auth) {
         var rating = $('input[name="{{form.rating.name}}"]').val();
         if (rating != "")
-            localStorage.setItem("rating.{{service.id}}", rating);
-            favorite = $('input[name="{{form.favorite.name}}"]').attr("checked");
+            localStorage.setItem("servicerating.{{service.id}}", rating);
+        var favorite = $('input[name="{{form.favorite.name}}"]').attr("checked");
         if (favorite != "")
-            localStorage.setItem("favorite.{{service.id}}", favorite);
+            localStorage.setItem("servicefavorite.{{service.id}}", favorite);
+        if (rating != "" || favorite != "")
+            localStorage.setItem("servicename.{{service.id}}", {{ service.name }});
         return false;
     }
 });
