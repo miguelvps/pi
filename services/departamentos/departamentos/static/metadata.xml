@@ -1,0 +1,49 @@
+<service name="Departamentos" url="http://127.0.0.1:5005/">
+    <description>Este serviço guarda informação dos departamentos/cursos/cadeiras</description>
+    <supported_formats>
+        <format>xml</format>
+    </supported_formats>
+
+    <resource url="">
+        <keywords>
+            <keyword>departamento</keyword>
+            <keyword>departamentos</keyword>
+            <keyword>licenciatura</keyword>
+            <keyword>licenciaturas</keyword>
+            <keyword>mestrado</keyword>
+            <keyword>mestrados</keyword>
+            <keyword>douturamento</keyword>
+            <keyword>douturamentos</keyword>
+            <keyword>curso</keyword>
+            <keyword>cursos</keyword>
+            <keyword>anual</keyword>
+            <keyword>semestre</keyword>
+            <keyword>trimestre</keyword>
+            <keyword>cadeira</keyword>
+            <keyword>cadeiras</keyword>
+            <keyword>disciplina</keyword>
+            <keyword>disciplinas</keyword>
+        </keywords>
+        <method type="GET" >
+            <parameter>query</parameter>
+        </method>
+        <resource url="departamentos">
+            <method type="GET" >
+                <parameter>start</parameter>
+                <parameter>end</parameter>
+            </method>
+        </resource>
+        <resource url="cursos">
+            <method type="GET" >
+                <parameter>start</parameter>
+                <parameter>end</parameter>
+            </method>
+        </resource>
+        <resource url="cadeiras">
+            <method type="GET" >
+                <parameter>start</parameter>
+                <parameter>end</parameter>
+            </method>
+        </resource>
+    </resource>
+</service>
