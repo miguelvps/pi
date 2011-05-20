@@ -31,16 +31,16 @@
                         {% endfor %}
                     </span>
                 </li>
+                <li data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        {{search_form.csrf}}
+                        {% for field in search_form if field != search_form.search_query 
+                            and field != search_form.csrf %}
+                            {{field}}  {{field.label}} 
+                        {% endfor %}                    
+                    </fieldset>
+                </li>
             </ul>
-            <div data-role="fieldcontain">
-                <fieldset data-role="controlgroup">
-                    {{search_form.csrf}}
-                    {% for field in search_form if field != search_form.search_query 
-                        and field != search_form.csrf %}
-                        {{field}}  {{field.label}} 
-                    {% endfor %}                    
-                </fieldset>
-            </div>
         </form>
 	</div><!-- /content -->
 
