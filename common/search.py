@@ -5,6 +5,17 @@ import urllib
 
 import modelxmlserializer
 
+
+def flatten(q):
+	r= []
+	for x in q:
+		if hasattr(x, '__iter__'):
+			r.extend(flatten(x))
+		else:
+			r.append(x)
+	return r
+
+
 def match_keywords_to_something(query, l):
     '''given a query and a list of tuples in the form
     ((K1,K2,...), something)
@@ -42,7 +53,7 @@ def service_search(model_list, query):
     keywords_models= [(model.keywords, model) for model in model_list]
     queries_models= match_keywords_to_something(query, keywords_models)
     results_lists= [service_model_search(m, q) for q,m in queries_models]
-    results= [t for t in itertools.chain(*results_lists)]
+    results= flatten(results_lists)
     return results
 
 def service_model_search(model_class, query):

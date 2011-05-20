@@ -61,3 +61,6 @@ class geo_wkt(SS, K): type = xml_types.STRING_TYPE
 
 
 class geo_placemark(K): type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: "%s (%s)" % (obj.name, obj.folder))
+
+class geo_placemarktypename(SS, K): type = xml_types.STRING_TYPE
+class geo_placemarktype(K): type = xml_types.LIST_TYPE ; representative = staticmethod(lambda obj: obj.type_name)

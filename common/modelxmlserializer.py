@@ -10,7 +10,7 @@ ALLOWED_ATRIBUTE_TYPES= [sqlalchemy.types.Date, sqlalchemy.types.String]
 class ModelList_xml(object):
 	def __init__(self, l):
 		assert hasattr(l, '__iter__')
-		self.l= l
+		self.l=l
 	
 	def to_xml(self, parameters):
 		f, t, a, s= get_serializer_parameters_for(parameters, 'list')
@@ -52,11 +52,17 @@ class Model_Atribute_Serializer(object):
 
 	def to_xml(self, parameters):
 		f, t, a, s= get_serializer_parameters_for(parameters, 'atribute')
-		if f(self):
+		
+		if self.atr_obj and f(self):
 			if self.is_true_atribute():
 				return AwesomeXml( t(self), a(self), self.atr_obj )
 			else:
-				return ModelList_xml(self.atr_obj).to_xml(parameters)
+				#model list or a model object
+				if hasattr(self.atr_obj, '__iter__'):
+					return ModelList_xml(self.atr_obj).to_xml(parameters)
+				else:
+					#model object
+					return Model_Serializer(self.atr_obj).to_xml(parameters)
 		return None
 
 

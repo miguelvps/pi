@@ -14,7 +14,7 @@ def resource_list_method(resourse):
     ms= filter(lambda m: method_is_listing(m))
     return ms[0] if len(ms) else None
 
-@service_browse.route('/browse/<service_id>')
+@service_browse.route('/services/<service_id>/browse/')
 def browse(service_id):
     resource_url = request.args.get('resource', '')
     service = Service.query.get_or_404(service_id)

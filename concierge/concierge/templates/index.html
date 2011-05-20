@@ -27,30 +27,16 @@
 
 {% block page_content %}
 
-	
+
 	<div data-role="content">
-        <a href="/map" data-role="button">Exemplo de mapa</a>
-		<ul data-role="listview"  data-theme="c"  data-dividertheme="a" data-inset="True">
+		<ul data-split-icon="star"  data-role="listview"  data-theme="c"  data-dividertheme="a" data-inset="True">
 			<li data-role="list-divider">Services</li>
             {% for service in services %}
-                <li><a href="/services/{{service.id}}">{{service.name}}</a></li>
+                <li>
+		    <a href="/services/{{service.id}}/browse/">{{service.name}}</a>
+		    <a href="/services/{{service.id}}"></a>
+		</li>
             {% endfor %}
-			<li><a href="#">Departamentos</a></li>
-			<li><a href="#">Espaços</a></li>
-			<li><a href="#">Transportes</a></li>
-			<li><a href="#">Biblioteca</a></li>
-			<li><a href="#">Informações Processuais</a></li>
-			<li><a href="#">Ementas</a></li>
-			<li><a href="#">Eventos</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
-			<li><a href="#">ServiçoX</a></li>
 		</ul>
 	</div><!-- /content -->
 
