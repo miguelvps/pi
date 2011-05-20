@@ -6,7 +6,8 @@
 
 {% block header %}
 	<div data-role="header"  data-id="concheader" data-backbtn="false" >
-		<h1>{{ service.name }}</h1>
+		<h1>{{ service.name + "/" + resource.url}}</h1>
+		<a href="{{url_for_resource(resource.get_parent_in_database(), service)}}" class="ui-btn-left">Back</a>
     </div>
 
 {% endblock %}
@@ -17,7 +18,7 @@
 	<div data-role="content">					
 		<ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset="True">
             {% for r in resource.resources %}
-                <li><a href="/services/{{service.id}}">{{r.url+"/"}}</a></li>
+                <li><a href="{{url_for_resource(r, service)}}">{{r.url+"/"}}</a></li>
             {% endfor %}
 		</ul>
 	</div><!-- /content -->
