@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block page_id %} favorite_list {% endblock %}
+{% block page_id %} favorites {% endblock %}
 
-{% block redirect %} data-url="/services/favorites_list" {% endblock %}
+{% block redirect %} data-url="/services/favorites" {% endblock %}
 
 {% block header %}
     <div data-role="header" data-backbtn="false">
@@ -13,7 +13,7 @@
 	
 {% block page_content %}
 	<div data-role="content">					
-        <ul data-role="listview"  data-theme="c" data-dividertheme="b">
+        <ul data-role="listview"  data-theme="c" data-dividertheme="a">
             {% for service in favorites %}
                 <li><a href="/services/{{service.id}}">{{service.name}}</a></li>
             {% endfor %}

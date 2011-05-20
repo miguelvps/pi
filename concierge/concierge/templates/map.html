@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+
+{% block page_id %} map {% endblock %}
+
+{% block redirect %} data-url="/map" {% endblock %}
+
+{% block class %} class="page-map" {% endblock %}
+
+{% block header %}
+    <div data-role="header" data-backbtn="false">
+        <h1>Map</h1>
+        <a href="/" class="ui-btn-left">Back</a>
+    </div><!-- /header -->
+{% endblock %}
+	
+{% block page_content %}
+    <script src="/static/map.js"></script>
+    <link rel="stylesheet" href="/static/map.css" />
+
+    <div data-role="content"> 
+        <div id="map-canvas">
+
+            <!-- map loads here... -->
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %} {% endblock %}

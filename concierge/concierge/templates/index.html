@@ -27,10 +27,10 @@
 
 {% block page_content %}
 
-	
-	<div data-role="content">					
-		<ul data-split-icon="star" data-role="listview"  data-theme="c" data-dividertheme="b" data-inset="True">
-			<!--<li data-role="list-divider">Serviços</li>-->
+
+	<div data-role="content">
+		<ul data-split-icon="star"  data-role="listview"  data-theme="c"  data-dividertheme="a" data-inset="True">
+			<li data-role="list-divider">Services</li>
             {% for service in services %}
                 <li>
 		    <a href="/services/{{service.id}}/browse/">{{service.name}}</a>
@@ -47,7 +47,7 @@
     <div data-role="footer" data-position="fixed" data-id="concfooter" >
             <div data-role="navbar">
                 <ul>
-                    <li><a href="settings">Settings</a></li>
+                    <li><a href="/settings/">Settings</a></li>
                     <li>
                     {% if session.get("auth") == True %}
                     <a href="/auth/logout">Logout</a>

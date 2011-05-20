@@ -67,3 +67,10 @@ def favorites():
     user = g.user
     favorites = user.favorite_services
     return render_template('favorites.html',favorites=favorites)
+    
+@services.route('/ratings')
+@requires_auth 
+def ratings():
+    user = g.user
+    ratings = user.rating_services
+    return render_template('ratings.html', ratings=ratings)   
