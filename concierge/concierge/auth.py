@@ -135,6 +135,6 @@ def login():
 @requires_auth
 def logout():
     session.pop('auth')
-    response = make_response(redirect(''))
+    response = make_response(redirect('/'))
     response.delete_cookie('online')
     return response
