@@ -24,7 +24,7 @@ class ServiceForm(Form):
     rating = IntegerField('Rating', validators=[NumberRange(min=1, max=5)])
 
 
-@services.route('/<id>/', methods=['GET', 'POST'])
+@services.route('/<id>', methods=['GET', 'POST'])
 def service(id):
     user = getattr(g, 'user', None)
     service = Service.query.get_or_404(id)
@@ -46,7 +46,7 @@ def service(id):
     return render_template('service.html', service=service, form=form)
 
 
-@services.route('/register/', methods=['GET','POST'])
+@services.route('/register', methods=['GET','POST'])
 @requires_auth
 def register():
     form = RegisterForm(request.form)
@@ -62,15 +62,16 @@ def register():
 
 
 @services.route('/favorites')
-@requires_auth
 def favorites():
-    user = g.user
-    favorites = user.favorite_services
-    return render_template('favorites.html',favorites=favorites)
-    
+    if hasattr(g, 'user'):
+        user = g.user
+        favorites = user.favorite_services
+        return render_template('favorites.html', favorites=favorites)
+    return render_template('favorites.html', favorites=[])
+
 @services.route('/ratings')
-@requires_auth 
+@requires_auth
 def ratings():
     user = g.user
     ratings = user.rating_services
-    return render_template('ratings.html', ratings=ratings)   
+    return render_template('ratings.html', ratings=ratings)

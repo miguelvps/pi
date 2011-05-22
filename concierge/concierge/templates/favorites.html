@@ -1,24 +1,41 @@
 {% extends "base.html" %}
 
-{% block page_id %} favorites {% endblock %}
+{% block page_id %}favorites{% endblock %}
 
-{% block redirect %} data-url="/services/favorites" {% endblock %}
+{% block redirect %}data-url="/services/favorites"{% endblock %}
 
 {% block header %}
-    <div data-role="header" data-backbtn="false">
-        <h1>Favorites</h1>
-        <a href="/settings" class="ui-btn-left">Back</a>
-    </div><!-- /header -->
+<div data-role="header" data-backbtn="false">
+    <h1>Favorites</h1>
+    <a href="/settings" class="ui-btn-left">Back</a>
+</div><!-- /header -->
 {% endblock %}
-	
+
 {% block page_content %}
-	<div data-role="content">					
-        <ul data-role="listview"  data-theme="c" data-dividertheme="a">
-            {% for service in favorites %}
-                <li><a href="/services/{{service.id}}">{{service.name}}</a></li>
-            {% endfor %}
-		</ul>
-	</div><!-- /content -->
+<div data-role="content">
+    <ul data-role="listview" data-theme="c" data-dividertheme="a">
+        {% for service in favorites %}
+        <li><a href="/services/{{service.id}}">{{service.name}}</a></li>
+        {% endfor %}
+    </ul>
+</div><!-- /content -->
+
+
+<script type="text/javascript">
+    $('#favorites').live('pagebeforeshow', function(event) {
+        if (!auth) {
+            $('#favorites ul').empty();
+            for (i=0; i<=localStorage.length-1; i++) {
+                var key = localStorage.key(i);
+                if (key.indexOf("service_favorite.") === 0) {
+                    var id = parseInt(key.substring("service_favorite.".length));
+                    $('#favorites ul').append('<li><a href="/services/'+id+'">'+localStorage.getItem('service_name.'+id)+'</a></li>');
+                }
+            }
+            $('#favorites ul').listview('refresh');
+        }
+    });
+</script>
 {% endblock %}
 
 {% block footer %} {% endblock %}
