@@ -17,7 +17,7 @@ search = Module(__name__, 'search')
 
 class SearchForm(Form):
     search_query = SearchField('query', validators=[Required(), Length(min=1)])
-    
+
 def match_search_to_methods_keywords(query, methods):
     '''assumes word separated by single space.
     returns list of pairs of (query, method)'''
@@ -31,7 +31,7 @@ def add_search_to_history(query):
         db.session.add(hstr_entry)
         db.session.commit()
 
-@search.route('/custom_search/', methods=['GET', 'POST'])
+@search.route('/custom_search', methods=['GET', 'POST'])
 def custom_search():
     services = Service.query.all()
 
@@ -40,19 +40,19 @@ def custom_search():
         variables = locals()
         for service in services:
             variables[service.name] = BooleanField(service.name)
-        
+
     form = CustomSearchForm(request.form)
     services_names = [ service.name for service in services]
     service_dict = dict(zip(services_names, services))
-    
+
     if form.validate_on_submit():
         query= form.search_query.data
         received_names = [ entry.label.text for entry in form \
                             if entry != form.search_query and entry != form.csrf and entry.data]
-        received_services = [ service_dict[name] for name in received_names ]    
+        received_services = [ service_dict[name] for name in received_names ]
         return search_aux(query, received_services)  
     else:
-        favorite_check = request.args.get('check_favorites', '')   # 
+        favorite_check = request.args.get('check_favorites', '')
         if favorite_check:
             user = g.user
             favorites = user.favorite_services
@@ -66,15 +66,14 @@ def custom_search():
 @search.route('/search/<search_query>')
 def search_history(search_query):
     '''history search'''
-    return search_aux( search_query , add_to_history=False)
-
+    return search_aux(search_query , add_to_history=False)
 
 @search.route('/search', methods=['POST'])
 def search_view():
     '''general search on all services'''
     form = SearchForm(request.form)
     if  form.validate_on_submit():
-        return search_aux( form.search_query.data )
+        return search_aux(form.search_query.data)
     return redirect('/')   #null string case
 
 def search_aux(query, services=None, add_to_history=True):
