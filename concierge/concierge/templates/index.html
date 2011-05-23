@@ -5,40 +5,39 @@
 {% block redirect %}data-url="/"{% endblock %}
 
 {% block header %}
-    <div data-role="header"  data-id="concheader" data-backbtn="false" >
-		<h1>Concierge</h1>
+<div data-role="header"  data-id="concheader" data-backbtn="false">
+    <h1>Concierge</h1>
 
-		<div data-role="header" data-position="inline" data-theme="c">
-            <form action="/search/" method="post">
-                        {% for field in search_form %}
-                            {{field(placeholder=field.label.text) }}
-                            <span class="error">
-                                {% for error in field.errors  %}
-                                    {{ error }}
-                                {% endfor %}
-                            </span>
-                        {% endfor %}
-            </form>
-            <a href="/custom_search/" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Custom Search</a>
-		</div>
+    <div data-role="header" data-position="inline" data-theme="c">
+        <form action="/search" method="POST">
+            {% for field in search_form %}
+            {{field(placeholder=field.label.text) }}
+            <span class="error">
+                {% for error in field.errors  %}
+                {{ error }}
+                {% endfor %}
+            </span>
+            {% endfor %}
+        </form>
+        <a href="/custom_search" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Custom Search</a>
+    </div>
 
-	</div><!-- /header -->
+</div><!-- /header -->
 
-    <script type="text/javascript">
+<script type="text/javascript">
     $("#index form").submit(function(e) {
         if (!auth) {
             var query = $('input[name="{{search_form.search_query.name}}"]').val();
             var history = localStorage.getItem("history");
             if (history == null)
                 history = "";
-                
             if (query != ""){
                 history = history + query  + "\0";
                 localStorage.setItem("history", history);
             }
         }
     });
-    </script>
+</script>
 {% endblock %}
 
 {% block page_content %}

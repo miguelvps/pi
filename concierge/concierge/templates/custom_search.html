@@ -14,7 +14,7 @@
 
 {% block page_content %}
 <div data-role="content">
-    <form action="/custom_search/" method="post">
+    <form action="/custom_search" method="POST">
         <ul data-role="listview" data-inset=True>
             <li data-role="fieldcontain">
             {{search_form.search_query.label}}
@@ -31,7 +31,7 @@
                 {{search_form.csrf}}
                 {% for field in search_form if field != search_form.search_query 
                 and field != search_form.csrf %}
-                {{field}}  {{field.label}} 
+                {{field}}  {{field.label}}
                 {% endfor %}
             </fieldset>
         </div>
