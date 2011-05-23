@@ -12,11 +12,11 @@
     
 {% block page_content %}
 	<div data-role="content">
-	
-	{% for atr_name,value in atributes %}
-	   <p>{{atr_name}}: {{value}}</p> 
-	{% endfor %}
-	
+	<ul data-role="listview">
+	    {% for atr_name,value in atributes %}
+		<p>{{atr_name}}: {{value}}</p> 
+	    {% endfor %}
+	</ul>
 	</div><!-- /content -->
 {% endblock %}
 
