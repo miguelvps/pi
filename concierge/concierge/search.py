@@ -1,5 +1,6 @@
 from flask import Module, request, session, render_template, redirect, g
 from concierge.services_models import Service
+from concierge.xml_to_html import xml_to_html
 
 from concierge.auth import HistoryEntry
 from concierge import db
@@ -7,8 +8,8 @@ from concierge import db
 from flaskext.wtf import Form, Required, Length, BooleanField
 from flaskext.wtf.html5 import SearchField
 
-from xml.etree import ElementTree
-from common import xml_types, rest_method_parameters
+
+from common import rest_method_parameters
 from common.search import match_keywords_to_something
 
 
@@ -22,21 +23,6 @@ def match_search_to_methods_keywords(query, methods):
     returns list of pairs of (query, method)'''
     keywords_methods=[([k.keyword for k in method.resource.keywords], method) for method in methods]
     return match_keywords_to_something(query, keywords_methods)
-
-def result_xml_to_text(xml):
-    if type(xml)==str or type(xml)==unicode:
-        #this is xml in string format
-        xml= ElementTree.fromstring(xml.encode('utf-8'))
-
-    if xml.get('type')== xml_types.LIST_TYPE:
-        html_children= "".join(map(result_xml_to_text, xml.getchildren()) )
-        r, k = xml.get('representative'), xml.get('kind')
-        list_str= "%s: %s" % (k,r) if (k and r) else k or "List"
-        list_header= '<h3>%s</h3>' % list_str
-        data_collapsed= "true" if k else "false"
-        return '<div data-role="collapsible" data-collapsed="%s" >%s%s</div>' % (data_collapsed, list_header,html_children)
-    else:
-        return '<p>%s</p>' % (xml.get('kind') + ": "+ xml.text )
 
 def add_search_to_history(query):
     #creates the entry in the user_history if the user is logged in
@@ -107,5 +93,5 @@ def search_aux(query, services=None, add_to_history=True):
         results_xml=[]
     else:
         results_xml= [method.execute({rest_method_parameters.QUERY: query}) for ignoreme, method in matches]
-    search_results= "".join(map(result_xml_to_text, results_xml))
+    search_results= "".join(map(xml_to_html, results_xml))
     return render_template('search.html', search_results=search_results)
