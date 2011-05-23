@@ -13,7 +13,7 @@
 
 {% block page_content %}
 <div data-role="content">
-    <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset=True>
+    <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset=True id ="ratings_list">
         <li data-role="list-divider">Ratings</li>
         {% for service,rating in ratings.items() %}
         <li><a href="/services/{{service.id}}">
@@ -23,6 +23,30 @@
         {% endfor %}
     </ul>
 </div><!-- /content -->
+
+   <script type="text/javascript">
+        $('#ratings').live('pagebeforeshow',function(event){
+            if (!auth) {
+                var list = $("#ratings_list");
+                list.empty();
+                list.append('<li data-role="list-divider">Ratings</li>');
+                for (var i = 0; i < localStorage.length; i++){
+                        var key = localStorage.key(i);
+                        if (key.search("service_rating") != -1){
+                            var serviceId = key.substr("service_rating.".length);
+                            var rating = localStorage.getItem(key);
+                            var serviceName = localStorage.getItem("service_name." + serviceId);
+                            var li = '<li><a href="/services/' + serviceId + '">' + "<h3>" + 
+                                        serviceName + "</h3>" + "<span class='ui-li-count'>" + rating + 
+                                        "</span></a></li>";
+                            list.append(li);
+                        }
+                    }
+                 list.listview('refresh');
+                }
+        });
+    </script>   
+    
 {% endblock %}
 
 {% block footer %} {% endblock %}
