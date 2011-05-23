@@ -1,6 +1,6 @@
 from flask import Module, request, session, render_template, redirect, g
 from concierge.services_models import Service
-from concierge.xml_to_html import xml_to_html
+from concierge import xml_to_html
 
 from concierge.auth import HistoryEntry
 from concierge import db
@@ -93,5 +93,4 @@ def search_aux(query, services=None, add_to_history=True):
         results_xml=[]
     else:
         results_xml= [method.execute({rest_method_parameters.QUERY: query}) for ignoreme, method in matches]
-    search_results= "".join(map(xml_to_html, results_xml))
-    return render_template('search.html', search_results=search_results)
+    return xml_to_html.render_xml_list(results_xml)

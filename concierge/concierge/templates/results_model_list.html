@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block page_id %} register {% endblock %}
+	
+{% block redirect %} data-url="/search" {% endblock %}
+  
+{% block header %}
+    <div data-role="header" data-backbtn="false">
+        <a href="/" class="ui-btn-left">Back</a>
+    </div><!-- /header -->
+{% endblock %}
+    
+{% block page_content %}
+	<div data-role="content">
+	
+	{% for atribute in l.content %}
+	    <li><a href="{{atribute.url}}">{{atribute.name}}</a>
+	{% endfor %}
+	
+	</div><!-- /content -->
+{% endblock %}
+
+{% block footer %} {% endblock %}
