@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block page_id %} index {% endblock %}
+{% block page_id %}index{% endblock %}
 
-{% block redirect %} data-url="/" {% endblock %}
+{% block redirect %}data-url="/"{% endblock %}
 
 {% block header %}
-	<div data-role="header"  data-id="concheader" data-backbtn="false" >
+k	<div data-role="header"  data-id="concheader" data-backbtn="false" >
 		<h1>Concierge</h1>
 
 		<div data-role="header" data-position="inline" data-theme="c">
@@ -42,43 +42,39 @@
             }
         }
     });
-    </script>   
-    
+    </script>
 {% endblock %}
 
 {% block page_content %}
-
-
-	<div data-role="content">
-		<ul data-split-icon="star"  data-role="listview"  data-theme="c"  data-dividertheme="a" data-inset="True">
-			<li data-role="list-divider">Services</li>
-            {% for service in services %}
-                <li>
-		    <a href="/services/{{service.id}}/browse/">{{service.name}}</a>
-		    <a href="/services/{{service.id}}"></a>
-		</li>
-            {% endfor %}
-		</ul>
-	</div><!-- /content -->
-
+<div data-role="content">
+    <ul data-split-icon="star"  data-role="listview"  data-theme="c"  data-dividertheme="a" data-inset="True">
+        <li data-role="list-divider">Services</li>
+        {% for service in services %}
+        <li>
+        <a href="/services/{{service.id}}/browse">{{service.name}}</a>
+        <a href="/services/{{service.id}}"></a>
+        </li>
+        {% endfor %}
+    </ul>
+</div><!-- /content -->
 {% endblock %}
 
 
 {% block footer %}
-    <div data-role="footer" data-position="fixed" data-id="concfooter" >
-            <div data-role="navbar">
-                <ul>
-                    <li><a href="/settings/">Settings</a></li>
-                    <li>
-                    {% if session.get("auth") == True %}
-                    <a href="/auth/logout">Logout</a>
-                    {% else %}
-                    <a href="/auth/login" data-transition="slideup">Login</a>
-                    {% endif %}
-                    </li>
-                    <li><a href="/history/">History</a></li>
-                </ul>
-		 </div><!-- /navbar -->
-    </div><!-- /footer -->
-           
+<div data-role="footer" data-position="fixed" data-id="concfooter" >
+    <div data-role="navbar">
+        <ul>
+            <li><a href="/settings">Settings</a></li>
+            <li>
+            {% if session.get("auth") == True %}
+            <a href="/auth/logout">Logout</a>
+            {% else %}
+            <a href="/auth/login" data-transition="slideup">Login</a>
+            {% endif %}
+            </li>
+            <li><a href="/history">History</a></li>
+        </ul>
+    </div><!-- /navbar -->
+</div><!-- /footer -->
+
 {% endblock %}

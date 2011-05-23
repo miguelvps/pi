@@ -106,6 +106,10 @@ class ServiceResource(db.Model):
         else:
             return local_resource.get_resource_by_url(url[1:])
 
+    def get_parent_in_database(self):
+        p= self.parent_id
+        return ServiceResource.query.get(p) if p else None
+
 class ResourceKeyword(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     resource_id = db.Column(db.Integer, db.ForeignKey('service_resource.id'))
