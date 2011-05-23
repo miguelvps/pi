@@ -26,9 +26,9 @@ def atribute_xml_show(atr):
 
   
 def model_xml_filter(model):
-  return True
+    return True
 def model_xml_tagname(model):
-  return "entity"
+    return "entity"
 def model_xml_atributes(model):
     kind= get_model_kind(model.model_class)
     r_str= kind.representative(model.model_obj)
@@ -38,15 +38,16 @@ def model_xml_show(model):
     return is_kind
 
 def list_xml_filter(model_list):
-  return len(model_list)>0
+    return len(model_list)>0
 def list_xml_tagname(model_list) :
-  return 'entity'
+    return 'entity'
 def list_xml_atributes(model_list):
     return {'type': "list"}
 def list_xml_show(model_list):
     #this lines makes a list (header) only appear if it's children models are kinds
     children_are_kinds= get_model_kind(model_list[0]) != None
     return len(model_list)>0 and children_are_kinds
+
 
 def get_serializer_parameters_for(parameters, mal):
     p= parameters[mal]
