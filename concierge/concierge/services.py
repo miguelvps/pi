@@ -62,15 +62,17 @@ def register():
 
 
 @services.route('/favorites')
-@requires_auth
 def favorites():
-    user = g.user
-    favorites = user.favorite_services
-    return render_template('favorites.html',favorites=favorites)
+    if hasattr(g, 'user'):
+        user = g.user
+        favorites = user.favorite_services
+        return render_template('favorites.html',favorites=favorites)
+    return render_template('favorites.html', favorites=[])
     
 @services.route('/ratings')
-@requires_auth 
 def ratings():
-    user = g.user
-    ratings = user.rating_services
-    return render_template('ratings.html', ratings=ratings)   
+    if hasattr(g, 'user'):
+        user = g.user
+        ratings = user.rating_services
+        return render_template('ratings.html', ratings=ratings)   
+    return render_template('ratings.html', ratings={})

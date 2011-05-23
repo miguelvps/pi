@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block page_id %} ratings {% endblock %}
+{% block page_id %}ratings{% endblock %}
 
 {% block redirect %} data-url="/services/ratings" {% endblock %}
 
@@ -13,7 +13,7 @@
 	
 {% block page_content %}
 	<div data-role="content">					
-        <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset=True>
+        <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset=True id ="ratings_list">
             <li data-role="list-divider">Ratings</li>
             {% for service,rating in ratings.items() %}
                 <li><a href="/services/{{service.id}}">
@@ -23,6 +23,7 @@
             {% endfor %}
 		</ul>
 	</div><!-- /content -->
+    
 {% endblock %}
 
 {% block footer %} {% endblock %}

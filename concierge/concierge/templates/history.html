@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block page_id %} history {% endblock %}
+{% block page_id %}history{% endblock %}
 
 {% block redirect %} data-url="/history" {% endblock %}
 
@@ -14,7 +14,7 @@
 {% block page_content %}
 
     <div data-role="content">					
-        <ul data-role="listview"  data-theme="c" data-dividertheme="b">
+        <ul data-role="listview"  data-theme="c" data-dividertheme="b" id="hist_list">
             {% for entry in history %}
             <li><a href="/search/{{entry.query}}">{{entry.query}}</a></li>
             {% endfor %}
@@ -25,9 +25,35 @@
                         </button>
 		        	</fieldset>
 	        	</form>
+            </li>
 		</ul>
-
     </div><!-- /content -->
+
+
+    <script type="text/javascript">
+    var auth = false;
+    {% if g.user %}
+        auth = true;
+    {% endif %}
+    $('#history').live('pagecreate',function(event){
+        if (!auth) {
+            var history = localStorage.getItem("history");
+            var split_history = history.split("\0");
+            var list = $("#hist_list");
+            for(var i = 0; i < split_history.length-1; i++){
+                var li = '<li><a href="/search/' + split_history[i] + '">' + split_history[i] + '</a></li>';
+                list.prepend(li);
+            }
+            list.listview('refresh');
+        }
+    });
+    
+    $("form").submit(function(e) {
+        localStorage.setItem("history", "");
+    });
+
+    </script>   
+
 
 {% endblock %}
 

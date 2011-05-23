@@ -29,29 +29,29 @@
 </div><!-- /content -->
 
 <script type="text/javascript">
-var auth = false;
-{% if g.user %}
-    auth = true;
-{% endif %}
-$('#{{service.name}}').live('pagecreate',function(event){
-    if (!auth) {
-        $('input[name="{{form.rating.name}}"]').val(localStorage.getItem("rating.{{service.id}}")).slider("refresh");
-        $('input[name="{{form.favorite.name}}"]').attr("checked", localStorage.getItem("favorite.{{service.id}}")).checkboxradio("refresh");
-    }
-});
-$("form").submit(function(e) {
-    if (!auth) {
-        var rating = $('input[name="{{form.rating.name}}"]').val();
-        if (rating != "")
-            localStorage.setItem("servicerating.{{service.id}}", rating);
-        var favorite = $('input[name="{{form.favorite.name}}"]').attr("checked");
-        if (favorite != "")
-            localStorage.setItem("servicefavorite.{{service.id}}", favorite);
-        if (rating != "" || favorite != "")
-            localStorage.setItem("servicename.{{service.id}}", {{ service.name }});
-        return false;
-    }
-});
+    var auth = false;
+    {% if g.user %}
+        auth = true;
+    {% endif %}
+    $('#{{service.name}}').live('pagecreate',function(event){
+        if (!auth) {
+            $('input[name="{{form.rating.name}}"]').val(localStorage.getItem("rating.{{service.id}}")).slider("refresh");
+            $('input[name="{{form.favorite.name}}"]').attr("checked", localStorage.getItem("favorite.{{service.id}}")).checkboxradio("refresh");
+        }
+    });
+    $("form").submit(function(e) {
+        if (!auth) {
+            var rating = $('input[name="{{form.rating.name}}"]').val();
+            if (rating != "")
+                localStorage.setItem("rating.{{service.id}}", rating);
+            var favorite = $('input[name="{{form.favorite.name}}"]').attr("checked");
+            if (favorite != "")
+                localStorage.setItem("favorite.{{service.id}}", favorite);
+            if (rating != "" || favorite != "")
+                localStorage.setItem("servicename.{{service.id}}", '{{service.name}}');
+            return false;
+        }
+    });
 </script>
 
 {% endblock %}
