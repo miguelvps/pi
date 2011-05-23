@@ -5,7 +5,7 @@
 {% block redirect %}data-url="/"{% endblock %}
 
 {% block header %}
-k	<div data-role="header"  data-id="concheader" data-backbtn="false" >
+    <div data-role="header"  data-id="concheader" data-backbtn="false" >
 		<h1>Concierge</h1>
 
 		<div data-role="header" data-position="inline" data-theme="c">
@@ -25,11 +25,7 @@ k	<div data-role="header"  data-id="concheader" data-backbtn="false" >
 	</div><!-- /header -->
 
     <script type="text/javascript">
-    var auth = false;
-    {% if g.user %}
-        auth = true;
-    {% endif %}
-    $("form").submit(function(e) {
+    $("#index form").submit(function(e) {
         if (!auth) {
             var query = $('input[name="{{search_form.search_query.name}}"]').val();
             var history = localStorage.getItem("history");

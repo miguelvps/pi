@@ -28,13 +28,14 @@
         $('#ratings').live('pagebeforeshow',function(event){
             if (!auth) {
                 var list = $("#ratings_list");
+                list.empty();
+                list.append('<li data-role="list-divider">Ratings</li>');
                 for (var i = 0; i < localStorage.length; i++){
                         var key = localStorage.key(i);
                         if (key.search("service_rating") != -1){
                             var serviceId = key.substr("service_rating.".length);
                             var rating = localStorage.getItem(key);
                             var serviceName = localStorage.getItem("service_name." + serviceId);
-                            alert("serviceId: " + serviceId + ", rating :" + rating + ", serviceName :" + serviceName);
                             var li = '<li><a href="/services/' + serviceId + '">' + "<h3>" + 
                                         serviceName + "</h3>" + "<span class='ui-li-count'>" + rating + 
                                         "</span></a></li>";
