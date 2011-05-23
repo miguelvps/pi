@@ -1,31 +1,25 @@
 {% extends "base.html" %}
 
-{% block page_id %} service_browse {% endblock %}
+{% block page_id %}service{{service.id}}_browse{% endblock %}
 
-{% block redirect %} data-url="/services/{{service.id}}/browse" {% endblock %}
+{% block redirect %}data-url="/services/{{service.id}}/browse"{% endblock %}
 
 {% block header %}
-	<div data-role="header"  data-id="concheader" data-backbtn="false" >
-		<h1>{{ service.name + "/" + resource.url}}</h1>
-		<a href="{{url_for_resource(resource.get_parent_in_database(), service)}}" class="ui-btn-left">Back</a>
-    </div>
-
+<div data-role="header" data-id="concheader" data-backbtn="false">
+    <h1>{{ service.name + "/" + resource.url}}</h1>
+    <a href="{{url_for_resource(resource.get_parent_in_database(), service)}}" class="ui-btn-left">Back</a>
+</div>
 {% endblock %}
 
 {% block page_content %}
-
-	
-	<div data-role="content">					
-		<ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset="True">
-            {% for r in resource.resources %}
-                <li><a href="{{url_for_resource(r, service)}}">{{r.url+"/"}}</a></li>
-            {% endfor %}
-		</ul>
-	</div><!-- /content -->
-
+<div data-role="content">
+    <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset="True">
+        {% for r in resource.resources %}
+        <li><a href="{{url_for_resource(r, service)}}">{{r.url+"/"}}</a></li>
+        {% endfor %}
+    </ul>
+</div><!-- /content -->
 {% endblock %}
 
 
-{% block footer %}
-  
-{% endblock %}
+{% block footer %} {% endblock %}

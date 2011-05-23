@@ -78,7 +78,9 @@ def search_method():
 
 @app.route("/pessoas/", methods=['GET',])
 def teachers():
-    teachers = Teacher.query.all()
+    start = request.args.get('start', 0)
+    end = request.args.get('end', 10)
+    teachers = Teacher.query.limit(end-start).offset(start).all()
     xml_text= modelxmlserializer.ModelList_xml(teachers).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(response=xml_text, mimetype="application/xml")
 

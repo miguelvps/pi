@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block page_id %}{{service.name}}{% endblock %}
+{% block page_id %}service{{service.id}}{% endblock %}
 
-{% block redirect %} data-url="/services/{{service.id}}" {% endblock %}
+{% block redirect %}data-url="/services/{{service.id}}"{% endblock %}
 
 {% block header %}
 <div data-role="header" data-backbtn="false">
@@ -14,7 +14,7 @@
 {% block page_content %}
 
 <div data-role="content">
-    <form action="/services/{{service.id}}/" method="post">
+    <form action="/services/{{service.id}}" method="POST">
         <fieldset>
             <p> Check/Uncheck this service to favorite it.</p>
             {{form.favorite}} {{form.favorite.label}}
@@ -29,27 +29,23 @@
 </div><!-- /content -->
 
 <script type="text/javascript">
-var auth = false;
-{% if g.user %}
-    auth = true;
-{% endif %}
-$('#{{service.name}}').live('pagecreate',function(event){
+$('#service{{service.id}}').live('pagebeforeshow',function(event){
     if (!auth) {
-        $('input[name="{{form.rating.name}}"]').val(localStorage.getItem("rating.{{service.id}}")).slider("refresh");
-        $('input[name="{{form.favorite.name}}"]').attr("checked", localStorage.getItem("favorite.{{service.id}}")).checkboxradio("refresh");
+        $('input[name="{{form.rating.name}}"]').val(localStorage.getItem("service_rating.{{service.id}}")).slider("refresh");
+        $('input[name="{{form.favorite.name}}"]').attr("checked", localStorage.getItem("service_favorite.{{service.id}}")).checkboxradio("refresh");
     }
 });
-$("form").submit(function(e) {
+
+$("#service{{service.id}} form").submit(function(e) {
     if (!auth) {
         var rating = $('input[name="{{form.rating.name}}"]').val();
         if (rating != "")
-            localStorage.setItem("servicerating.{{service.id}}", rating);
+            localStorage.setItem("service_rating.{{service.id}}", rating);
         var favorite = $('input[name="{{form.favorite.name}}"]').attr("checked");
         if (favorite != "")
-            localStorage.setItem("servicefavorite.{{service.id}}", favorite);
+            localStorage.setItem("service_favorite.{{service.id}}", favorite);
         if (rating != "" || favorite != "")
-            localStorage.setItem("servicename.{{service.id}}", {{ service.name }});
-        return false;
+            localStorage.setItem("service_name.{{service.id}}", "{{ service.name }}");
     }
 });
 </script>
