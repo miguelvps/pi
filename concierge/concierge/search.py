@@ -69,7 +69,7 @@ def search_history(search_query):
     return search_aux( search_query , add_to_history=False)
 
 
-@search.route('/search/', methods=['POST'])
+@search.route('/search', methods=['POST'])
 def search_view():
     '''general search on all services'''
     form = SearchForm(request.form)
