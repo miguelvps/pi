@@ -12,29 +12,22 @@
 {% endblock %}
 
 {% block page_content %}
+<div data-role="content">
+    <ul data-role="listview"  data-theme="c" data-dividertheme="b" id="hist_list">
+        {% for entry in history %}
+        <li><a href="/search/{{entry.query}}">{{entry.query}}</a></li>
+        {% endfor %}
+        <li>
+        <form action="/history/" method="post">
+            <fieldset>
+                <button type="submit" data-theme="a" name="submit" value="submit-value">Clear History</button>
+            </fieldset>
+        </form>
+        </li>
+    </ul>
+</div><!-- /content -->
 
-    <div data-role="content">					
-        <ul data-role="listview"  data-theme="c" data-dividertheme="b" id="hist_list">
-            {% for entry in history %}
-            <li><a href="/search/{{entry.query}}">{{entry.query}}</a></li>
-            {% endfor %}
-            <li>        
-                <form action="/history/" method="post">
-        			<fieldset>
-        				<button type="submit" data-theme="a" name="submit" value="submit-value">Clear History
-                        </button>
-		        	</fieldset>
-	        	</form>
-            </li>
-		</ul>
-    </div><!-- /content -->
-
-
-    <script type="text/javascript">
-    var auth = false;
-    {% if g.user %}
-        auth = true;
-    {% endif %}
+<script type="text/javascript">
     $('#history').live('pagecreate',function(event){
         if (!auth) {
             var history = localStorage.getItem("history");
@@ -47,13 +40,11 @@
             list.listview('refresh');
         }
     });
-    
-    $("form").submit(function(e) {
+
+    $("#history form").submit(function(e) {
         localStorage.setItem("history", "");
     });
-
-    </script>   
-
+</script>
 {% endblock %}
 
 {% block footer %} {% endblock %}
