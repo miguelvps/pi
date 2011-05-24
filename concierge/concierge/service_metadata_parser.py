@@ -1,16 +1,7 @@
-import urllib2
 from xml.etree import ElementTree
 from concierge.services_models import Service, ServiceFormat, ServiceResource, ResourceKeyword, ResourceMethod, MethodParameter
 from common import rest_methods, rest_return_formats, rest_method_parameters
 
-def xmlFromUrl(url):
-    urlloader = urllib2.build_opener()
-    page = urlloader.open(url).read()
-    return page
-
-def serviceMetadataFromXML(metadata_url):
-    xml= xmlFromUrl(metadata_url)
-    return parse_metadata(xml)
 
 def parse_metadataResourceMethod(xml_object, parent_resource):
     '''returns method_type, parameters'''
