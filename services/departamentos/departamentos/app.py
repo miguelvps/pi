@@ -84,7 +84,9 @@ def s():
 
 @app.route('/departamentos')
 def departments():
-    departments = Department.query.all()
+    start = request.args.get('start', 0)
+    end = request.args.get('end', 10)
+    departments = Department.query.limit(end-start).offset(start).all()
     xml_text= modelxmlserializer.ModelList_xml(departments).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(xml_text, mimetype='application/xml')
 
@@ -96,7 +98,9 @@ def department(id):
 
 @app.route('/cursos')
 def courses():
-    courses = Course.query.all()
+    start = request.args.get('start', 0)
+    end = request.args.get('end', 10)
+    courses = Course.query.limit(end-start).offset(start).all()
     xml_text= modelxmlserializer.ModelList_xml(courses).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(xml_text, mimetype='application/xml')
 
@@ -108,7 +112,9 @@ def course(id):
 
 @app.route('/cadeiras')
 def subjects():
-    subjects = Subject.query.all()
+    start = request.args.get('start', 0)
+    end = request.args.get('end', 10)
+    subjects = Subject.query.limit(end-start).offset(start).all()
     xml_text= modelxmlserializer.ModelList_xml(subjects).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(xml_text, mimetype='application/xml')
 
