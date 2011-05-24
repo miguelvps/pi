@@ -24,15 +24,16 @@
 <script type="text/javascript">
     $('#favorites').live('pagebeforeshow', function(event) {
         if (!auth) {
-            $('#favorites ul').empty();
-            for (i=0; i<=localStorage.length-1; i++) {
+            var list = $('#favorites ul');
+            list.empty();
+            for (var i = 0; i < localStorage.length; i++) {
                 var key = localStorage.key(i);
                 if (key.indexOf("service_favorite.") === 0) {
                     var id = parseInt(key.substring("service_favorite.".length));
-                    $('#favorites ul').append('<li><a href="/services/'+id+'">'+localStorage.getItem('service_name.'+id)+'</a></li>');
+                    list.append('<li><a href="/services/' + id + '">' + localStorage.getItem('service_name.' + id) + '</a></li>');
                 }
             }
-            $('#favorites ul').listview('refresh');
+            list.listview('refresh');
         }
     });
 </script>
