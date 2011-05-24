@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
 from common import xml_kinds
 from common import modelxmlserializer
 from common.xmlserializer_parameters import SERIALIZER_PARAMETERS
 from common import search
-
 
 
 app = Flask(__name__)
@@ -60,18 +61,6 @@ class Course(db.Model):
 xml_kinds.set_model_kind(Course, xml_kinds.course)
 
 
-# Subject
-class SubjectPeriod(db.Model):
-    keywords= ['anual', 'semestre', 'trimestre']
-    id = db.Column(db.Integer, primary_key=True)
-    period = db.Column(xml_kinds.subject_period(255))
-
-    subjects = db.relationship('Subject', backref='period')
-
-    search_atributes = ['period']
-    search_representative = 'subjects'
-
-
 class Subject(db.Model):
     keywords=['cadeira', 'cadeiras', 'disciplina', 'disciplinas']
     id = db.Column(db.Integer, primary_key=True)
@@ -79,10 +68,10 @@ class Subject(db.Model):
     acronym = db.Column(xml_kinds.subject_acronym(10))
     regent = db.Column(xml_kinds.subject_regent(255))
     coordinator = db.Column(xml_kinds.subject_coordinator(255))
-    period_id = db.Column(db.Integer, db.ForeignKey('subject_period.id'))
+    period = db.Column(db.Enum(u'Anual', u'1º Sem', u'2º Sem',
+                               u'1º Tri', u'2º Tri', u'3º Tri'))
 
     search_atributes = ['name', 'acronym']
-    search_join = ['period']
 
 xml_kinds.set_model_kind(Subject, xml_kinds.subject)
 
@@ -90,9 +79,8 @@ xml_kinds.set_model_kind(Subject, xml_kinds.subject)
 @app.route('/')
 def s():
     q = request.args.get('query', '')   #quoted query
-    xml= search.service_search_xmlresponse([Department, Course, CourseType, Subject, SubjectPeriod], q, SERIALIZER_PARAMETERS)
+    xml= search.service_search_xmlresponse([Department, Course, CourseType, Subject], q, SERIALIZER_PARAMETERS)
     return Response(response=xml, mimetype="application/xml")
-
 
 @app.route('/departamentos')
 def departments():

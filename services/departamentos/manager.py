@@ -26,7 +26,7 @@ def resetdb():
 def fixtures():
     """Loads sample data in the database."""
     import csv
-    from departamentos.app import Department, Course, CourseType, Subject, SubjectPeriod
+    from departamentos.app import Department, Course, CourseType, Subject
 
     reader = csv.reader(open('cursos.csv', 'r'), delimiter=',')
     for row in reader:
@@ -57,19 +57,12 @@ def fixtures():
             print "Invalid course:", row[4].decode('utf-8')
             continue
 
-        period = row[0].decode('utf-8')
-        subject_period = SubjectPeriod.query.filter_by(period=period).first() 
-        if not subject_period:
-            subject_period = SubjectPeriod(period=period)
-            db.session.add(subject_period)
-            db.session.commit()
-
         subject_id = row[1].decode('utf-8')
         subject = Subject.query.filter_by(id=subject_id).first()
         if not subject:
             subject = Subject(id=subject_id, name=row[3].decode('utf-8'), acronym=row[2].decode('utf-8'),
                               regent=row[5].decode('utf-8'), coordinator=row[6].decode('utf-8'),
-                              period=subject_period)
+                              period=row[0].decode('utf-8'))
         subject.courses.append(course)
         db.session.add(subject)
         db.session.commit()
