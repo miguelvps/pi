@@ -54,13 +54,14 @@ def custom_search():
     else:
         favorite_check = request.args.get('check_favorites', '')
         if favorite_check:
-            user = g.user
-            favorites = user.favorite_services
-            favorite_services_names = [ service.name for service in favorites ]
-            for field in form:
-                if field != form.search_query:
-                    if field.name in favorite_services_names:
-                        field.data = True
+            if hasattr(g, 'user'):
+                user = g.user
+                favorites = user.favorite_services
+                favorite_services_names = [ service.name for service in favorites ]
+                for field in form:
+                    if field != form.search_query:
+                        if field.name in favorite_services_names:
+                            field.data = True
         return render_template('custom_search.html', search_form=form)
 
 @search.route('/search/<search_query>')
