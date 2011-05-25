@@ -88,3 +88,26 @@ def ratings():
         ratings = user.rating_services
         return render_template('ratings.html', ratings=ratings)
     return render_template('ratings.html', ratings={})
+
+
+# /import?f=1&f=2&r=2.1
+@services.route('/import')
+@requires_auth
+def imports():
+    user = g.user
+    favorites = set(request.args.getlist('f'))
+    ratings = set([tuple(r.split('.')) for r in request.args.getlist('r')])
+
+    for f in favorites:
+        service = Service.query.get(f)
+        if (service and service not in user.favorite_services):
+            user.favorite_services.append(service)
+
+    for r in ratings:
+        service = Service.query.get(r[0])
+        if (service):
+            user.rating_services[service] = r[1]
+
+    db.session.add(user)
+    db.session.commit()
+    return redirect("/")

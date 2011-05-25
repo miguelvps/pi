@@ -26,8 +26,33 @@
                 <h3>Ratings</h3>
                 <p>View a list with all the assigned service ratings <br /> (must be logged in).</p>
         </a></li>
+        <li><a id="import" href="/services/import">
+                <h3>Import</h3>
+                <p>Import your favorite services and ratings from your device to your user account <br /> (must be logged in).</p>
+        </a></li>
     </ul><!--/config_list-->
 </div><!-- /content -->
+
+
+<script type="text/javascript">
+    $('#settings').live('pagebeforeshow', function(event) {
+        var anchor = $('#settings #import');
+        var link = anchor.attr('href') + "?";
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            if (key.indexOf("service_favorite.") === 0) {
+                var id = parseInt(key.substring("service_favorite.".length));
+                link = link + "&f=" + id
+            }
+            else if (key.indexOf("service_rating") == 0) {
+                var id = key.substring("service_rating.".length);
+                var rating = localStorage.getItem(key);
+                link = link + "&r=" + id + "." + rating;
+            }
+        }
+        anchor.attr('href', link);
+    });
+</script>
 {% endblock %}
 
 {% block footer %} {% endblock %}
