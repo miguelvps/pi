@@ -16,9 +16,9 @@
     <p>Please insert the url with the service metadata to perform the submission</p>
     <form action="/services/register", method="POST">
         <fieldset>
-            {{form.metadata_url(placeholder = form.metadata_url.label.text) }}
+            {{form.url(placeholder = form.url.label.text) }}
             <span class="error">
-                {% for error in form.metadata_url.errors  %}
+                {% for error in form.url.errors  %}
                 {{ error }}
                 <br \>
                 {% endfor %}
