@@ -32,21 +32,20 @@
 
 $('#service{{service.id}}').live('pagebeforeshow',function(event){
     if (!auth) {
-        $('input[name="{{form.rating.name}}"]').val(localStorage.getItem("service_rating.{{service.id}}")).slider("refresh");
-        $('input[name="{{form.favorite.name}}"]').attr("checked", localStorage.getItem("service_favorite.{{service.id}}")).checkboxradio("refresh");
+        $('#service{{service.id}} input[name="{{form.rating.name}}"]').val(localStorage.getItem("service_rating.{{service.id}}")).slider("refresh");
+        $('#service{{service.id}} input[name="{{form.favorite.name}}"]').attr("checked", localStorage.getItem("service_favorite.{{service.id}}")=="true").checkboxradio("refresh");
     }
 });
 
 $("#service{{service.id}} form").submit(function(e) {
     if (!auth) {
-        var rating = $('input[name="{{form.rating.name}}"]').val();
+        var rating = $('#service{{service.id}} input[name="{{form.rating.name}}"]').val();
+        alert(rating);
         if (rating != "")
             localStorage.setItem("service_rating.{{service.id}}", rating);
-        var favorite = $('input[name="{{form.favorite.name}}"]').attr("checked");
-        if (favorite != "")
-            localStorage.setItem("service_favorite.{{service.id}}", favorite);
-        if (rating != "" || favorite != "")
-            localStorage.setItem("service_name.{{service.id}}", "{{ service.name }}");
+        var favorite = $('#service{{service.id}} input[name="{{form.favorite.name}}"]').attr("checked");
+        localStorage.setItem("service_favorite.{{service.id}}", favorite);
+        localStorage.setItem("service_name.{{service.id}}", "{{ service.name }}");
     }
 });
 </script>

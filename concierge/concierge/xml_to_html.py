@@ -28,7 +28,8 @@ class ListTypeRepresentation(object):
         '''takes a list of ListTypeRepresentation, creates a new one with
         all of their content'''
         assert all([isinstance(a, ListTypeRepresentation) for a in l])
-        content= reduce(lambda x,y: x.extend(y), [other.content for other in l])
+        #concatenate all lists into one
+        content= reduce(lambda x,y: x.extend(y), [other.content for other in l]) if len(l) else []
         return ListTypeRepresentation(name, content)
 
 

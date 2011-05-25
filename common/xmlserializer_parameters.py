@@ -7,44 +7,47 @@ def descends(class1, parent_class):
     return inspect.isclass(class1) and parent_class in inspect.getmro(class1)
 
 def atribute_xml_filter(atr):
-  is_kind= descends(atr.atr_class, xml_kind)        #is a xml_kind
-  is_model_list= atr.is_model_list()     #is a list of models (relationship)
-  is_empty= (atr.atr_obj==None) and not is_model_list  #value is null, or model list is empty
-  return not is_empty and (is_kind or is_model_list)
+    is_kind= descends(atr.atr_class, xml_kind)        #is a xml_kind
+    is_model_list= atr.is_model_list()     #is a list of models (relationship)
+    return is_kind or is_model_list
 
 def atribute_xml_tagname(atr):
-  return "entity"
+    return "entity"
 
 def atribute_xml_atributes(atr):
-  k= atr.atr_class.__name__
-  if hasattr(atr.atr_class, 'type'):
-    return {'kind': k, 'type': atr.atr_class.type}
-  else:
-    return {'kind': k, 'type': "INTERNAL_DB_VALUE"}
+    k= atr.atr_class.__name__
+    if hasattr(atr.atr_class, 'type'):
+        return {'kind': k, 'type': atr.atr_class.type}
+    else:
+        return {'kind': k, 'type': "INTERNAL_DB_VALUE"}
 
 def atribute_xml_show(atr):
     return True
 
   
 def model_xml_filter(model):
-  return True
+    return True
 def model_xml_tagname(model):
-  return "entity"
+    return "entity"
 def model_xml_atributes(model):
     kind= get_model_kind(model.model_class)
     r_str= kind.representative(model.model_obj)
     return {'kind': kind.__name__, 'type': kind.type, 'representative': r_str}
 def model_xml_show(model):
-    return True
+    is_kind= get_model_kind(model.model_class) != None
+    return is_kind
 
 def list_xml_filter(model_list):
-  return len(model_list)>0
+    return len(model_list)>0
 def list_xml_tagname(model_list) :
-  return 'entity'
+    return 'entity'
 def list_xml_atributes(model_list):
-  return {'type': "list"}
-def list_xml_show(atr):
-    return True
+    return {'type': "list"}
+def list_xml_show(model_list):
+    #this lines makes a list (header) only appear if it's children models are kinds
+    children_are_kinds= get_model_kind(model_list[0]) != None
+    return len(model_list)>0 and children_are_kinds
+
 
 def get_serializer_parameters_for(parameters, mal):
     p= parameters[mal]
@@ -91,4 +94,5 @@ SERIALIZER_PARAMETERS= \
     'atributes':  list_xml_atributes,
     'show':       list_xml_show,
     },
+'show_empty_atributes':False
 }
