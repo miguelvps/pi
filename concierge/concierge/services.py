@@ -1,6 +1,6 @@
 import urllib
 from sqlalchemy.exc import IntegrityError
-from xml.etree.ElementTree import ParseError
+#from xml.etree.ElementTree import ParseError
 from flask import Module, request, g, render_template, redirect, url_for
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL, ValidationError

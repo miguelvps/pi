@@ -24,15 +24,15 @@ def match_search_to_methods_keywords(query, methods):
     keywords_methods=[([k.keyword for k in method.resource.keywords], method) for method in methods]
     return match_keywords_to_something(query, keywords_methods)
 
-def add_search_to_history(query):
+def add_search_to_history(query, services):
     #creates the entry in the user_history if the user is logged in
     if session.get('auth'):
-        hstr_entry = HistoryEntry(user_id=session['id'], query=query)
+        hstr_entry = HistoryEntry(user = g.user, query=query, entry_services=services)
         db.session.add(hstr_entry)
         db.session.commit()
-
+        
 @search.route('/custom_search', methods=['GET', 'POST'])
-def custom_search():
+def custom_search(history_entry = None):
     services = Service.query.all()
 
     class CustomSearchForm(Form):
@@ -50,7 +50,15 @@ def custom_search():
         received_names = [ entry.label.text for entry in form \
                             if entry != form.search_query and entry != form.csrf and entry.data]
         received_services = [ service_dict[name] for name in received_names ]
-        return search_aux(query, received_services)  
+        return search_aux(query, received_services)
+    elif history_entry != None:
+        selected_services = history_entry.entry_services
+        selected_services_names = [ service.name for service in selected_services]
+        for field in form:
+            if field != form.search_query:
+                if field.name in selected_services_names:
+                    field.data = True
+        return render_template('custom_search.html', search_form=form)
     else:
         favorite_check = request.args.get('check_favorites', '')
         if favorite_check:
@@ -64,10 +72,15 @@ def custom_search():
                             field.data = True
         return render_template('custom_search.html', search_form=form)
 
-@search.route('/search/<search_query>')
-def search_history(search_query):
+@search.route('/search/<entry_id>')
+def search_history(entry_id):
     '''history search'''
-    return search_aux(search_query , add_to_history=False)
+    user = g.user
+    history = user.user_history
+    for entry in history:
+        if entry.id == entry_id:
+            break
+    return custom_search(history_entry = entry)
 
 @search.route('/search', methods=['POST'])
 def search_view():
@@ -85,7 +98,7 @@ def search_aux(query, services=None, add_to_history=True):
     if services==None:
         services= Service.query.all()
     if add_to_history:
-        add_search_to_history(query)
+        add_search_to_history(query, services)
     search_methods= [m.global_search() for m in services]
     matches = match_search_to_methods_keywords(query, search_methods)
     if len(matches)==0:
