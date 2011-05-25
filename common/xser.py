@@ -2,7 +2,7 @@ import sqlalchemy
 import flaskext
 from awesomexml import AwesomeXml
 import inspect
-from xmlserializer_parameters import get_serializer_parameters_for
+from xser_parameters import get_serializer_parameters_for
 
 
 ALLOWED_ATRIBUTE_TYPES= [sqlalchemy.types.Date, sqlalchemy.types.String]

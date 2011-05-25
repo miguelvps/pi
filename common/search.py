@@ -3,7 +3,7 @@ from sqlalchemy.orm import joinedload
 import itertools
 import urllib
 
-import modelxmlserializer
+import xser
 
 
 def flatten(q):
@@ -44,7 +44,7 @@ def service_search_xmlresponse(model_list, quoted_query, xml_parameters):
     if len(results) == 0:
         xml_text = ""
     else :
-        xml_text= modelxmlserializer.ModelList_xml(results).to_xml(xml_parameters).toxml() 
+        xml_text= xser.ModelList_xml(results).to_xml(xml_parameters).toxml() 
     return xml_text
 
 def service_search(model_list, query):
