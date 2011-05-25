@@ -9,8 +9,7 @@ def descends(class1, parent_class):
 def atribute_xml_filter(atr):
     is_kind= descends(atr.atr_class, xml_kind)        #is a xml_kind
     is_model_list= atr.is_model_list()     #is a list of models (relationship)
-    is_empty= (atr.atr_obj==None) and not is_model_list  #value is null, or model list is empty
-    return not is_empty and (is_kind or is_model_list)
+    return is_kind or is_model_list
 
 def atribute_xml_tagname(atr):
     return "entity"
@@ -35,7 +34,8 @@ def model_xml_atributes(model):
     r_str= kind.representative(model.model_obj)
     return {'kind': kind.__name__, 'type': kind.type, 'representative': r_str}
 def model_xml_show(model):
-    return True
+    is_kind= get_model_kind(model.model_class) != None
+    return is_kind
 
 def list_xml_filter(model_list):
     return len(model_list)>0
@@ -43,8 +43,11 @@ def list_xml_tagname(model_list) :
     return 'entity'
 def list_xml_atributes(model_list):
     return {'type': "list"}
-def list_xml_show(atr):
-    return True
+def list_xml_show(model_list):
+    #this lines makes a list (header) only appear if it's children models are kinds
+    children_are_kinds= get_model_kind(model_list[0]) != None
+    return len(model_list)>0 and children_are_kinds
+
 
 def get_serializer_parameters_for(parameters, mal):
     p= parameters[mal]
@@ -91,4 +94,5 @@ SERIALIZER_PARAMETERS= \
     'atributes':  list_xml_atributes,
     'show':       list_xml_show,
     },
+'show_empty_atributes':False
 }

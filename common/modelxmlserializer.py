@@ -19,9 +19,12 @@ class ModelList_xml(object):
 			models_xml= filter(lambda a: a!=None, models_xml)
 			return AwesomeXml( t(self), a(self) ).appendChild(models_xml) if s(self) else models_xml
 		return None
-
+	
 	def __len__(self):
 		return self.l.__len__()
+	
+	def __getitem__(self, i):
+		return self.l.__getitem__(i)
 
 class Model_Atribute_Serializer(object):
 	TRUE_ATRIBUTE, MODEL_LIST_ATRIBUTE= range(2)
@@ -52,10 +55,10 @@ class Model_Atribute_Serializer(object):
 
 	def to_xml(self, parameters):
 		f, t, a, s= get_serializer_parameters_for(parameters, 'atribute')
-		
-		if self.atr_obj and f(self):
+		if f(self):
 			if self.is_true_atribute():
-				return AwesomeXml( t(self), a(self), self.atr_obj )
+				if self.atr_obj or parameters['show_empty_atributes']:
+					return AwesomeXml( t(self), a(self), self.atr_obj )
 			else:
 				#model list or a model object
 				if hasattr(self.atr_obj, '__iter__'):
