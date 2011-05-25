@@ -7,7 +7,7 @@ from datetime import datetime
 
 from concierge import db
 from concierge.auth import User, history_entry_services
-from common import xml_kinds, rest_methods, rest_method_parameters
+from common import rest_methods, rest_method_parameters
 
 import urllib
 
@@ -40,9 +40,9 @@ User.rating_services = association_proxy('service_ratings', 'rating',
 
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    metadata_url = db.Column(xml_kinds.service_url(256), unique=True)
+    metadata_url = db.Column(db.String(256), unique=True)
     url= db.Column(db.String)
-    name = db.Column(xml_kinds.service_name(256), unique=True)
+    name = db.Column(db.String(256), unique=True)
     description = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     active = db.Column(db.Boolean, default=True)
