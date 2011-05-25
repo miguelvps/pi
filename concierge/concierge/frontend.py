@@ -6,12 +6,16 @@ from concierge import db
 
 frontend = Module(__name__, 'frontend')
 
+from sqlalchemy import desc
 
 @frontend.route('/')
 def index():
+    descendant = request.args.get('desc', None)
+    order_by = request.args.get('order_by', None)
+    order_by = desc(order_by) if descendant != None else order_by
     searchform = SearchForm(request.form)
-    services = Service.query.all()
-    return render_template('index.html', services = services, search_form=searchform)
+    services = Service.query.order_by(order_by).all()
+    return render_template('index.html', services=services, search_form=searchform)
 
 @frontend.route('/history', methods=['GET', 'POST'])
 def history():
