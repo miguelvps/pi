@@ -6,7 +6,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from datetime import datetime
 
 from concierge import db
-from concierge.auth import User
+from concierge.auth import User, history_entry_services
 from common import xml_kinds, rest_methods, rest_method_parameters
 
 import urllib
@@ -51,6 +51,10 @@ class Service(db.Model):
     user = db.relationship('User', backref='services')
     users_favorite = db.relation('User', secondary=service_favorites,
                                  backref='favorite_services')
+                                 
+    entries_service = db.relation('HistoryEntry', secondary=history_entry_services,
+                                 backref='entry_services')
+                                 
     rating_users = association_proxy('user_ratings', 'rating',
             creator=lambda u, r: ServiceRating(user=u, rating=r))
 

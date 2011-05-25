@@ -35,9 +35,12 @@ class HistoryEntry(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
     query = db.Column(db.String(50))
 
-    user = db.relationship(User, backref=backref('user_history', order_by=created))
+    user = db.relationship('User', backref=backref('user_history', order_by=created))
 
-
+history_entry_services = db.Table('history_entry_services',
+    db.Column('service_id', db.Integer, db.ForeignKey('service.id')),
+    db.Column('entry_id', db.Integer, db.ForeignKey('history_entry.id')),
+)
 
 class RegisterForm(Form):
     username = TextField('Username', validators=[Required(),
