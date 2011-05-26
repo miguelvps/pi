@@ -13,11 +13,11 @@ class ModelList_xml(object):
 		self.l=l
 	
 	def to_xml(self, parameters):
-		f, t, a, s= get_serializer_parameters_for(parameters, 'list')
+		f, t, a, si, sc= get_serializer_parameters_for(parameters, 'list')
 		if f(self):
 			models_xml=[Model_Serializer(model).to_xml(parameters) for model in self.l]
 			models_xml= filter(lambda a: a!=None, models_xml)
-			return AwesomeXml( t(self), a(self) ).appendChild(models_xml) if s(self) else models_xml
+			return AwesomeXml( t(self), a(self) ).appendChild(models_xml) if si(self) else models_xml
 		return None
 	
 	def __len__(self):
@@ -54,7 +54,7 @@ class Model_Atribute_Serializer(object):
 		return self.atr_type == self.MODEL_LIST_ATRIBUTE
 
 	def to_xml(self, parameters):
-		f, t, a, s= get_serializer_parameters_for(parameters, 'atribute')
+		f, t, a, si,sc= get_serializer_parameters_for(parameters, 'atribute')
 		if f(self):
 			if self.is_true_atribute():
 				if self.atr_obj or parameters['show_empty_atributes']:
@@ -82,9 +82,9 @@ class Model_Serializer(object):
 		self.atributes= [Model_Atribute_Serializer(model_obj, name) for name in atribute_names]
 
 	def to_xml(self, parameters):
-		f, t, a, s= get_serializer_parameters_for(parameters, 'model')
+		f, t, a, si, sc= get_serializer_parameters_for(parameters, 'model')
 		if f(self):
 			atrs_xml=[atr.to_xml(parameters) for atr in self.atributes]
 			atrs_xml= filter(lambda a:a!=None, atrs_xml)
-			return AwesomeXml( t(self), a(self) ).appendChild(atrs_xml) if s(self) else atrs_xml
+			return AwesomeXml( t(self), a(self) ).appendChild(atrs_xml) if si(self) else atrs_xml
 		return None

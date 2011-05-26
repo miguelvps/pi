@@ -36,7 +36,8 @@ def atribute_xml_atributes(atr):
 
 def atribute_xml_show_itself(atr):
     return True
-
+def atribute_xml_show_children(atr):
+    return True
 
 
   
@@ -63,6 +64,8 @@ def model_xml_atributes(model):
 def model_xml_show_itself(model):
     is_kind= has_xser_prop(model.model_class, 'kind')       #is a xml_kind
     return is_kind
+def model_xml_show_children(model):
+    return True
 
 
 
@@ -77,11 +80,12 @@ def list_xml_show_itself(model_list):
     #this lines makes a list (header) only appear if it's children models are kinds
     children_are_kinds= has_xser_prop(model_list[0], 'kind')
     return len(model_list)>0 and children_are_kinds
-
+def list_xml_show_children(model_list):
+    return True
 
 def get_serializer_parameters_for(parameters, mal):
     p= parameters[mal]
-    return p['filter'], p['tagname'], p['atributes'], p['show_itself']
+    return p['filter'], p['tagname'], p['atributes'], p['show_itself'], p['show_children']
 
 '''
 let MAL be an Model, Atribute or List (of models)
@@ -92,12 +96,13 @@ model: model parameters
 atribute: dictionary of model parameters
 list: the dictionary of parameters
 
-each of these dictionaries has 4 key-value pairs:
+each of these dictionaries has 5 key-value pairs:
 
 filter:     function that specifies if the MAL and it's atributes are processed
-tagname:    function that specifies the MAL xml tagname
-atributes:   function that specifies the MAL xml atributes
-show_itself:       function that specifies if the MAL itself appears in the xml, or only it's subelements
+tagname:    specifies the MAL xml tagname
+atributes:   specifies the MAL xml atributes
+show_itself: specifies if the MAL itself appears in the xml (may be only it's children)
+show_children: specifies if the MAL's children appear in the xml 
 '''
 
 
@@ -109,6 +114,7 @@ SERIALIZER_PARAMETERS= \
     'tagname':  model_xml_tagname,
     'atributes':model_xml_atributes,
     'show_itself':     model_xml_show_itself,
+    'show_children' : model_xml_show_children,
     },
 'atribute':
     {
@@ -116,6 +122,7 @@ SERIALIZER_PARAMETERS= \
     'tagname':    atribute_xml_tagname,
     'atributes':  atribute_xml_atributes,
     'show_itself':       atribute_xml_show_itself,
+    'show_children' : atribute_xml_show_children,
     },
 'list':
     {
@@ -123,6 +130,7 @@ SERIALIZER_PARAMETERS= \
     'tagname':    list_xml_tagname,
     'atributes':  list_xml_atributes,
     'show_itself':       list_xml_show_itself,
+    'show_children' : list_xml_show_children,
     },
 'show_empty_atributes':False
 }
