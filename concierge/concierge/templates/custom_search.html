@@ -10,6 +10,7 @@
     <h1>Concierge</h1>
     <a href="/custom_search?check_favorites=True" data-icon="heart" class="ui-btn-right" >Select Favorites</a>
 </div><!-- /header -->
+
 {% endblock %}
 
 {% block page_content %}
@@ -37,4 +38,43 @@
         </div>
     </form>
 </div><!-- /content -->
+
+<script type="text/javascript">
+    $('#custom_search').live('pagebeforeshow',function(event){
+        if (!auth && Boolean({{history_call}})) {
+            var entry = localStorage.getItem("history.{{entry_id}}");
+            split_entry = entry.split("\0");
+            $('input[name="{{search_form.search_query.name}}"]').val(split_entry[0]);
+            var checkboxes = $("input[type='checkbox']");
+            if( split_entry[1]=="global"){
+                checkboxes.each(function(index, element){
+                element.checked = true;
+                });
+            }
+            else { 
+                for (var i = 1; i < split_entry.length; i++)
+                    $('input[name="' + split_entry[i] + '"]').attr("checked", true).checkboxradio("refresh");
+            }
+        }
+    });
+
+    $("#custom_search form").submit(function(e) {
+        if (!auth) {
+            var query = $('#custom_search input[name="{{search_form.search_query.name}}"]').val();
+            var entry_id = localStorage.getItem("entry_id");
+            if (entry_id == null)
+                entry_id = 0;
+            var entry = query + "\0";
+            var checkboxes = $("#custom_search input[type='checkbox']");
+            checkboxes.each(function(index, element){
+                if ( element.checked ){
+                    entry += element.name + "\0";
+                }
+            });
+            localStorage.setItem("history." + entry_id, entry );
+            entry_id= parseInt(entry_id) +1;
+            localStorage.setItem("entry_id", entry_id);
+        }
+    });
+</script>
 {% endblock %}
