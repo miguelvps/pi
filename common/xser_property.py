@@ -5,13 +5,14 @@ class XserProperty(object):
         self.value=value
 
 def set_xser_prop(obj, prop_name, value):
-   assert not isinstance(value, XserProperty)
-   prop= XserProperty(value)
-   setattr(obj, prop_name, prop)
+    assert not hasattr(obj, prop_name)
+    assert not isinstance(value, XserProperty)
+    prop= XserProperty(value)
+    setattr(obj, prop_name, prop)
 
 def get_xser_prop(obj, prop_name, default=RAISE_EXCEPTION):
     prop= getattr(obj,prop_name,None)
-    if prop==None or not isinstance(prop, XserProperty):
+    if not isinstance(prop, XserProperty) or prop==None:
         if default== RAISE_EXCEPTION:
             raise AttributeError('The object %s has no suitable attribute %s' %(str(obj), prop_name))
         else:
