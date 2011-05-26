@@ -67,8 +67,7 @@ set_xser_prop(Person, xml_kinds.KIND_PROP_NAME, xml_kinds.person)
 def search_method():
     q = request.args.get('query', '')   #quoted query
     model_list= [Person, Email, Fax, Phone]
-    import ipdb; ipdb.set_trace()
-    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
+    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW
     xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
     return Response(response=xml, mimetype="application/xml")
 
