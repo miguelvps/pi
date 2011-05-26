@@ -6,7 +6,8 @@ class XserProperty(object):
 
 def set_xser_prop(obj, prop_name, value):
    assert not isinstance(value, XserProperty)
-   setattr(obj, prop_name, value)
+   prop= XserProperty(value)
+   setattr(obj, prop_name, prop)
 
 def get_xser_prop(obj, prop_name, default=RAISE_EXCEPTION):
     prop= getattr(obj,prop_name,None)
