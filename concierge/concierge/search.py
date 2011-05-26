@@ -32,7 +32,7 @@ def add_search_to_history(query, services):
         db.session.commit()
         
 @search.route('/custom_search', methods=['GET', 'POST'])
-def custom_search(history_entry = None):
+def custom_search(history_entry = None, entry_id = None):
     services = Service.query.all()
 
     class CustomSearchForm(Form):
@@ -45,21 +45,26 @@ def custom_search(history_entry = None):
     services_names = [ service.name for service in services]
     service_dict = dict(zip(services_names, services))
 
-    if form.validate_on_submit():
+    if form.validate_on_submit():   #POST form
         query= form.search_query.data
         received_names = [ entry.label.text for entry in form \
                             if entry != form.search_query and entry != form.csrf and entry.data]
         received_services = [ service_dict[name] for name in received_names ]
         return search_aux(query, received_services)
-    elif history_entry != None:
+
+    elif history_entry != None: #History search
         selected_services = history_entry.entry_services
         selected_services_names = [ service.name for service in selected_services]
         for field in form:
             if field != form.search_query:
                 if field.name in selected_services_names:
                     field.data = True
-        return render_template('custom_search.html', search_form=form)
-    else:
+        return render_template('custom_search.html', search_form=form, history_call='false')
+
+    elif entry_id != None:  #localStorage history entry id
+        return render_template('custom_search.html', search_form=form, entry_id=entry_id, history_call='true')
+
+    else:   #Favorite services button
         favorite_check = request.args.get('check_favorites', '')
         if favorite_check:
             if hasattr(g, 'user'):
@@ -70,17 +75,19 @@ def custom_search(history_entry = None):
                     if field != form.search_query:
                         if field.name in favorite_services_names:
                             field.data = True
-        return render_template('custom_search.html', search_form=form)
+        return render_template('custom_search.html', search_form=form, history_call='false')
 
 @search.route('/search/<entry_id>')
 def search_history(entry_id):
     '''history search'''
-    user = g.user
-    history = user.user_history
-    for entry in history:
-        if entry.id == entry_id:
-            break
-    return custom_search(history_entry = entry)
+    if hasattr(g, 'user'):
+        user = g.user
+        history = user.user_history
+        for entry in history:
+            if entry.id == entry_id:
+                break
+        return custom_search(history_entry = entry)
+    return custom_search(entry_id=entry_id)
 
 @search.route('/search', methods=['POST'])
 def search_view():

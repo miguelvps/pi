@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 from flask import Module, request, session, g, render_template, redirect, \
-                  make_response, url_for
+                  make_response, url_for, flash
 from flaskext.wtf import Form, TextField, PasswordField, BooleanField, \
                          Required, Length, EqualTo, ValidationError
 from werkzeug import generate_password_hash, check_password_hash
@@ -66,6 +66,7 @@ def requires_auth(f):
     @wraps(f)
     def decorator(*args, **kwargs):
         if not session.get('auth') and not hasattr(g, 'user'):
+            flash('You must login', 'warning')
             session['referrer'] = request.url
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
@@ -79,7 +80,7 @@ def before_request():
         if user:
             g.user = user
         else:
-            session.pop('auth', None)
+            session.pop('auth')
 
 
 @auth.after_app_request
@@ -106,6 +107,7 @@ def register():
         session['id'] = user.id
         session['username'] = user.username
         session['auth'] = True
+        flash('Successfull registration', 'success')
         session.permanent = form.remember.data
         referrer = session.pop('referrer', None)
         if referrer:
@@ -125,6 +127,7 @@ def login():
             session['username'] = user.username
             session['auth'] = True
             session.permanent = form.remember.data
+            flash('You were successfully logged in', 'success')
             referrer = session.pop('referrer', None)
             if referrer:
                 return redirect(referrer)
@@ -140,4 +143,5 @@ def logout():
     session.pop('auth')
     response = make_response(redirect('/'))
     response.delete_cookie('online')
+    flash('You were successfully logged out', 'success')
     return response

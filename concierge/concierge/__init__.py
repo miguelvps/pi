@@ -24,14 +24,14 @@ def create_app(cfg=None):
     from concierge.search import search
     app.register_module(search)
 
+    from concierge.auth import auth
+    app.register_module(auth, url_prefix='/auth')
+
     from concierge.services_models import services_models
     app.register_module(services_models)
 
     from concierge.services import services
     app.register_module(services, url_prefix='/services')
-
-    from concierge.auth import auth
-    app.register_module(auth, url_prefix='/auth')
 
     from concierge.service_browse import service_browse
     app.register_module(service_browse)
