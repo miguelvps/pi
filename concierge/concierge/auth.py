@@ -80,7 +80,7 @@ def before_request():
         if user:
             g.user = user
         else:
-            session.pop('auth', None)
+            session.pop('auth')
 
 
 @auth.after_app_request

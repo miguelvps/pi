@@ -1,7 +1,11 @@
 import urllib
+from datetime import datetime
 from sqlalchemy.exc import IntegrityError
-#from xml.etree.ElementTree import ParseError
-from flask import Module, request, g, render_template, redirect, url_for
+try: from xml.etree.ElementTree import ParseError
+except:
+    from xml.parsers.expat import ExpatError
+    ParseError = ExpatError
+from flask import Module, request, g, render_template, redirect, url_for, flash
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL, ValidationError
 from concierge import db
@@ -11,6 +15,19 @@ from concierge.service_metadata_parser import parse_metadata
 
 
 services = Module(__name__, 'services')
+
+
+@services.before_app_request
+def before_request():
+    if request.cookies.get('online'):
+        if hasattr(g, 'user'):
+            last_seen = g.user.last_seen
+            services = Service.query.filter(Service.created > last_seen).all()
+            for service in services:
+                flash('New service: %s' % service.name, 'info')
+            g.user.last_seen = datetime.utcnow()
+            db.session.add(g.user)
+            db.session.commit()
 
 
 class RegisterForm(Form):
