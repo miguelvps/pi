@@ -1,4 +1,4 @@
-KIND_PROP_NAME= 'kind'
+KIND_PROP_NAME= 'xml_kind'
 
 #person_birthdate    = 'person_birthdate'
 #person_name         = 'person_name'

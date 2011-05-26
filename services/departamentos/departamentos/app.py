@@ -2,9 +2,7 @@
 
 from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
-from common import xml_kinds
-from common import xml_attributes
-from common import xser
+from common import xml_kinds, xml_attributes, xml_names, xser
 from common.xser_property import set_xser_prop
 from common.xser_parameters import SERIALIZER_PARAMETERS
 from common import search
@@ -32,6 +30,8 @@ class Department(db.Model):
     search_atributes = ['name']
 
 set_xser_prop(Department, xml_kinds.KIND_PROP_NAME, xml_kinds.department )
+set_xser_prop(Department, xml_names.NAME_PROP_NAME, xml_names.departamentos_department )
+
 
 
 # COURSE
@@ -60,6 +60,8 @@ class Course(db.Model):
     search_join = ['type']
 
 set_xser_prop(Course, xml_kinds.KIND_PROP_NAME, xml_kinds.course )
+set_xser_prop(Course, xml_names.NAME_PROP_NAME, xml_names.departamentos_course )
+
 
 
 class Subject(db.Model):
@@ -75,6 +77,8 @@ class Subject(db.Model):
     search_atributes = ['name', 'acronym']
 
 set_xser_prop(Subject, xml_kinds.KIND_PROP_NAME, xml_kinds.subject )
+set_xser_prop(Subject, xml_names.NAME_PROP_NAME, xml_names.departamentos_subject )
+
 
 
 @app.route('/')

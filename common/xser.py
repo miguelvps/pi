@@ -2,7 +2,7 @@ import sqlalchemy
 import flaskext
 from awesomexml import AwesomeXml
 import inspect
-from xser_parameters import get_serializer_parameters_for
+from xser_parameters import get_serializer_parameters_for, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN
 
 
 ALLOWED_ATRIBUTE_TYPES= [sqlalchemy.types.Date, sqlalchemy.types.String]
@@ -14,10 +14,10 @@ class ModelList_xml(object):
 	
 	def to_xml(self, parameters):
 		f, t, a, si, sc= get_serializer_parameters_for(parameters, 'list')
-		if f(self):
+		if f(self, parameters):
 			models_xml=[Model_Serializer(model).to_xml(parameters) for model in self.l]
 			models_xml= filter(lambda a: a!=None, models_xml)
-			return AwesomeXml( t(self), a(self) ).appendChild(models_xml) if si(self) else models_xml
+			return AwesomeXml( t(self, parameters), a(self, parameters) ).appendChild(models_xml) if si(self, parameters) else models_xml
 		return None
 	
 	def __len__(self):
@@ -55,10 +55,10 @@ class Model_Atribute_Serializer(object):
 
 	def to_xml(self, parameters):
 		f, t, a, si,sc= get_serializer_parameters_for(parameters, 'atribute')
-		if f(self):
+		if f(self, parameters):
 			if self.is_true_atribute():
 				if self.atr_obj or parameters['show_empty_atributes']:
-					return AwesomeXml( t(self), a(self), self.atr_obj )
+					return AwesomeXml( t(self, parameters), a(self, parameters), self.atr_obj )
 			else:
 				#model list or a model object
 				if hasattr(self.atr_obj, '__iter__'):
@@ -83,8 +83,18 @@ class Model_Serializer(object):
 
 	def to_xml(self, parameters):
 		f, t, a, si, sc= get_serializer_parameters_for(parameters, 'model')
-		if f(self):
-			atrs_xml=[atr.to_xml(parameters) for atr in self.atributes]
-			atrs_xml= filter(lambda a:a!=None, atrs_xml)
-			return AwesomeXml( t(self), a(self) ).appendChild(atrs_xml) if si(self) else atrs_xml
+		if f(self, parameters):
+			xml= AwesomeXml( t(self, parameters), a(self, parameters) )
+			if sc(self, parameters):
+				shallowness= parameters['serialization_type']
+				if shallowness==SER_TYPE_SHALLOW_CHILDREN:
+					#temporarily set shallowness for serialization of children
+					parameters['serialization_type']=SER_TYPE_SHALLOW
+				atrs_xml=[atr.to_xml(parameters) for atr in self.atributes]
+				atrs_xml= filter(lambda a:a!=None, atrs_xml)
+				#restore shallowness
+				parameters['serialization_type']=shallowness
+			else:
+				atrs_xml=[]
+			return xml.appendChild(atrs_xml) if si(self, parameters) else atrs_xml
 		return None

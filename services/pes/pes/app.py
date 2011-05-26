@@ -7,7 +7,7 @@ from common import xml_attributes
 from common import xml_kinds
 from common import search
 from common import xser
-from common.xser_parameters import SERIALIZER_PARAMETERS
+from common.xser_parameters import SERIALIZER_PARAMETERS, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN
 from common.xser_property import set_xser_prop
 
 import urllib
@@ -67,6 +67,8 @@ set_xser_prop(Person, xml_kinds.KIND_PROP_NAME, xml_kinds.person)
 def search_method():
     q = request.args.get('query', '')   #quoted query
     model_list= [Person, Email, Fax, Phone]
+    import ipdb; ipdb.set_trace()
+    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
     xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
     return Response(response=xml, mimetype="application/xml")
 
@@ -76,6 +78,7 @@ def persons():
     start = request.args.get('start', 0)
     end = request.args.get('end', 10)
     persons = Person.query.limit(end-start).offset(start).all()
+    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW
     xml_text= xser.ModelList_xml(persons).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(response=xml_text, mimetype="application/xml")
 
@@ -83,5 +86,6 @@ def persons():
 @app.route("/pessoas/<id>", methods=['GET',])
 def person(id):
     person = Person.query.options(joinedload('emails'), joinedload('phones'), joinedload('faxes')).get_or_404(id)
+    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
     xml_text= xser.Model_Serializer(person).to_xml(serializer_params).toprettyxml()
     return Response(response=xml_text, mimetype="application/xml")

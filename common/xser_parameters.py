@@ -6,6 +6,9 @@ from xml_kinds import KIND_PROP_NAME
 from xml_names import NAME_PROP_NAME
 import sqlalchemy
 
+
+SER_TYPE_FULL, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN= range(3)
+
 def descends(class1, parent_class):
     return inspect.isclass(class1) and parent_class in inspect.getmro(class1)
 
@@ -19,69 +22,71 @@ def aux_atributes(atr_list, class_obj):
             d[x]= v
     return d
 
-def atribute_xml_filter(atr):
+
+
+def atribute_xml_filter(atr, params):
     is_type= has_xser_prop(atr.atr_class, TYPE_PROP_NAME)       #is a xml_kind
     is_model_list= atr.is_model_list()     #is a list of models (relationship)
     return is_type or is_model_list
 
-def atribute_xml_tagname(atr):
+def atribute_xml_tagname(atr, params):
     return "entity"
 
-def atribute_xml_atributes(atr):
+def atribute_xml_atributes(atr, params):
     d= aux_atributes((TYPE_PROP_NAME, KIND_PROP_NAME, NAME_PROP_NAME), atr.atr_class)
     if d.get(NAME_PROP_NAME)!=None:
         #name is a function of the model or atribute
-        d[NAME_PROP_NAME] = d[NAME_PROP_NAME](atr)
+        d[NAME_PROP_NAME] = d[NAME_PROP_NAME](atr.atr_obj)
     return d
 
-def atribute_xml_show_itself(atr):
+def atribute_xml_show_itself(atr, params):
     return True
-def atribute_xml_show_children(atr):
+def atribute_xml_show_children(atr, params):
     return True
 
 
   
-def model_xml_filter(model):
+def model_xml_filter(model, params):
     return True
     
-def model_xml_tagname(model):
+def model_xml_tagname(model, params):
     return "entity"
     
-def model_xml_atributes(model):
-    d={}
-    for x in ('kind', 'type'):
-        v= get_xser_prop( model.model_class, x, None)
-        if v:
-            d[x]= v
-            
-    r_f= get_xser_prop( model.model_class, 'representative', None)
-    if r_f:
-        r= r_f(model)
-        d['representative']=r
-    
+def model_xml_atributes(model, params):
+    d= aux_atributes((TYPE_PROP_NAME, KIND_PROP_NAME, NAME_PROP_NAME), model.model_class)
+    if d.get(NAME_PROP_NAME)!=None:
+        #name is a function of the model or atribute
+        d[NAME_PROP_NAME] = d[NAME_PROP_NAME](model.model_obj)
     return d
     
-def model_xml_show_itself(model):
-    is_kind= has_xser_prop(model.model_class, 'kind')       #is a xml_kind
+def model_xml_show_itself(model, params):
+    is_kind= has_xser_prop(model.model_class, KIND_PROP_NAME)       #is a xml_kind
     return is_kind
-def model_xml_show_children(model):
-    return True
+def model_xml_show_children(model, params):
+    is_kind= has_xser_prop(model.model_class, KIND_PROP_NAME)       #is a xml_kind
+    is_fully_shallow= params['serialization_type']==SER_TYPE_SHALLOW
+    return not is_fully_shallow or not is_kind
 
 
 
 
-def list_xml_filter(model_list):
+def list_xml_filter(model_list, params):
     return len(model_list)>0
-def list_xml_tagname(model_list) :
+def list_xml_tagname(model_list, params):
     return 'entity'
-def list_xml_atributes(model_list):
+def list_xml_atributes(model_list, params):
     return {'type': "list"}
-def list_xml_show_itself(model_list):
+def list_xml_show_itself(model_list, params):
     #this lines makes a list (header) only appear if it's children models are kinds
-    children_are_kinds= has_xser_prop(model_list[0], 'kind')
+    children_are_kinds= has_xser_prop(model_list[0], KIND_PROP_NAME)
     return len(model_list)>0 and children_are_kinds
-def list_xml_show_children(model_list):
+def list_xml_show_children(model_list, params):
     return True
+
+#----------------------------------------------------------------------
+
+
+
 
 def get_serializer_parameters_for(parameters, mal):
     p= parameters[mal]
@@ -102,7 +107,9 @@ filter:     function that specifies if the MAL and it's atributes are processed
 tagname:    specifies the MAL xml tagname
 atributes:   specifies the MAL xml atributes
 show_itself: specifies if the MAL itself appears in the xml (may be only it's children)
-show_children: specifies if the MAL's children appear in the xml 
+show_children: specifies if the MAL's children appear in the xml
+
+these functions take the MAL as first argument and the serializer parameters as second
 '''
 
 
@@ -132,5 +139,6 @@ SERIALIZER_PARAMETERS= \
     'show_itself':       list_xml_show_itself,
     'show_children' : list_xml_show_children,
     },
-'show_empty_atributes':False
+'show_empty_atributes':False,
+'serialization_type': SER_TYPE_SHALLOW,
 }

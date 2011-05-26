@@ -1,4 +1,4 @@
-TYPE_PROP_NAME= 'type'
+TYPE_PROP_NAME= 'xml_type'
 
 STRING_TYPE= "string"
 NUMBER_TYPE= "number"
