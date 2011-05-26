@@ -3,11 +3,12 @@ from flaskext.sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
+from common import xml_attributes
 from common import xml_kinds
+from common import search
 from common import xser
 from common.xser_parameters import SERIALIZER_PARAMETERS
 from common.xser_property import set_xser_prop
-from common import search
 
 import urllib
 import itertools
@@ -21,10 +22,9 @@ serializer_params= SERIALIZER_PARAMETERS
 class Email(db.Model):
     keywords= ['email','mail']
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column( db.String(255) )
+    email = db.Column( xml_attributes.pes_person_email(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
 
-    set_xser_prop( email, 'kind', xml_kinds.pes_person_email)
     search_atributes= ["email"]
     search_representative="person"
 
@@ -32,10 +32,9 @@ class Email(db.Model):
 class Phone(db.Model):
     keywords= ['phone','telefone', 'tel']
     id = db.Column(db.Integer, primary_key=True)
-    phone = db.Column( db.String(255) )
+    phone = db.Column( xml_attributes.pes_person_phone(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
 
-    set_xser_prop( phone, 'kind', xml_kinds.pes_person_phone)
     search_atributes= ["Phone"]
     earch_representative="person"
 
@@ -43,29 +42,26 @@ class Phone(db.Model):
 class Fax(db.Model):
     keywords= ['fax']
     id = db.Column(db.Integer, primary_key=True)
-    fax = db.Column( db.String(255) )
+    fax = db.Column( xml_attributes.pes_person_fax(255) )
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
 
-    set_xser_prop( fax, 'kind', xml_kinds.pes_person_fax)
     search_atributes= ["fax"]
     earch_representative="person"
 
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column( db.String(1024) )
-    birth_date = db.Column( db.DateTime )
-    office = db.Column( db.String(64) )
+    name = db.Column(xml_attributes.pes_person_name(1024) )
+    birth_date = db.Column( xml_attributes.pes_person_birthdate )
+    office = db.Column( xml_attributes.pes_person_office(64) )
     emails = db.relationship('Email', backref='person')
     phones = db.relationship('Phone', backref='person')
     faxes = db.relationship('Fax', backref='person')
-
-    set_xser_prop( name, 'kind', xml_kinds.pes_person_name)
 
     keywords= ['pessoa','professor']
     search_joins= ["emails", "phones", "faxes"]
     search_atributes= ["name"]
 
-set_xser_prop(Person, 'kind', xml_kinds.pes_person)
+set_xser_prop(Person, xml_kinds.KIND_PROP_NAME, xml_kinds.person)
 
 @app.route("/")
 def search_method():

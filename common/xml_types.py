@@ -1,3 +1,5 @@
+TYPE_PROP_NAME= 'type'
+
 STRING_TYPE= "string"
 NUMBER_TYPE= "number"
 DATETIME_TYPE= "datetime"
