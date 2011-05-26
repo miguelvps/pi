@@ -1,5 +1,5 @@
 import inspect
-from xml_kinds import xml_kind, get_model_kind
+from xser_property import has_xser_prop, get_xser_prop
 from xml_types import LIST_TYPE
 import sqlalchemy
 
@@ -7,7 +7,7 @@ def descends(class1, parent_class):
     return inspect.isclass(class1) and parent_class in inspect.getmro(class1)
 
 def atribute_xml_filter(atr):
-    is_kind= descends(atr.atr_class, xml_kind)        #is a xml_kind
+    is_kind= has_xser_prop(atr.atr_class, 'kind')       #is a xml_kind
     is_model_list= atr.is_model_list()     #is a list of models (relationship)
     return is_kind or is_model_list
 
@@ -15,27 +15,45 @@ def atribute_xml_tagname(atr):
     return "entity"
 
 def atribute_xml_atributes(atr):
-    k= atr.atr_class.__name__
-    if hasattr(atr.atr_class, 'type'):
-        return {'kind': k, 'type': atr.atr_class.type}
+    k= get_xser_prop( atr.atr_class, 'kind', None)
+    t= get_xser_prop( atr.atr_class, 'type', None)
+    if k:
+        return {'kind': k, 'type': t}
     else:
-        return {'kind': k, 'type': "INTERNAL_DB_VALUE"}
+        return {}
 
 def atribute_xml_show(atr):
     return True
 
+
+
   
 def model_xml_filter(model):
     return True
+    
 def model_xml_tagname(model):
     return "entity"
+    
 def model_xml_atributes(model):
-    kind= get_model_kind(model.model_class)
-    r_str= kind.representative(model.model_obj)
-    return {'kind': kind.__name__, 'type': kind.type, 'representative': r_str}
+    d={}
+    for x in ('kind', 'type'):
+        v= get_xser_prop( model.model_class, x, None)
+        if v:
+            d[x]= v
+            
+    r_f= get_xser_prop( model.model_class, 'representative', None)
+    if r_f:
+        r= r_f(model)
+        d['representative']=r
+    
+    return d
+    
 def model_xml_show(model):
-    is_kind= get_model_kind(model.model_class) != None
+    is_kind= has_xser_prop(model.model_class, 'kind')       #is a xml_kind
     return is_kind
+
+
+
 
 def list_xml_filter(model_list):
     return len(model_list)>0
@@ -45,7 +63,7 @@ def list_xml_atributes(model_list):
     return {'type': "list"}
 def list_xml_show(model_list):
     #this lines makes a list (header) only appear if it's children models are kinds
-    children_are_kinds= get_model_kind(model_list[0]) != None
+    children_are_kinds= has_xser_prop(model_list[0], 'kind')
     return len(model_list)>0 and children_are_kinds
 
 

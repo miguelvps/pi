@@ -5,7 +5,7 @@ class XserProperty(object):
         self.value=value
 
 def set_xser_prop(obj, prop_name, value):
-   assert not isinstance(value, XserProperty):
+   assert not isinstance(value, XserProperty)
    setattr(obj, prop_name, value)
 
 def get_xser_prop(obj, prop_name, default=RAISE_EXCEPTION):
