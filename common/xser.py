@@ -86,7 +86,7 @@ class Model_Serializer(object):
 		if f(self, parameters):
 			xml= AwesomeXml( t(self, parameters), a(self, parameters) )
 			if sc(self, parameters):
-				shallowness= parameters['serialization_type']
+				shallowness= parameters.get('serialization_type')
 				if shallowness==SER_TYPE_SHALLOW_CHILDREN:
 					#temporarily set shallowness for serialization of children
 					parameters['serialization_type']=SER_TYPE_SHALLOW
