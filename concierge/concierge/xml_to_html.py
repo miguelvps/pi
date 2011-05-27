@@ -3,6 +3,9 @@ from common import xml_types
 from xml.etree import ElementTree
 from flask import render_template
 import itertools
+from common.xml_types import TYPE_PROP_NAME
+from common.xml_kinds import KIND_PROP_NAME
+from common.xml_names import NAME_PROP_NAME
 
 
 class AtributeTypeRepresentation(object):
@@ -37,20 +40,20 @@ class ListTypeRepresentation(object):
 
 
 def list_type_shallow_representation(xml):
-    r, k = xml.get('xml_name'), xml.get('xml_kind')
+    r, k = xml.get(NAME_PROP_NAME), xml.get(KIND_PROP_NAME)
     title= "%s: %s" % (k,r) if (k and r) else k or "List"
     return AtributeTypeRepresentation(title, '')
 
 def list_or_atribute_type_shallow_representation(xml):
-    if xml.get('xml_type')== xml_types.LIST_TYPE:
+    if xml.get(TYPE_PROP_NAME)== xml_types.LIST_TYPE:
         return list_type_shallow_representation(xml)
     else:
-        k, t= xml.get('kind'), xml.text
+        k, t= xml.get(KIND_PROP_NAME), xml.text
         title= '<p>%s: %s</p>' % ( k, t )
         return AtributeTypeRepresentation(title, '')
 
 def list_type_deep_representation(xml):
-    r, k = xml.get('representative'), xml.get('kind')
+    r, k = xml.get(NAME_PROP_NAME), xml.get(KIND_PROP_NAME)
     title= "%s: %s" % (k,r) if (k and r) else k or "List"
     atributes= map(list_or_atribute_type_shallow_representation, xml.getchildren())
     return ListTypeRepresentation(title, atributes)
@@ -62,13 +65,14 @@ def list_type_deep_representation(xml):
 def xml_to_representation(xml_str):
     assert type(xml_str)==str or type(xml_str)==unicode
     xml= ElementTree.fromstring(xml_str.encode('utf-8'))
-    if xml.get('type')== xml_types.LIST_TYPE:
+    if xml.get(TYPE_PROP_NAME)== xml_types.LIST_TYPE:
         return list_type_deep_representation(xml)
     else:
         return list_or_atribute_type_shallow_representation(xml)
 
 
 def render_xml_list(xml_list):
+    import ipdb; ipdb.set_trace()
     rs= map(xml_to_representation, xml_list)
     r= ListTypeRepresentation.from_list(rs)
     return render_template('results_model_list.html', l=r)
