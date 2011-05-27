@@ -3,7 +3,7 @@ from flaskext.sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 
-from common import xser, xml_attributes, xml_kinds, xml_names
+from common import xser, xml_attributes, xml_kinds, xml_names, xml_types
 from common.xser_parameters import SERIALIZER_PARAMETERS, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN
 from common import search
 from common.xser_property import set_xser_prop
@@ -61,6 +61,8 @@ class Person(db.Model):
 
 set_xser_prop(Person, xml_kinds.KIND_PROP_NAME, xml_kinds.person)
 set_xser_prop(Person, xml_names.NAME_PROP_NAME, xml_names.pes_person)
+set_xser_prop(Person, xml_types.TYPE_PROP_NAME, xml_types.LIST_TYPE)
+
 
 
 @app.route("/")
