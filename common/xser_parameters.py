@@ -75,7 +75,7 @@ def list_xml_filter(model_list, params):
 def list_xml_tagname(model_list, params):
     return 'entity'
 def list_xml_atributes(model_list, params):
-    return {KIND_PROP_NAME: LIST_TYPE}
+    return {TYPE_PROP_NAME: LIST_TYPE}
 def list_xml_show_itself(model_list, params):
     #this lines makes a list (header) only appear if it's children models are kinds
     children_are_kinds= has_xser_prop(model_list[0], KIND_PROP_NAME)
