@@ -20,11 +20,9 @@
             <li data-role="fieldcontain">
             {{search_form.search_query.label}}
             {{search_form.search_query}}
-            <span class="error">
                 {% for error in search_form.search_query.errors  %}
-                {{ error }}
+                <span class="error">{{ error }}</span>
                 {% endfor %}
-            </span>
             </li>
         </ul>
         <div data-role="fieldcontain">

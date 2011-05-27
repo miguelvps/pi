@@ -20,9 +20,7 @@
             {{form.favorite}} {{form.favorite.label}}
             <p>Give it a rating (1 to 5).</p>
             <input type="range" name="{{form.rating.name}}" id="slider" value="{{form.rating.data}}" min="1" max="5"  />
-            {% for error in form.errors  %}
-            {{ error }}
-            {% endfor %}
+            <!-- put error presentation here /-->
         </fieldset>
         <input id="submit" type="submit" value="Save" data-role="button" data-inline="true" data-theme="b" />
     </form>

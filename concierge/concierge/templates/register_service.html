@@ -17,12 +17,10 @@
     <form action="/services/register", method="POST">
         <fieldset>
             {{form.url(placeholder = form.url.label.text) }}
-            <span class="error">
                 {% for error in form.url.errors  %}
-                {{ error }}
+                <span class="error">{{ error }}</span>
                 <br \>
                 {% endfor %}
-            </span>
             <input id="Submit1" type="submit" value="Register" data-role="button" data-inline="true" data-theme="b" />
         </fieldset>
     </form>

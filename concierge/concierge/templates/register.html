@@ -18,17 +18,13 @@
         <fieldset>
             {{ csrf }}
             {{ form.username(placeholder=form.username.label.text) }}
-            <span class="error">
                 {% for error in form.username.errors  %}
-                {{ error }}
+                <span class="error">{{ error }}</span>
                 {% endfor %}
-            </span>
             {{ form.password(placeholder=form.password.label.text) }}
-            <span class="error">
                 {% for error in form.password.errors  %}
-                {{ error }}
+                <span class="error">{{ error }}</span>
                 {% endfor %}
-            </span>
             {{ form.confirm(placeholder=form.confirm.label.text) }}
             {{ form.remember }} {{ form.remember.label }}
             <input type="submit" value="Sign up" data-role="button" data-inline="true" data-theme="b" />
