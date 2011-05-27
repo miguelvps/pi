@@ -37,12 +37,12 @@ class ListTypeRepresentation(object):
 
 
 def list_type_shallow_representation(xml):
-    r, k = xml.get('representative'), xml.get('kind')
+    r, k = xml.get('xml_name'), xml.get('xml_kind')
     title= "%s: %s" % (k,r) if (k and r) else k or "List"
     return AtributeTypeRepresentation(title, '')
 
 def list_or_atribute_type_shallow_representation(xml):
-    if xml.get('type')== xml_types.LIST_TYPE:
+    if xml.get('xml_type')== xml_types.LIST_TYPE:
         return list_type_shallow_representation(xml)
     else:
         k, t= xml.get('kind'), xml.text
