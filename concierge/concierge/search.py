@@ -1,5 +1,5 @@
 from flask import Module, request, session, render_template, redirect, g
-from concierge.services_models import Service
+from concierge.services_models import Service, ResourceMethod
 from concierge import xml_to_html
 
 from concierge.auth import HistoryEntry
@@ -112,5 +112,10 @@ def search_aux(query, services=None, add_to_history=True):
         #no keywords match
         results_xml=[]
     else:
-        results_xml= [method.execute({rest_method_parameters.QUERY: query}) for ignoreme, method in matches]
+        params= {rest_method_parameters.QUERY: query}
+        method_parameters= [(method, params) for ignoreme, method in matches]
+        results= ResourceMethod.execute_several(method_parameters)
+
+    failed_services= [services[i] for i, result in enumerate(results) if result==None]
+    results_xml= filter( lambda a:a!=None, results)
     return xml_to_html.render_xml_list(results_xml)

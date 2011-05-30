@@ -143,6 +143,53 @@ class ResourceMethod(db.Model):
         page = urllib.urlopen(method_url + "?" + params).read().decode('utf-8')
         return page
 
+    @staticmethod
+    def execute_several(method_parameters_pairs, thread_number=8):
+        '''
+        See execute().
+        given a list of tuples in the form (method, parameters),
+        executes the given methods in parallel (threaded), and returns a
+        list of results (in the same order).
+        Does not throw exceptions; if any of the methods fails, its
+        result is None.'''
+        from Queue import Queue
+        import threading
+        tasks_queue = Queue()
+        results_list = [0]*len(method_parameters_pairs)
+        
+        class ExecuteThread(threading.Thread):
+            def __init__(self, tasks_queue, results_list):
+                threading.Thread.__init__(self)
+                self.tasks_queue = tasks_queue
+                self.results_list= results_list
+        
+            def run(self):
+                while True:
+                    #n is the desired position of the result in the
+                    #results_list (technique like Schwartzian transform)
+                    n, x = self.tasks_queue.get()
+                    method, parameters= x
+                    try:
+                        result= method.execute(parameters)
+                    except:
+                        #communication error
+                        result= None
+                    print "set", n, "...",result
+                    self.results_list[n]= result
+                    self.tasks_queue.task_done()
+        
+        for i in range(thread_number):
+            t = ExecuteThread(tasks_queue, results_list)
+            t.setDaemon(True)
+            t.start()
+
+        decorated= [(i, pair) for i,pair in enumerate(method_parameters_pairs)]
+        map(tasks_queue.put, decorated)
+        #wait until everything has been processed     
+        tasks_queue.join()
+        return results_list
+        
+
 
 class MethodParameter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
