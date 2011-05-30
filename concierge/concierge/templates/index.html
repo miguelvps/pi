@@ -8,6 +8,14 @@
 <div data-role="header"  data-id="concheader" data-backbtn="false">
     <h1>Concierge</h1>
 
+    <div class="ui-btn-right">
+        <select data-theme="a" data-icon="arrow-d" data-native-menu="false" data-iconpos="notext" tabindex="-1"> 
+            <option value="name" id="order_by_name">Order by name</option> 
+            <option value="created" id="order_by_type">Order by date</option>
+            <option value="active" id="order_by_provider">Order by online</option>
+        </select>
+    </div>
+
     <div data-role="header" data-position="inline" data-theme="c">
         <form action="/search" method="POST">
             {% for field in search_form %}
@@ -23,6 +31,11 @@
 </div><!-- /header -->
 
 <script type="text/javascript">
+
+    $('#index').load(function(event){
+        $("#index ul").listview('refresh');
+    });
+
     $("#index form").submit(function(e) {
         if (!auth) {
             var query = $('#index input[name="{{search_form.search_query.name}}"]').val();
@@ -36,11 +49,12 @@
         }
     });
 </script>
+
 {% endblock %}
 
 {% block page_content %}
 <div data-role="content">
-    <ul data-split-icon="star"  data-role="listview"  data-theme="c"  data-dividertheme="a" data-inset="True">
+    <ul data-split-icon="star"  data-role="listview"  data-theme="c"  data-dividertheme="a" data-inset="True" id="service_list">
         <li data-role="list-divider">Services</li>
         {% for service in services %}
         <li>
@@ -70,4 +84,19 @@
     </div><!-- /navbar -->
 </div><!-- /footer -->
 
+<script type="text/javascript">
+    $("#index select").bind('change', function() {
+        var option = $("#index select").val();
+        var url = "?order_by=" + option;
+        var list = $("#index ul");
+        $.ajax({
+            type: "GET",
+            url: url
+        });
+    });
+    
+    $("#service_list").ajaxSuccess(function() {
+        $(this).listview('refresh');
+    });    
+</script>
 {% endblock %}
