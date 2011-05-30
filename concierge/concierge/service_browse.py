@@ -16,7 +16,7 @@ def resource_list_method(resourse):
 
 def url_for_resource(resource, service):
     if not resource: return "/"
-    return url_for('browse', service_id=service.id)+'?resource='+resource.url
+    return url_for('browse', service_id=service.id)+'?resource='+resource.relative_url()
 
 @service_browse.route('/services/<service_id>/browse/')
 def browse(service_id):

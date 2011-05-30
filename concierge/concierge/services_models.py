@@ -85,8 +85,11 @@ class ServiceResource(db.Model):
     methods = db.relationship('ResourceMethod', backref='resource')
     resources = db.relationship('ServiceResource', backref=backref('parent', remote_side='ServiceResource.id'))
 
-    def full_url(self):
-        return self.parent.full_url()+self.url+"/" if self.parent else self.service.url
+    def relative_url(self):
+        return self.parent.relative_url()+self.url+"/" if self.parent else ""
+
+    def absolute_url(self):
+        return self.service.url + "/" + self.relative_url()
 
     def find_methods(self, recursive= False, filter_function= (lambda x: True) ):
         '''returns the methods of the resource and (optionally) subresources.
@@ -101,6 +104,8 @@ class ServiceResource(db.Model):
 
     def get_resource_by_url(self, url):
         if type(url)== str or type(url)==unicode:
+            if url[-1]=="/":
+                url=url[:-1]       #remove last / for splitting
             url= url.split('/')
 
         local_resource_name= url[0]
@@ -132,7 +137,7 @@ class ResourceMethod(db.Model):
         and returns response'''
         if self.type!=rest_methods.GET:
             raise NotImplementedError("Can't execute a service method that is not a GET")
-        method_url= self.resource.full_url()
+        method_url= self.resource.absolute_url()
         needed_parameters= [p.parameter for p in self.parameters]
         needed_parameters_names= [rest_method_parameters.reverse[p] for p in needed_parameters]
         #all received parameters must be method parameters
