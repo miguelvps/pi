@@ -80,11 +80,15 @@ class ServiceResource(db.Model):
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     parent_id = db.Column(db.Integer, db.ForeignKey('service_resource.id'))
     url = db.Column(db.String)
+    dynamic= db.Column(db.Boolean)
 
     keywords = db.relationship('ResourceKeyword', backref='resource')
     methods = db.relationship('ResourceMethod', backref='resource')
     resources = db.relationship('ServiceResource', backref=backref('parent', remote_side='ServiceResource.id'))
 
+    def browsable_childs(self):
+        return filter( lambda r: not r.dynamic, self.resources)
+        
     def relative_url(self):
         return self.parent.relative_url()+self.url+"/" if self.parent else ""
 
@@ -104,16 +108,21 @@ class ServiceResource(db.Model):
 
     def get_resource_by_url(self, url):
         if type(url)== str or type(url)==unicode:
-            if url[-1]=="/":
-                url=url[:-1]       #remove last / for splitting
             url= url.split('/')
-
-        local_resource_name= url[0]
-        local_resource= filter(lambda r:r.url==local_resource_name, self.resources)[0]
-        if len(url)==1:
-            return local_resource
+        rn= url[0]  #local resource name
+        if rn=="":
+            r= self
         else:
-            return local_resource.get_resource_by_url(url[1:])
+            try:
+                r= filter(lambda r:r.url==rn, self.resources)[0]
+            except:
+                raise Exception("Cannot find a resource named %s in resource %s" % (url[0], self.absolute_url())  )
+        if r.dynamic:
+            raise Exception("The resource %s, child of %s, is dynamic, cannot get it by url" % (url[0], self.absolute_url())  )
+        if len(url)==1:
+            return r
+        else:
+            return r.get_resource_by_url(url[1:])
 
     def get_parent_in_database(self):
         p= self.parent_id

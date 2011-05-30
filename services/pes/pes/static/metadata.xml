@@ -22,11 +22,15 @@
         <method type="GET" >
             <parameter>query</parameter> 
         </method>
-        <resource url="pessoas">
+        <resource url="pessoas" type="static">
             <method type="GET" >
                 <parameter>start</parameter>
                 <parameter>end</parameter> 
             </method>
+            <resource url="pessoa_id" type="dynamic">
+                <method type="GET" >
+                </method>
+            </resource >
         </resource >
     </resource>
 </service>
