@@ -72,7 +72,6 @@ def xml_to_representation(xml_str):
 
 
 def render_xml_list(xml_list):
-    import ipdb; ipdb.set_trace()
     rs= map(xml_to_representation, xml_list)
     r= ListTypeRepresentation.from_list(rs)
     return render_template('results_model_list.html', l=r)

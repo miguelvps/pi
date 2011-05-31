@@ -80,13 +80,20 @@ class ServiceResource(db.Model):
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     parent_id = db.Column(db.Integer, db.ForeignKey('service_resource.id'))
     url = db.Column(db.String)
+    dynamic= db.Column(db.Boolean)
 
     keywords = db.relationship('ResourceKeyword', backref='resource')
     methods = db.relationship('ResourceMethod', backref='resource')
     resources = db.relationship('ServiceResource', backref=backref('parent', remote_side='ServiceResource.id'))
 
-    def full_url(self):
-        return self.parent.full_url()+self.url+"/" if self.parent else self.service.url
+    def browsable_childs(self):
+        return filter( lambda r: not r.dynamic, self.resources)
+        
+    def relative_url(self):
+        return self.parent.relative_url()+self.url+"/" if self.parent else ""
+
+    def absolute_url(self):
+        return self.service.url + "/" + self.relative_url()
 
     def find_methods(self, recursive= False, filter_function= (lambda x: True) ):
         '''returns the methods of the resource and (optionally) subresources.
@@ -102,13 +109,20 @@ class ServiceResource(db.Model):
     def get_resource_by_url(self, url):
         if type(url)== str or type(url)==unicode:
             url= url.split('/')
-
-        local_resource_name= url[0]
-        local_resource= filter(lambda r:r.url==local_resource_name, self.resources)[0]
-        if len(url)==1:
-            return local_resource
+        rn= url[0]  #local resource name
+        if rn=="":
+            r= self
         else:
-            return local_resource.get_resource_by_url(url[1:])
+            try:
+                r= filter(lambda r:r.url==rn, self.resources)[0]
+            except:
+                raise Exception("Cannot find a resource named %s in resource %s" % (url[0], self.absolute_url())  )
+        if r.dynamic:
+            raise Exception("The resource %s, child of %s, is dynamic, cannot get it by url" % (url[0], self.absolute_url())  )
+        if len(url)==1:
+            return r
+        else:
+            return r.get_resource_by_url(url[1:])
 
     def get_parent_in_database(self):
         p= self.parent_id
@@ -132,7 +146,7 @@ class ResourceMethod(db.Model):
         and returns response'''
         if self.type!=rest_methods.GET:
             raise NotImplementedError("Can't execute a service method that is not a GET")
-        method_url= self.resource.full_url()
+        method_url= self.resource.absolute_url()
         needed_parameters= [p.parameter for p in self.parameters]
         needed_parameters_names= [rest_method_parameters.reverse[p] for p in needed_parameters]
         #all received parameters must be method parameters
@@ -142,6 +156,53 @@ class ResourceMethod(db.Model):
         params= urllib.urlencode(parameters_kv)
         page = urllib.urlopen(method_url + "?" + params).read().decode('utf-8')
         return page
+
+    @staticmethod
+    def execute_several(method_parameters_pairs, thread_number=8):
+        '''
+        See execute().
+        given a list of tuples in the form (method, parameters),
+        executes the given methods in parallel (threaded), and returns a
+        list of results (in the same order).
+        Does not throw exceptions; if any of the methods fails, its
+        result is None.'''
+        from Queue import Queue
+        import threading
+        tasks_queue = Queue()
+        results_list = [0]*len(method_parameters_pairs)
+        
+        class ExecuteThread(threading.Thread):
+            def __init__(self, tasks_queue, results_list):
+                threading.Thread.__init__(self)
+                self.tasks_queue = tasks_queue
+                self.results_list= results_list
+        
+            def run(self):
+                while True:
+                    #n is the desired position of the result in the
+                    #results_list (technique like Schwartzian transform)
+                    n, x = self.tasks_queue.get()
+                    method, parameters= x
+                    try:
+                        result= method.execute(parameters)
+                    except:
+                        #communication error
+                        result= None
+                    print "set", n, "...",result
+                    self.results_list[n]= result
+                    self.tasks_queue.task_done()
+        
+        for i in range(thread_number):
+            t = ExecuteThread(tasks_queue, results_list)
+            t.setDaemon(True)
+            t.start()
+
+        decorated= [(i, pair) for i,pair in enumerate(method_parameters_pairs)]
+        map(tasks_queue.put, decorated)
+        #wait until everything has been processed     
+        tasks_queue.join()
+        return results_list
+        
 
 
 class MethodParameter(db.Model):

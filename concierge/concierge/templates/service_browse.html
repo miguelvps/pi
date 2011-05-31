@@ -14,7 +14,7 @@
 {% block page_content %}
 <div data-role="content">
     <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset="True">
-        {% for r in resource.resources %}
+        {% for r in resource.browsable_childs() %}
         <li><a href="{{url_for_resource(r, service)}}">{{r.url+"/"}}</a></li>
         {% endfor %}
     </ul>
