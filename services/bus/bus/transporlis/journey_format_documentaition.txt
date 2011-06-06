@@ -1,0 +1,70 @@
+
+#---#
+    pcas coords
+    #*#
+    #-#
+        coords
+        #*#
+        coords
+        #*#
+        coords
+        #*#
+        coords
+        #*#
+        coords
+        #*#
+        coords
+        #*#
+    #-#
+        
+    pcas coords
+    #*#
+    #-#
+        coords
+        #*#
+        coords
+        #*#
+        coords
+        #*#
+        coords
+        #*#
+    #-#
+
+
+    pcas coords
+    #*#
+    #-#
+
+
+#---#
+    carr
+    #-#
+    carr
+    #-#
+    carr
+    #-#
+    carr
+    #-#
+    carr
+    #-#
+#---#
+pcas coords
+
+
+
+
+
+
+
+#-----------
+06-06-2011 18:05:00|        datetime inicio
+247g|                       ???
+descricao|                  descricao
+4614|                       ????
+06-06-2011 18:13:30|        datetime fim
+SFertagus|                  cod operador
+1,8|                        custo
+Bus|                        operador type?  Metro, Pedestrian, Bus
+00:08:30|                   duração
+0:10:00|                    tempo de espera
+noCoords                    constante?
