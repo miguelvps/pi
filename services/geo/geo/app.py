@@ -1,6 +1,7 @@
 from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
 from common import xser, xser_parameters, xml_attributes
+from common.xser_parameters import SERIALIZER_PARAMETERS, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN
 from common import xml_kinds, search, xser_property, xml_types, xml_names
 from common.xml_kinds import KIND_PROP_NAME
 from common.xml_types import TYPE_PROP_NAME
@@ -40,7 +41,7 @@ xser_property.set_xser_prop(Placemark, NAME_PROP_NAME ,xml_names.geo_placemark)
 #xser_property.set_xser_prop(PlacemarkType, TYPE_PROP_NAME, xml_types.LIST_TYPE)
 
 @app.route("/placemarks/", methods=['GET',])
-def placemark():
+def placemarks():
     placemarks = Placemark.query.all()
     xml_text= xser.ModelList_xml(placemarks).to_xml(SERIALIZER_PARAMETERS).toxml()
     return Response(response=xml_text, mimetype="application/xml")
@@ -51,3 +52,13 @@ def search_method():
     model_list= [Placemark, PlacemarkType]
     xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
     return Response(response=xml, mimetype="application/xml")
+
+@app.route("/placemarks/<id>")
+def placemark(id):
+    placemark = Placemark.query.get_or_404(id)
+    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
+    import pdb; pdb.set_trace()
+    xml_text= xser.Model_Serializer(placemark).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
+    return Response(xml_text, mimetype='application/xml')
+
+    
