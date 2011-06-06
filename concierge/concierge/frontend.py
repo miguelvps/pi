@@ -12,11 +12,13 @@ from sqlalchemy import desc
 def index():
     descendant = request.args.get('desc', None)
     order_by = request.args.get('order_by', None)
-    order_by = desc(order_by) if descendant != None else order_by
     searchform = SearchForm(request.form)
-    
-    {'name': 'name', 'provider': 'user.username', 'created':'created'}
-    services = Service.query.order_by(order_by).all()
+    if order_by:
+        order_by = desc(order_by) if descendant != None else order_by
+        order_option= {'name': 'name', 'provider': 'user.username', 'created':'created'}
+        services = Service.query.order_by(order_option[order_by]).all()
+    else:
+        services = Service.query.all()
     return render_template('index.html', services=services, search_form=searchform)
 
 @frontend.route('/history', methods=['GET', 'POST'])

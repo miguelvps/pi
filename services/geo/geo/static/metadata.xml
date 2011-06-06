@@ -1,32 +1,31 @@
-<service name="pessoas" url="http://127.0.0.1:5001/">
-    <description>Este serviço guarda informação dos docentes</description>
+<service name="geo" url="http://127.0.0.1:5001/">
+    <description>Este serviço guarda informação sobre espaços e as suas coordenadas</description>
     <supported_formats>
         <format>xml</format>
     </supported_formats>
 
     <resource url="">
         <keywords>
-            <keyword>docente</keyword>
-            <keyword>docentes</keyword>
-            <keyword>professor</keyword>
-            <keyword>professores</keyword>
-            <keyword>email</keyword>
-            <keyword>mail</keyword>
-            <keyword>phone</keyword>
-            <keyword>telefone</keyword>
-            <keyword>tel</keyword>
-            <keyword>fax</keyword>
-            <keyword>pessoa</keyword>
-            <keyword>pessoas</keyword>
+            <keyword>departamento</keyword>
+            <keyword>dep</keyword>
+            <keyword>sala</keyword>
+            <keyword>gabinete</keyword>
+            <keyword>edificio</keyword>
+            <keyword>ed</keyword>
+            <keyword>pavilhao</keyword>
         </keywords>
         <method type="GET" >
             <parameter>query</parameter> 
         </method>
-        <resource url="pessoas">
+        <resource url="espacos" type="static">
             <method type="GET" >
                 <parameter>start</parameter>
                 <parameter>end</parameter> 
             </method>
-        </resource >
+            <resource url="espaco_id" type="dynamic">
+                <method type="GET">
+                </method>
+            </resource>
+        </resource>
     </resource>
 </service>
