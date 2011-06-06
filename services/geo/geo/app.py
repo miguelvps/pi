@@ -57,7 +57,6 @@ def search_method():
 def placemark(id):
     placemark = Placemark.query.get_or_404(id)
     SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
-    import pdb; pdb.set_trace()
     xml_text= xser.Model_Serializer(placemark).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
     return Response(xml_text, mimetype='application/xml')
 

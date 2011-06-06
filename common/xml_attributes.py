@@ -96,3 +96,15 @@ set_xser_prop(departamentos_subject_acronym, KP, xml_kinds.subject)
 set_xser_prop(departamentos_subject_period, KP, xml_kinds.subject_period)
 set_xser_prop(departamentos_subject_regent, KP, xml_kinds.person)
 set_xser_prop(departamentos_subject_coordinator, KP, xml_kinds.person)
+
+
+
+#GEO atributes properties----------------------------------------------
+set_xser_prop(geo_placemark_name, TP, xml_types.STRING_TYPE)
+set_xser_prop(geo_placemark_folder, TP, xml_types.STRING_TYPE)
+set_xser_prop(geo_placemark_abreviation, TP, xml_types.STRING_TYPE)
+set_xser_prop(geo_placemark_wkt, TP, xml_types.COORDINATE_TYPE)
+set_xser_prop(geo_placemarktype_name, TP, xml_types.STRING_TYPE)
+
+set_xser_prop(geo_placemark_name, KP, xml_kinds.placemark)
+set_xser_prop(geo_placemark_folder, KP, xml_kinds.placemark_folder)
