@@ -1,56 +1,20 @@
+the data is obtained in the following way:
 
-#---#
-    pcas coords
-    #*#
-    #-#
-        coords
-        #*#
-        coords
-        #*#
-        coords
-        #*#
-        coords
-        #*#
-        coords
-        #*#
-        coords
-        #*#
-    #-#
-        
-    pcas coords
-    #*#
-    #-#
-        coords
-        #*#
-        coords
-        #*#
-        coords
-        #*#
-        coords
-        #*#
-    #-#
+transporlis.sapo.pt -> calculo de percurso
+http://transporlis.sapo.pt/Default.aspx?tabid=188
 
+inspect page for clicking "calcular" button event
+onclick="VisualizarRota();"
 
-    pcas coords
-    #*#
-    #-#
+VisualizarRota is on the following include
+http://transporlis.sapo.pt:80//js/trp_ajaxRequest_calculo_percurso.js
 
-
-#---#
-    carr
-    #-#
-    carr
-    #-#
-    carr
-    #-#
-    carr
-    #-#
-    carr
-    #-#
-#---#
-pcas coords
-
-
+gets data from
+UrlBaseAjax + 'Ajax/trp_calculo_percurso.ashx?cmd=recuperarRota' + descRota +'&UrlBase=' + UrlBase + '&isKyosk='+iskyosk, DoVisualizarRota_Callback); 
+UrlBaseAjax="http://transporlis.sapo.pt:80//DesktopModules/trp_calculo_percurso/"
+descRota="&textPartida=Definido no mapa&latInicial=38.706307612665&longInicial=-9.2620098999&textChegada=Definido no mapa&latFinal=38.752909777636&longFinal=-9.2194378784167&calculoPartida=0&dataRota=06/06/2011&horaRota=21:02&meiosTransporte=true,true,true,true&tipoPercurso=64"
+UrlBase= "http://transporlis.sapo.pt:80//"
+iskyosk= false
 
 
 
