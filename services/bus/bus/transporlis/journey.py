@@ -167,7 +167,10 @@ def magic_text_to_list(magic_text):
 
 def parse(html):
     '''main function. returns a Jorney object from the html'''
-    mt= get_magic_text_from_html(html)
+    try:
+        mt= get_magic_text_from_html(html)
+    except:
+        raise Exception("Could not find magic text in returned page. page dump:\n"+html)
     mtl= magic_text_to_list(mt)
     contents= zip(*mtl)[1]
     assert len(contents)>0
