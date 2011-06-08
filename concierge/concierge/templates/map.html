@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 
-{% block page_id %} map {% endblock %}
+{% block page_id %}map{% endblock %}
 
 {% block redirect %} data-url="/map" {% endblock %}
 
@@ -15,12 +15,28 @@
 {% endblock %}
 	
 {% block page_content %}
-    <script src="/static/map.js"></script>
+    <script type="text/javascript">
+
+        // When map page opens get location and display map
+        $('.page-map').live("pagecreate", function() {
+
+            //boston :)
+            var lat = 38.660911,
+                lng = -9.205256;
+
+            var latlng = new google.maps.LatLng(lat, lng);
+            var myOptions = {
+                zoom: 17,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
+        });     
+    </script>
     <link rel="stylesheet" href="/static/map.css" />
 
     <div data-role="content"> 
         <div id="map-canvas">
-
             <!-- map loads here... -->
         </div>
     </div>

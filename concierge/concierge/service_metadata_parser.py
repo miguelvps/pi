@@ -17,8 +17,7 @@ def parse_metadataResource(xml_object):
     url= xml_object.get('url')
     keywords_xml= xml_object.find('keywords')
     keywords= [ResourceKeyword(keyword=k.text) for k in keywords_xml.getchildren()] if keywords_xml is not None else []
-    is_dynamic= True if xml_object.get('type')=="dynamic" else False    #not dynamic if atribute doesn't exist
-    resource= ServiceResource(url=url, keywords=keywords, dynamic=is_dynamic)
+    resource= ServiceResource(url=url, keywords=keywords)
     resourcelist_xml= xml_object.findall('resource')
     resource.resources = [parse_metadataResource(resource_xml) for resource_xml in resourcelist_xml]
     methodlist_xml= xml_object.findall('method')

@@ -64,8 +64,9 @@ class Model_Atribute_Serializer(object):
 				if hasattr(self.atr_obj, '__iter__'):
 					return ModelList_xml(self.atr_obj).to_xml(parameters)
 				else:
-					#model object
-					return Model_Serializer(self.atr_obj).to_xml(parameters)
+					if self.atr_obj is not None:
+						#model object
+						return Model_Serializer(self.atr_obj).to_xml(parameters)
 		return None
 
 

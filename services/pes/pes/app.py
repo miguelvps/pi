@@ -1,26 +1,18 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, url_for
 from flaskext.sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
-from sqlalchemy.orm import joinedload
 
-from common import xser, xml_attributes, xml_kinds, xml_names, xml_types
-from common.xser_parameters import SERIALIZER_PARAMETERS, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN
 from common import search
-from common.xser_property import set_xser_prop
 
-import urllib
-import itertools
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pes.db'
 db = SQLAlchemy(app)
 
-serializer_params= SERIALIZER_PARAMETERS
 
 class Email(db.Model):
     keywords= ['email','mail']
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column( xml_attributes.pes_person_email(255) )
+    email = db.Column(db.String(255))
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
 
     search_atributes= ["email"]
@@ -30,7 +22,7 @@ class Email(db.Model):
 class Phone(db.Model):
     keywords= ['phone','telefone', 'tel']
     id = db.Column(db.Integer, primary_key=True)
-    phone = db.Column( xml_attributes.pes_person_phone(255) )
+    phone = db.Column(db.String(255))
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
 
     search_atributes= ["Phone"]
@@ -40,53 +32,78 @@ class Phone(db.Model):
 class Fax(db.Model):
     keywords= ['fax']
     id = db.Column(db.Integer, primary_key=True)
-    fax = db.Column( xml_attributes.pes_person_fax(255) )
+    fax = db.Column(db.String(255))
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
 
     search_atributes= ["fax"]
     earch_representative="person"
 
 class Person(db.Model):
+    keywords= ['pessoa','professor']
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(xml_attributes.pes_person_name(1024) )
-    birth_date = db.Column( xml_attributes.pes_person_birthdate )
-    office = db.Column( xml_attributes.pes_person_office(64) )
+    name = db.Column(db.String(1024))
+    birth_date = db.Column(db.Date)
+    office = db.Column(db.String(64))
+
     emails = db.relationship('Email', backref='person')
     phones = db.relationship('Phone', backref='person')
     faxes = db.relationship('Fax', backref='person')
 
-    keywords= ['pessoa','professor']
     search_joins= ["emails", "phones", "faxes"]
     search_atributes= ["name"]
 
-set_xser_prop(Person, xml_kinds.KIND_PROP_NAME, xml_kinds.person)
-set_xser_prop(Person, xml_names.NAME_PROP_NAME, xml_names.pes_person)
-set_xser_prop(Person, xml_types.TYPE_PROP_NAME, xml_types.LIST_TYPE)
+    def permalink(self):
+        return url_for('person', id=self.id)
 
+    def to_xml_shallow(self):
+        return '<entity type="string" service="Pessoas" url="%s">%s</entity>' % (self.permalink(), self.name)
+
+    def to_xml(self):
+        xml = '<entity type="record">'
+        xml += '<entity kind="person" type="string">%s</entity>' % self.name
+        xml += '<entity type="string">%s</entity>' % self.birth_date if self.birth_date else ''
+        xml += '<entity kind="placemark" type="string">%s</entity>' % self.office if self.office else ''
+        xml += '<entity name="Emails" type="list">'
+        if self.emails:
+            for email in self.emails:
+                xml += '<entity type="email">%s</entity>' % email.email
+            xml += '</entity>'
+        if self.phones:
+            xml += '<entity name="Phones" type="list">'
+            for phone in self.phones:
+                xml += '<entity kind="phone" type="string">%s</entity>' % phone.phone
+            xml += '</entity>'
+        if self.faxes:
+            xml += '<entity name="Faxes" type="list">'
+            for fax in self.faxes:
+                xml += '<entity kind="fax" type="string">%s</entity>' % fax.fax
+            xml += '</entity>'
+        xml += '</entity>'
+        return xml
 
 
 @app.route("/")
 def search_method():
     q = request.args.get('query', '')   #quoted query
     model_list= [Person, Email, Fax, Phone]
-    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW
-    xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
+    xml= search.service_search_xmlresponse(model_list, q)
+    # TODO: search
     return Response(response=xml, mimetype="application/xml")
 
 
-@app.route("/pessoas/", methods=['GET',])
+@app.route("/pessoas", methods=['GET',])
 def persons():
     start = request.args.get('start', 0)
     end = request.args.get('end', 10)
     persons = Person.query.limit(end-start).offset(start).all()
-    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW
-    xml_text= xser.ModelList_xml(persons).to_xml(SERIALIZER_PARAMETERS).toxml()
-    return Response(response=xml_text, mimetype="application/xml")
+    xml = '<entity type="list">'
+    for p in persons:
+        xml += p.to_xml_shallow()
+    xml += '</entity>'
+    return Response(response=xml, mimetype="application/xml")
 
 
 @app.route("/pessoas/<id>", methods=['GET',])
 def person(id):
-    person = Person.query.options(joinedload('emails'), joinedload('phones'), joinedload('faxes')).get_or_404(id)
-    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
-    xml_text= xser.Model_Serializer(person).to_xml(serializer_params).toprettyxml()
-    return Response(response=xml_text, mimetype="application/xml")
+    person = Person.query.get_or_404(id)
+    return Response(response=person.to_xml(), mimetype="application/xml")

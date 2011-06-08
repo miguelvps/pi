@@ -1,5 +1,6 @@
 from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import joinedload
 from common import xser, xser_parameters, xml_attributes
 from common.xser_parameters import SERIALIZER_PARAMETERS, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN
 from common import xml_kinds, search, xser_property, xml_types, xml_names
@@ -35,7 +36,7 @@ class Placemark(db.Model):
     search_atributes= ["name", "abreviation"]
     
 xser_property.set_xser_prop(Placemark, KIND_PROP_NAME, xml_kinds.placemark)
-xser_property.set_xser_prop(Placemark, TYPE_PROP_NAME, xml_types.LIST_TYPE)
+xser_property.set_xser_prop(Placemark, TYPE_PROP_NAME, "map")
 xser_property.set_xser_prop(Placemark, NAME_PROP_NAME ,xml_names.geo_placemark)
 #xser_property.set_xser_prop(PlacemarkType, KIND_PROP_NAME, xml_kinds.placemarktype)
 #xser_property.set_xser_prop(PlacemarkType, TYPE_PROP_NAME, xml_types.LIST_TYPE)
@@ -50,12 +51,13 @@ def placemarks():
 def search_method():
     q = request.args.get('query', '')   #quoted query
     model_list= [Placemark, PlacemarkType]
+    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW
     xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
     return Response(response=xml, mimetype="application/xml")
 
 @app.route("/placemarks/<id>")
 def placemark(id):
-    placemark = Placemark.query.get_or_404(id)
+    placemark = Placemark.query.options(joinedload('type')).get_or_404(id)
     SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
     xml_text= xser.Model_Serializer(placemark).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
     return Response(xml_text, mimetype='application/xml')

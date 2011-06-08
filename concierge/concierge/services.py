@@ -1,6 +1,7 @@
 import urllib
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from xml.etree import ElementTree
 try: from xml.etree.ElementTree import ParseError
 except:
     from xml.parsers.expat import ExpatError
@@ -128,3 +129,26 @@ def imports():
     db.session.add(user)
     db.session.commit()
     return redirect("/")
+
+
+@services.route('/<id>/browse')
+def browse(id):
+    service = Service.query.get_or_404(id)
+    root = service.resources[0]
+    return render_template('service_browse.html', resources=root.resources, service=service)
+
+
+@services.route('/<id>/browse/<path:url>')
+def browse_resource(id, url):
+    service = Service.query.get_or_404(id)
+    root = service.resources[0]
+    resource = root.get_resource_by_url(url)
+    # TODO: resource methods/params etc
+    xml = urllib.urlopen(service.url + url).read()
+    element = ElementTree.fromstring(xml)
+    for e in element.iter():
+        if 'service' in e.attrib:
+            s = Service.query.filter_by(name=e.attrib['service']).first()
+            if s:
+                e.attrib['service_id'] = s.id
+    return render_template('service_browse_resource.html', service=service, element=element, url=url)

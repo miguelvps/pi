@@ -1,15 +1,16 @@
+import re
+import urllib
+from datetime import datetime
+
 from flask import Module
 from sqlalchemy.orm import backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.ext.associationproxy import association_proxy
 
-from datetime import datetime
-
 from concierge import db
 from concierge.auth import User, history_entry_services
 from common import rest_methods, rest_method_parameters
 
-import urllib
 
 services_models = Module(__name__, 'services')
 
@@ -69,6 +70,7 @@ class Service(db.Model):
         assert len(search_methods)==1
         return search_methods[0]
 
+
 class ServiceFormat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
@@ -80,15 +82,11 @@ class ServiceResource(db.Model):
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     parent_id = db.Column(db.Integer, db.ForeignKey('service_resource.id'))
     url = db.Column(db.String)
-    dynamic= db.Column(db.Boolean)
 
     keywords = db.relationship('ResourceKeyword', backref='resource')
     methods = db.relationship('ResourceMethod', backref='resource')
     resources = db.relationship('ServiceResource', backref=backref('parent', remote_side='ServiceResource.id'))
 
-    def browsable_childs(self):
-        return filter( lambda r: not r.dynamic, self.resources)
-        
     def relative_url(self):
         return self.parent.relative_url()+self.url+"/" if self.parent else ""
 
@@ -107,26 +105,18 @@ class ServiceResource(db.Model):
         return methods
 
     def get_resource_by_url(self, url):
-        if type(url)== str or type(url)==unicode:
-            url= url.split('/')
-        rn= url[0]  #local resource name
-        if rn=="":
-            r= self
+        if isinstance(url, str) or isinstance(url, unicode):
+            url = url.split('/')
+        rn = url[0]  #local resource name
+        if rn == "":
+            r = self
         else:
             try:
-                r= filter(lambda r:r.url==rn, self.resources)[0]
+                r= filter(lambda r:re.match(r.url, rn), self.resources)[0]
             except:
                 raise Exception("Cannot find a resource named %s in resource %s" % (url[0], self.absolute_url())  )
-        if r.dynamic:
-            raise Exception("The resource %s, child of %s, is dynamic, cannot get it by url" % (url[0], self.absolute_url())  )
-        if len(url)==1:
-            return r
-        else:
-            return r.get_resource_by_url(url[1:])
+        return r if len(url) == 1 else r.get_resource_by_url(url[1:])
 
-    def get_parent_in_database(self):
-        p= self.parent_id
-        return ServiceResource.query.get(p) if p else None
 
 class ResourceKeyword(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -185,7 +175,7 @@ class ResourceMethod(db.Model):
                     method, parameters= x
                     try:
                         result= method.execute(parameters)
-                    except:
+                    except IOError:
                         #communication error
                         result= None
                     print "set", n, "...",result

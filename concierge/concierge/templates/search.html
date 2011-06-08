@@ -13,7 +13,7 @@
 {% block page_content %}
 	<div data-role="content">	
 		search results:
-		{{ search_results|safe }}
+		{% include "render.html" %}
 	</div><!-- /content -->
 {% endblock %}
 
