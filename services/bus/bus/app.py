@@ -1,9 +1,49 @@
 from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
+import urllib
+import datetime
 
+from transporlis import transporlis
+
+
+SERVICE_NAME= "Bus"
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bus.db'
-db = SQLAlchemy(app)
 
 
 
+def locations_to_xml(locations):
+    xml= "<entity type=list>"
+    for location in locations:
+        l= location[0]
+        ln= location[1]
+        xml+= '<entity type="string" service="%s" url="/transportation?%s&%s">%s</entity>' % (SERVICE_NAME, l, ln)
+    xml+="</entity>"
+    
+@app.route("/transportation")
+def destination():
+    l1= request.args.get('lat', '')
+    ln1= request.args.get('long', '')
+    l2= request.args.get('destination_lat', '')
+    ln2= request.args.get('destination_long', '')
+    if not all((l1, ln1, l2, ln2)):
+        xml=""
+    else:
+        now= datetime.datetime.now()
+        j= transporlis.transportation(l1,ln1,l2,ln2, now)
+        
+    
+
+@app.route("/")
+def search_method():
+    query= urllib.unquote_plus(request.args.get('query', ''))
+    if query=="" or len(query)<12 or query[:12]!="transportes ":
+        xml=""
+    else:
+        locationstr= query[12:]
+        try:
+            locations= transporlis.geolocate(locationstr)
+            xml= locations_to_xml(locations)
+        except:
+            print "transporlis response error"
+            xml=""
+    return Response(response=xml, mimetype="application/xml")

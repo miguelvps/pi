@@ -9,8 +9,9 @@ def parse_pesquisar_lugar(html):
             raise Exception("remote end error")
         if not 'value=' in html:
             #a single result, no html
-            tmp= html.split("/")
-            assert tmp[0]="coordenadas"
+            tmp= html.split("/") 
+            if tmp[0]!="coordenadas":
+                raise Exception("remote end error")
             return tmp[1:]
         else:
             matches= re.findall('value="(.*?)"', html)

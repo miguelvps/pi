@@ -1,6 +1,6 @@
 from flaskext.script import Manager, Server
 
-from bus.app import app, db
+from bus.app import app
 
 
 manager = Manager(app)
