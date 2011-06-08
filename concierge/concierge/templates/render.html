@@ -1,7 +1,7 @@
 {% if element.get('service_id') %}
 <a href="/services/{{element.get('service_id')}}/browse{{element.get('url')}}">
 {% elif element.get('kind') %}
-<a href="{{element.get('kind')}}">
+<a href="/search?query={{element.get('kind')}} {{element.text}}">
 {% endif %}
 
 {% if element.get('type') == "string" %}

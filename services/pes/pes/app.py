@@ -86,9 +86,9 @@ class Person(db.Model):
 def search_method():
     q = request.args.get('query', '')   #quoted query
     model_list= [Person, Email, Fax, Phone]
-    # xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
+    xml= search.service_search_xmlresponse(model_list, q)
     # TODO: search
-    return Response(response="", mimetype="application/xml")
+    return Response(response=xml, mimetype="application/xml")
 
 
 @app.route("/pessoas", methods=['GET',])

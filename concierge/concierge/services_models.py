@@ -87,6 +87,12 @@ class ServiceResource(db.Model):
     methods = db.relationship('ResourceMethod', backref='resource')
     resources = db.relationship('ServiceResource', backref=backref('parent', remote_side='ServiceResource.id'))
 
+    def relative_url(self):
+        return self.parent.relative_url()+self.url+"/" if self.parent else ""
+
+    def absolute_url(self):
+        return self.service.url + "/" + self.relative_url()
+
     def find_methods(self, recursive= False, filter_function= (lambda x: True) ):
         '''returns the methods of the resource and (optionally) subresources.
         Optionally filtered by a filter function (with the method as parameter).
@@ -169,7 +175,7 @@ class ResourceMethod(db.Model):
                     method, parameters= x
                     try:
                         result= method.execute(parameters)
-                    except:
+                    except IOError:
                         #communication error
                         result= None
                     print "set", n, "...",result
