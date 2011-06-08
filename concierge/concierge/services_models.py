@@ -106,6 +106,7 @@ class ServiceResource(db.Model):
                 methods.extend( subres.find_methods(recursive, filter_function))
         return methods
 
+
     def get_resource_by_url(self, url):
         if type(url)== str or type(url)==unicode:
             url= url.split('/')
@@ -116,9 +117,10 @@ class ServiceResource(db.Model):
             try:
                 r= filter(lambda r:r.url==rn, self.resources)[0]
             except:
-                raise Exception("Cannot find a resource named %s in resource %s" % (url[0], self.absolute_url())  )
-        if r.dynamic:
-            raise Exception("The resource %s, child of %s, is dynamic, cannot get it by url" % (url[0], self.absolute_url())  )
+                try:
+                    r= filter(lambda r:r.dynamic, self.resources)[0]
+                except:
+                    raise Exception("Cannot find a resource named %s in resource %s" % (url[0], self.absolute_url())  )
         if len(url)==1:
             return r
         else:

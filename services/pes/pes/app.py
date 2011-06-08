@@ -66,7 +66,7 @@ class Person(db.Model):
         xml += '<entity name="Emails" type="list">'
         if self.emails:
             for email in self.emails:
-                xml += '<entity kind="email" type="email">%s</entity>' % email.email
+                xml += '<entity type="email">%s</entity>' % email.email
             xml += '</entity>'
         if self.phones:
             xml += '<entity name="Phones" type="list">'
