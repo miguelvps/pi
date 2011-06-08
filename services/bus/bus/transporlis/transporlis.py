@@ -1,19 +1,43 @@
 import urllib
 import journey
+import re
 
-urlbase= "http://transporlis.sapo.pt:80/"
-UrlBaseAjax= urlbase + "DesktopModules/trp_calculo_percurso/"
-iskyosk= "false"
+def parse_pesquisar_lugar(html):
+        '''returns list of [lat, long, place_name]'''
+        #print "html" , html
+        if html=="Erro":
+            raise Exception("remote end error")
+        if not 'value=' in html:
+            #a single result, no html
+            tmp= html.split("/") 
+            if tmp[0]!="coordenadas":
+                raise Exception("remote end error")
+            return tmp[1:]
+        else:
+            matches= re.findall('value="(.*?)"', html)
+            matches= map(lambda m: m.split('/'), matches)
+            return matches
+            
 
-base_params=    {
-                    "cmd": "recuperarRota",
-                    'UrlBase': urlbase,
-                    'isKyosk': iskyosk,
-                }
+def geolocate(place_string):
+    method_url= 'http://transporlis.sapo.pt:80//DesktopModules/trp_homepage/Ajax/trp_homepage.ashx'
+    params= {"cmd": "pesquisarLugar",
+             "Lugar": place_string}
+    request_params= urllib.urlencode(params)
+    html = urllib.urlopen(method_url + "?" + request_params).read()
+    return parse_pesquisar_lugar(html)
 
-method_url= UrlBaseAjax + 'Ajax/trp_calculo_percurso.ashx'
+    
+
 
 def transportation(lat1, long1, lat2, long2, journey_datetime):
+    '''example: transportation(38.748893448241,-9.1445932910152,38.716755469796,-9.1693125292957, datetime.datetime.now())'''
+    method_url= 'http://transporlis.sapo.pt:80/DesktopModules/trp_calculo_percurso/Ajax/trp_calculo_percurso.ashx'
+    base_params=    {
+                    "cmd": "recuperarRota",
+                    'isKyosk': "false",
+                    }
+        
     #convert lat/long to strings
     lat1,long1, lat2, long2= map(str, (lat1,long1, lat2, long2))
     datarota= journey_datetime.date().strftime("%d/%m/%Y")
@@ -41,4 +65,3 @@ def transportation(lat1, long1, lat2, long2, journey_datetime):
     request_params= urllib.urlencode(all_params)
     html = urllib.urlopen(method_url + "?" + request_params).read()
     return journey.parse(html)
-
