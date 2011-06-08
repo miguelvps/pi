@@ -22,6 +22,14 @@
     {% endfor %}
     </ul>
 
+{% elif element.get('type') == "map" %}
+    <link rel="stylesheet" href="/static/map.css" />
+    <script src="/static/map.js"></script>
+        <div id="map-canvas">
+            <!-- map loads here... -->
+        </div>
+
+
 {% elif element.get('type') == "record" %}
     <h1>{{ element[0].text }}</h1>
     <dl>
@@ -37,3 +45,5 @@
 {% if element.get('service_id') or element.get('kind') %}
     </a>
 {% endif %}
+
+    

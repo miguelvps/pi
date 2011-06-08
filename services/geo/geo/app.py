@@ -54,7 +54,7 @@ def search_method():
     return Response(response=xml, mimetype="application/xml")
 
 
-@app.route("/placemarks/", methods=['GET',])
+@app.route("/placemarks", methods=['GET',])
 def placemarks():
     #start = request.args.get('start', 0)
     #end = request.args.get('end', 10)

@@ -1,4 +1,4 @@
-<service name="Geo" url="http://127.0.0.1:5001/">
+<service name="Geo" url="http://127.0.0.1:5004/">
     <description>Este serviço guarda informação sobre espaços e as suas coordenadas</description>
     <supported_formats>
         <format>xml</format>
@@ -17,12 +17,12 @@
         <method type="GET" >
             <parameter>query</parameter> 
         </method>
-        <resource url="espacos" type="static">
+        <resource url="placemarks">
             <method type="GET" >
                 <parameter>start</parameter>
                 <parameter>end</parameter> 
             </method>
-            <resource url="espaco_id" type="dynamic">
+            <resource url="\d+">
                 <method type="GET">
                 </method>
             </resource>

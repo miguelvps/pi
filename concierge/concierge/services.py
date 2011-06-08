@@ -146,7 +146,7 @@ def browse_resource(id, url):
     # TODO: resource methods/params etc
     xml = urllib.urlopen(service.url + url).read()
     element = ElementTree.fromstring(xml)
-    for e in element.iter():
+    for e in element.getiterator():
         if 'service' in e.attrib:
             s = Service.query.filter_by(name=e.attrib['service']).first()
             if s:

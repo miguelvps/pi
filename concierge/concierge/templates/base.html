@@ -22,7 +22,8 @@
 
 
         <!-- Start of first page -->
-        <div data-role="page" id="{% block page_id %}{% endblock %}" {% block redirect %}{% endblock %} {% block class %}{% endblock %}>
+        <div data-role="page" id="{% block page_id %}{% endblock %}" {% block redirect %}{% endblock %} {% block class %}class="page-map"{% endblock %}
+>
             <script type="text/javascript">
                 {% if g.user %}
                     auth = true;
