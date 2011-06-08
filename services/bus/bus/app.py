@@ -12,12 +12,15 @@ app = Flask(__name__)
 
 
 def locations_to_xml(locations):
-    xml= "<entity type=list>"
+    import ipdb; ipdb.set_trace()
+    xml= '<entity type="list">'
     for location in locations:
         l= location[0]
         ln= location[1]
-        xml+= '<entity type="string" service="%s" url="/transportation?%s&%s">%s</entity>' % (SERVICE_NAME, l, ln)
+        location_str= location[2]
+        xml+= '<entity type="string" service="%s" url="/transportation?%s&%s">%s</entity>' % (SERVICE_NAME, l, ln, location_str)
     xml+="</entity>"
+    return xml
     
 @app.route("/transportation")
 def destination():
@@ -40,10 +43,8 @@ def search_method():
         xml=""
     else:
         locationstr= query[12:]
-        try:
-            locations= transporlis.geolocate(locationstr)
-            xml= locations_to_xml(locations)
-        except:
-            print "transporlis response error"
-            xml=""
-    return Response(response=xml, mimetype="application/xml")
+        
+        locations= transporlis.geolocate(locationstr)
+        xml= locations_to_xml(locations)
+        
+        return Response(response=xml, mimetype="application/xml")
