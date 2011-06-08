@@ -83,10 +83,10 @@ def search_history(entry_id):
     if hasattr(g, 'user'):
         user = g.user
         history = user.user_history
+        hist
         for entry in history:
             if entry.id == entry_id:
-                break
-        return custom_search(history_entry = entry)
+                return custom_search(history_entry = entry)
     return custom_search(entry_id=entry_id)
 
 @search.route('/search', methods=['POST'])
