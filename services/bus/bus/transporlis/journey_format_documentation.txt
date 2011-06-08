@@ -1,0 +1,34 @@
+the data is obtained in the following way:
+
+transporlis.sapo.pt -> calculo de percurso
+http://transporlis.sapo.pt/Default.aspx?tabid=188
+
+inspect page for clicking "calcular" button event
+onclick="VisualizarRota();"
+
+VisualizarRota is on the following include
+http://transporlis.sapo.pt:80//js/trp_ajaxRequest_calculo_percurso.js
+
+gets data from
+UrlBaseAjax + 'Ajax/trp_calculo_percurso.ashx?cmd=recuperarRota' + descRota +'&UrlBase=' + UrlBase + '&isKyosk='+iskyosk, DoVisualizarRota_Callback); 
+UrlBaseAjax="http://transporlis.sapo.pt:80//DesktopModules/trp_calculo_percurso/"
+descRota="&textPartida=Definido no mapa&latInicial=38.706307612665&longInicial=-9.2620098999&textChegada=Definido no mapa&latFinal=38.752909777636&longFinal=-9.2194378784167&calculoPartida=0&dataRota=06/06/2011&horaRota=21:02&meiosTransporte=true,true,true,true&tipoPercurso=64"
+UrlBase= "http://transporlis.sapo.pt:80//"
+iskyosk= false
+
+
+
+
+
+#-----------
+06-06-2011 18:05:00|        datetime inicio
+247g|                       ???
+descricao|                  descricao
+4614|                       ????
+06-06-2011 18:13:30|        datetime fim
+SFertagus|                  cod operador
+1,8|                        custo
+Bus|                        operador type?  Metro, Pedestrian, Bus
+00:08:30|                   duração
+0:10:00|                    tempo de espera
+noCoords                    constante?

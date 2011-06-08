@@ -1,13 +1,12 @@
+from xml.etree import ElementTree
 from flask import Module, request, session, render_template, redirect, g
 from concierge.services_models import Service, ResourceMethod
-from concierge import xml_to_html
 
 from concierge.auth import HistoryEntry
 from concierge import db
 
 from flaskext.wtf import Form, Required, Length, BooleanField
 from flaskext.wtf.html5 import SearchField
-
 
 from common import rest_method_parameters
 from common.search import match_keywords_to_something
@@ -97,6 +96,7 @@ def search_view():
         return search_aux(form.search_query.data)
     return redirect('/')   #null string case
 
+
 def search_aux(query, services=None, add_to_history=True):
     '''give a list of services, and a query, executes the search on
     those services. If the list is None, search on all services.
@@ -110,12 +110,22 @@ def search_aux(query, services=None, add_to_history=True):
     matches = match_search_to_methods_keywords(query, search_methods)
     if len(matches)==0:
         #no keywords match
-        results_xml=[]
+        results=[]
     else:
         params= {rest_method_parameters.QUERY: query}
         method_parameters= [(method, params) for ignoreme, method in matches]
-        results= ResourceMethod.execute_several(method_parameters)
+        results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
+        print results
 
-    failed_services= [services[i] for i, result in enumerate(results) if result==None]
-    results_xml= filter( lambda a:a!=None, results)
-    return xml_to_html.render_xml_list(results_xml)
+    xml = ElementTree.Element("entity", type='list')
+    for result in results:
+        element = ElementTree.fromstring(result)
+        for e in element:
+            xml.append(e)
+
+    for e in xml.iter():
+        if 'service' in e.attrib:
+            s = Service.query.filter_by(name=e.attrib['service']).first()
+            if s:
+                e.attrib['service_id'] = s.id
+    return render_template('search.html', element=xml)

@@ -38,13 +38,16 @@ def match_keywords_to_something(query, l):
                 pass    #no match
     return result
 
-def service_search_xmlresponse(model_list, quoted_query, xml_parameters):
+def service_search_xmlresponse(model_list, quoted_query):
     query= urllib.unquote_plus(quoted_query)
     results= service_search(model_list, query)
     if len(results) == 0:
         xml_text = ""
-    else :
-        xml_text= xser.ModelList_xml(results).to_xml(xml_parameters).toxml() 
+    else:
+        xml_text = '<entity type="list">'
+        for result in results:
+            xml_text += result.to_xml_shallow()
+        xml_text += '</entity>'
     return xml_text
 
 def service_search(model_list, query):

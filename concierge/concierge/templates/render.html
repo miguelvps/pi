@@ -1,0 +1,39 @@
+{% if element.get('service_id') %}
+<a href="/services/{{element.get('service_id')}}/browse{{element.get('url')}}">
+{% elif element.get('kind') %}
+<a href="/search?query={{element.get('kind')}} {{element.text}}">
+{% endif %}
+
+{% if element.get('type') == "string" %}
+    {{ element.text }}
+
+{% elif element.get('type') == "email" %}
+    <a href="mailto:{{ element.text }}">{{ element.text }}</a>
+
+{% elif element.get('type') == "image" %}
+    <img src="{{ element.text }}"/>
+
+{% elif element.get('type') == "list" %}
+    <ul data-role="listview" data-inset="true">
+    {% for e in element %}
+        {% with element = e %}
+        <li>{% include "render.html" %}</li>
+        {% endwith %}
+    {% endfor %}
+    </ul>
+
+{% elif element.get('type') == "record" %}
+    <h1>{{ element[0].text }}</h1>
+    <dl>
+    {% for e in element[1:] %}
+        <dt><h4>{{ e.get('name', '') }}</h4></dt>
+        {% with element = e %}
+        <dd>{% include "render.html" %}</dd>
+        {% endwith %}
+    {% endfor %}
+{% endif %}
+
+
+{% if element.get('service_id') or element.get('kind') %}
+    </a>
+{% endif %}
