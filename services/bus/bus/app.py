@@ -12,7 +12,6 @@ app = Flask(__name__)
 
 
 def locations_to_xml(locations):
-    import ipdb; ipdb.set_trace()
     xml= '<entity type="list">'
     for location in locations:
         l= location[0]

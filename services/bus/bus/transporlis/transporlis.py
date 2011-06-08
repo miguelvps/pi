@@ -12,7 +12,7 @@ def parse_pesquisar_lugar(html):
             tmp= html.split("/") 
             if tmp[0]!="coordenadas":
                 raise Exception("remote end error")
-            return tmp[1:]
+            return [tmp[1:]]
         else:
             matches= re.findall('value="(.*?)"', html)
             matches= map(lambda m: m.split('/'), matches)
