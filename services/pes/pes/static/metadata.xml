@@ -1,4 +1,4 @@
-<service name="pessoas" url="http://127.0.0.1:5001/">
+<service name="Pessoas" url="http://127.0.0.1:5001/">
     <description>Este serviço guarda informação dos docentes</description>
     <supported_formats>
         <format>xml</format>
@@ -20,17 +20,17 @@
             <keyword>pessoas</keyword>
         </keywords>
         <method type="GET" >
-            <parameter>query</parameter> 
+            <parameter>query</parameter>
         </method>
-        <resource url="pessoas" type="static">
+        <resource url="pessoas">
             <method type="GET" >
                 <parameter>start</parameter>
-                <parameter>end</parameter> 
+                <parameter>end</parameter>
             </method>
-            <resource url="pessoa_id" type="dynamic">
-                <method type="GET" >
+            <resource url="\d+">
+                <method type="GET">
                 </method>
-            </resource >
-        </resource >
+            </resource>
+        </resource>
     </resource>
 </service>

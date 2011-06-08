@@ -56,7 +56,7 @@ class Person(db.Model):
         return url_for('person', id=self.id)
 
     def to_xml_shallow(self):
-        return '<entity type="string" service="pessoas" url="%s">%s</entity>' % (self.permalink(), self.name)
+        return '<entity type="string" service="Pessoas" url="%s">%s</entity>' % (self.permalink(), self.name)
 
     def to_xml(self):
         xml = '<entity type="record">'
@@ -91,7 +91,7 @@ def search_method():
     return Response(response="", mimetype="application/xml")
 
 
-@app.route("/pessoas/", methods=['GET',])
+@app.route("/pessoas", methods=['GET',])
 def persons():
     start = request.args.get('start', 0)
     end = request.args.get('end', 10)

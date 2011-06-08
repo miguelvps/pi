@@ -148,5 +148,7 @@ def browse_resource(id, url):
     element = ElementTree.fromstring(xml)
     for e in element.iter():
         if 'service' in e.attrib:
-            e.attrib['service_id'] = Service.query.filter_by(name=e.attrib['service']).first().id
+            s = Service.query.filter_by(name=e.attrib['service']).first()
+            if s:
+                e.attrib['service_id'] = s.id
     return render_template('service_browse_resource.html', service=service, element=element, url=url)
