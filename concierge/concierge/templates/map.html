@@ -18,12 +18,12 @@
     <script type="text/javascript">
 
         // When map page opens get location and display map
-        $('.page-map').live("pagecreate", function() {
+        $('.page-map').live("pagecreate", function() {     
 
             //boston :)
-            var lat = 38.660911,
-                lng = -9.205256;
-
+            var lat = 38.66097,
+                lng = -9.203217;
+ 
             var latlng = new google.maps.LatLng(lat, lng);
             var myOptions = {
                 zoom: 17,
@@ -31,7 +31,31 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
-        });     
+            
+            var bermudaTriangle;
+
+
+            var triangleCoords = [
+            {{
+                new google.maps.LatLng(38.66097, -9.203217),
+                new google.maps.LatLng(38.60991, -9.203216),
+                new google.maps.LatLng(38.66097, -9.203217)
+            ];
+
+            // Construct the polygon
+            // Note that we don't specify an array or arrays, but instead just
+            // a simple array of LatLngs in the paths property
+            bermudaTriangle = new google.maps.Polygon({
+                paths: triangleCoords,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35
+            });
+
+            bermudaTriangle.setMap(map);
+        });        
     </script>
     <link rel="stylesheet" href="/static/map.css" />
 
