@@ -1,4 +1,4 @@
-<service name="geo" url="http://127.0.0.1:5001/">
+<service name="Geo" url="http://127.0.0.1:5001/">
     <description>Este serviço guarda informação sobre espaços e as suas coordenadas</description>
     <supported_formats>
         <format>xml</format>

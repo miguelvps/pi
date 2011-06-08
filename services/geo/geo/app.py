@@ -1,14 +1,6 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, url_for
 from flaskext.sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import joinedload
-from common import xser, xser_parameters, xml_attributes
-from common.xser_parameters import SERIALIZER_PARAMETERS, SER_TYPE_SHALLOW, SER_TYPE_SHALLOW_CHILDREN
-from common import xml_kinds, search, xser_property, xml_types, xml_names
-from common.xml_kinds import KIND_PROP_NAME
-from common.xml_types import TYPE_PROP_NAME
-from common.xml_names import NAME_PROP_NAME
-
-SERIALIZER_PARAMETERS= xser_parameters.SERIALIZER_PARAMETERS
+from common import search
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///geo.db'
@@ -16,7 +8,7 @@ db = SQLAlchemy(app)
 
 class PlacemarkType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    type_name= db.Column(xml_attributes.geo_placemarktype_name(64))
+    type_name= db.Column(db.String(64))
 
     keywords= ['edificios', 'salas']
     search_atributes= ["type_name"]
@@ -24,42 +16,58 @@ class PlacemarkType(db.Model):
 
 class Placemark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    folder= db.Column(xml_attributes.geo_placemark_folder(128))
-    name= db.Column(xml_attributes.geo_placemark_name(128))
-    abreviation= db.Column(xml_attributes.geo_placemark_abreviation(32))
+    folder= db.Column(db.String(128))
+    name= db.Column(db.String(1024))
+    abreviation= db.Column(db.String(32))
     type_id= db.Column( db.Integer, db.ForeignKey('placemark_type.id'))
     type= db.relationship('PlacemarkType', backref='placemark')
-    geowkt= db.Column(xml_attributes.geo_placemark_wkt(8192))
+    geowkt= db.Column(db.String(8192))
 
     keywords= ['sitio','place', 'placemark', 'sala', 'edificio']
     search_joins= ["type"]
     search_atributes= ["name", "abreviation"]
     
-xser_property.set_xser_prop(Placemark, KIND_PROP_NAME, xml_kinds.placemark)
-xser_property.set_xser_prop(Placemark, TYPE_PROP_NAME, "map")
-xser_property.set_xser_prop(Placemark, NAME_PROP_NAME ,xml_names.geo_placemark)
-#xser_property.set_xser_prop(PlacemarkType, KIND_PROP_NAME, xml_kinds.placemarktype)
-#xser_property.set_xser_prop(PlacemarkType, TYPE_PROP_NAME, xml_types.LIST_TYPE)
+    def permalink(self):
+        return url_for('placemark', id = self.id)
 
-@app.route("/placemarks/", methods=['GET',])
-def placemarks():
-    placemarks = Placemark.query.all()
-    xml_text= xser.ModelList_xml(placemarks).to_xml(SERIALIZER_PARAMETERS).toxml()
-    return Response(response=xml_text, mimetype="application/xml")
+    def to_xml_shallow(self):
+        return '<entity type="string" service="Geo" url="%s">%s</entity>' %( self.permalink(), self.name )
+
+    def to_xml(self):
+        xml = '<entity type="map">'
+        xml += '<entity type="string">%s</entity>' %self.name
+        xml += '<entity type="string">%s</entity>' %self.folder
+        xml += '<entity type="string">%s</entity>' %self.geowkt
+        if self.type:
+            xml += '<entity type="string">%s</entity>' %self.type.type_name
+        if self.abreviation:
+            xml += '<entity type="string">%s</entity>' %self.abreviation
+        xml += '</entity>'
+        return xml
+
 
 @app.route("/")
 def search_method():
     q = request.args.get('query', '')   #quoted query
     model_list= [Placemark, PlacemarkType]
-    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW
-    xml= search.service_search_xmlresponse(model_list, q, SERIALIZER_PARAMETERS)
+    xml= search.service_search_xmlresponse(model_list, q)
+    return Response(response=xml, mimetype="application/xml")
+
+
+@app.route("/placemarks/", methods=['GET',])
+def placemarks():
+    #start = request.args.get('start', 0)
+    #end = request.args.get('end', 10)
+    placemarks = Placemark.query.all()
+    xml = '<entity type="list">'
+    for p in placemarks:
+        xml += p.to_xml_shallow()
+    xml += '</entity>'
     return Response(response=xml, mimetype="application/xml")
 
 @app.route("/placemarks/<id>")
 def placemark(id):
-    placemark = Placemark.query.options(joinedload('type')).get_or_404(id)
-    SERIALIZER_PARAMETERS['serialization_type']= SER_TYPE_SHALLOW_CHILDREN
-    xml_text= xser.Model_Serializer(placemark).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
-    return Response(xml_text, mimetype='application/xml')
+    placemark = Placemark.query.get_or_404(id)
+    return Response(response=placemark.to_xml(), mimetype='application/xml')
 
     
