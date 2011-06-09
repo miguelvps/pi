@@ -26,7 +26,7 @@ def match_search_to_methods_keywords(query, methods):
 def add_search_to_history(query, services):
     #creates the entry in the user_history if the user is logged in
     if session.get('auth'):
-        hstr_entry = HistoryEntry(user = g.user, query=query, entry_services=services)
+        hstr_entry = HistoryEntry(user = g.user, search_query=query, entry_services=services)
         db.session.add(hstr_entry)
         db.session.commit()
         
@@ -55,9 +55,10 @@ def custom_search(history_entry = None, entry_id = None):
         selected_services = history_entry.entry_services
         selected_services_names = [ service.name for service in selected_services]
         for field in form:
-            if field != form.search_query:
-                if field.name in selected_services_names:
-                    field.data = True
+            if field == form.search_query:
+                form.search_query.data = history_entry.search_query
+            elif field.name in selected_services_names:
+                field.data = True
         return render_template('custom_search.html', search_form=form, history_call='false')
 
     elif entry_id != None:  #localStorage history entry id
@@ -82,9 +83,8 @@ def search_history(entry_id):
     if hasattr(g, 'user'):
         user = g.user
         history = user.user_history
-        for entry in history:
-            if entry.id == entry_id:
-                return custom_search(history_entry = entry)
+        entry = HistoryEntry.query.get_or_404(entry_id)
+        return custom_search(history_entry = entry)
     return custom_search(entry_id=entry_id)
 
 @search.route('/search', methods=['GET', 'POST'])

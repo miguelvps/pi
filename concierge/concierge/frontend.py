@@ -26,13 +26,13 @@ def history():
     if hasattr(g, 'user'):
         user = g.user
         history = user.user_history
-
         if request.method =='POST': 
 
             for entry in history:   #clear user history
                 db.session.delete(entry)
             db.session.commit()
         history = user.user_history #update object
+        history.reverse()
         return render_template('history.html', history=history)
 
     return render_template('history.html', history=[])
