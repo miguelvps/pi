@@ -37,7 +37,7 @@ class Placemark(db.Model):
         xml = '<entity type="map">'
         xml += '<entity type="string">%s</entity>' %self.name
         xml += '<entity type="string">%s</entity>' %self.folder
-        xml += '<entity type="string">%s</entity>' %self.geowkt
+        xml += '<entity type="geowkt">%s</entity>' %self.geowkt
         if self.type:
             xml += '<entity type="string">%s</entity>' %self.type.type_name
         if self.abreviation:
