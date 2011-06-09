@@ -17,7 +17,7 @@ def locations_to_xml(locations):
         l= location[0]
         ln= location[1]
         location_str= location[2]
-        xml+= '<entity type="string" service="%s" url="/transportation?%s&%s">%s</entity>' % (SERVICE_NAME, l, ln, location_str)
+        xml+= '<entity type="string" service="%s" url="/transportation?destination_lat=%s&amp;destination_long%s">%s</entity>' % (SERVICE_NAME, l, ln, location_str)
     xml+="</entity>"
     return xml
     
@@ -44,6 +44,6 @@ def search_method():
         locationstr= query[12:]
         
         locations= transporlis.geolocate(locationstr)
-        xml= locations_to_xml(locations)
+        xml= locations_to_xml(locations).decode('utf-8')
         
         return Response(response=xml, mimetype="application/xml")
