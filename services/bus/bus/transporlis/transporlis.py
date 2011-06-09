@@ -24,7 +24,7 @@ def geolocate(place_string):
     params= {"cmd": "pesquisarLugar",
              "Lugar": place_string}
     request_params= urllib.urlencode(params)
-    html = urllib.urlopen(method_url + "?" + request_params).read()
+    html = urllib.urlopen(method_url + "?" + request_params).read().decode('iso-8859-1')
     return parse_pesquisar_lugar(html)
 
     
@@ -63,5 +63,5 @@ def transportation(lat1, long1, lat2, long2, journey_datetime):
 
     all_params={}; all_params.update(base_params); all_params.update(extra_params)
     request_params= urllib.urlencode(all_params)
-    html = urllib.urlopen(method_url + "?" + request_params).read()
+    html = urllib.urlopen(method_url + "?" + request_params).read().decode('iso-8859-1')
     return journey.parse(html)
