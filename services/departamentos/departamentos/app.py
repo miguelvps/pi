@@ -112,12 +112,11 @@ class Subject(db.Model):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' %self.name
         xml += '<entity type="string">%s</entity>' %self.acronym
-        xml += '<entity kind="person" type="string" name="Regente">%s</entity>' %self.regent
-        xml += '<entity kind="person" type="string" name="Coordenador">%s</entity>' %self.coordinator
+        xml += '<entity kind="pessoa" type="string" name="Regente">%s</entity>' %self.regent
+        xml += '<entity kind="pessoa" type="string" name="Coordenador">%s</entity>' %self.coordinator
         xml += '<entity type="string" name="Periodo">%s</entity>' % self.period
         if self.courses:
             xml += '<entity type="list" name="Cursos">'
-            import pdb; pdb.set_trace()
             for course in self.courses:
                 xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (course.permalink(), course.name)
             xml += '</entity>'

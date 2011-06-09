@@ -108,13 +108,7 @@ class ServiceResource(db.Model):
         if isinstance(url, str) or isinstance(url, unicode):
             url = url.split('/')
         rn = url[0]  #local resource name
-        if rn == "":
-            r = self
-        else:
-            try:
-                r= filter(lambda r:re.match(r.url, rn), self.resources)[0]
-            except:
-                raise Exception("Cannot find a resource named %s in resource %s" % (url[0], self.absolute_url())  )
+        r = filter(lambda r:re.match(r.url, rn), self.resources)[0] if rn else self
         return r if len(url) == 1 else r.get_resource_by_url(url[1:])
 
 
@@ -178,7 +172,8 @@ class ResourceMethod(db.Model):
                     except IOError:
                         #communication error
                         result= None
-                    print "set", n, "...",result
+                    # print "set", n, "...",result
+                    result = result or None
                     self.results_list[n]= result
                     self.tasks_queue.task_done()
         

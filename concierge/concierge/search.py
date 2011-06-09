@@ -95,7 +95,7 @@ def search_view():
     else:
         query = request.args.get('query', None)
         if query:
-            return search_aux(query, add_to_history=False)
+            return search_aux(query.encode('utf-8'), add_to_history=False)
     return redirect('/')
 
 def search_aux(query, services=None, add_to_history=True):
