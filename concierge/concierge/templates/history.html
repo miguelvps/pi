@@ -15,7 +15,7 @@
 <div data-role="content">
     <ul data-role="listview"  data-theme="c" data-dividertheme="b">
         {% for entry in history %}
-        <li><a href="/search/{{entry.id}}">{{entry.query}}</a></li>
+        <li><a href="/search/{{entry.id}}">{{entry.search_query}}</a></li>
         {% endfor %}
         <li>
         <form action="/history" method="post">
