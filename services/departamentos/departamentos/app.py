@@ -30,14 +30,14 @@ class Department(db.Model):
         return url_for('department', id=self.id)
 
     def to_xml_shallow(self):
-        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' %(self.permanlink(), self.name)
+        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' %(self.permalink(), self.name)
 
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' %self.name
-        if courses:
+        if self.courses:
             xml += '<entity type="list" name="Cursos">'
-            for course in courses:
+            for course in self.courses:
                 xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (course.permalink(), course.name)
             xml += '</entity>'       
         xml += '</entity>'
@@ -72,20 +72,20 @@ class Course(db.Model):
         return url_for('course', id=self.id)
 
     def to_xml_shallow(self):
-        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (self.permanlink(), self.name)
+        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (self.permalink(), self.name)
 
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' % self.name
         xml += '<entity type="string" name="acronimo">%s</entity>' % self.acronym
         xml += '<entity type="string" service ="Departamentos" url="%s" name="Departamento">%s</entity>' % (self.department.permalink(), self.department.name)
-        if subjects:
-            xml += '<entity type="list" name="Cadeiras">'
-            for subject in subjects:
-                xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (subject.permalink(), subject.name)
-            xml += '<entity>'
         if self.type:
-            xml += '</entity type="string"> %s</entity>' % type.name
+            xml += '<entity type="string"> %s</entity>' % self.type.name        
+        if self.subjects:
+            xml += '<entity type="list" name="Cadeiras">'
+            for subject in self.subjects:
+                xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (subject.permalink(), subject.name)
+            xml += '</entity>'
         xml += '</entity>'
         return xml
 
@@ -106,69 +106,75 @@ class Subject(db.Model):
         return url_for('subject', id=self.id)
 
     def to_xml_shallow(self):
-        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' %(self.permanlink(), self.name)
+        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' %(self.permalink(), self.name)
 
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' %self.name
         xml += '<entity type="string">%s</entity>' %self.acronym
-        xml += '<entity kind="person" type="string" name="Regente">%s</entity>' %self.regent
-        xml += '<entity kind="person" type="string" name="Coordenador">%s</entity>' %self.coordinator
+        xml += '<entity kind="pessoa" type="string" name="Regente">%s</entity>' %self.regent
+        xml += '<entity kind="pessoa" type="string" name="Coordenador">%s</entity>' %self.coordinator
         xml += '<entity type="string" name="Periodo">%s</entity>' % self.period
-        if courses:
+        if self.courses:
             xml += '<entity type="list" name="Cursos">'
-            for course in courses:
+            for course in self.courses:
                 xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (course.permalink(), course.name)
             xml += '</entity>'
         xml += '</entity>'
         return xml
 
 
-
 @app.route('/')
 def s():
     q = request.args.get('query', '')   #quoted query
-    xml= search.service_search_xmlresponse([Department, Course, CourseType, Subject], q, SERIALIZER_PARAMETERS)
+    model_list= [Department, Course, CourseType, Subject]
+    xml= search.service_search_xmlresponse(model_list, q)
     return Response(response=xml, mimetype="application/xml")
 
 @app.route('/departamentos')
 def departments():
-    start = request.args.get('start', 0)
-    end = request.args.get('end', 10)
+    start = int(request.args.get('start', 0))
+    end = int(request.args.get('end', 10))
     departments = Department.query.limit(end-start).offset(start).all()
-    xml_text= xser.ModelList_xml(departments).to_xml(SERIALIZER_PARAMETERS).toxml()
-    return Response(xml_text, mimetype='application/xml')
+    xml = '<entity type="list">'
+    for d in departments:
+        xml += d.to_xml_shallow()
+    xml += '</entity>'
+    return Response(xml, mimetype='application/xml')
 
 @app.route('/departamentos/<id>')
 def department(id):
     department = Department.query.get_or_404(id)
-    xml_text= xser.Model_Serializer(department).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
-    return Response(xml_text, mimetype='application/xml')
+    return Response(response=department.to_xml(), mimetype='application/xml')
 
 @app.route('/cursos')
 def courses():
-    start = request.args.get('start', 0)
-    end = request.args.get('end', 10)
+    start = int(request.args.get('start', 0))
+    end = int(request.args.get('end', 10))
     courses = Course.query.limit(end-start).offset(start).all()
-    xml_text= xser.ModelList_xml(courses).to_xml(SERIALIZER_PARAMETERS).toxml()
-    return Response(xml_text, mimetype='application/xml')
+    xml = '<entity type="list">'
+    for c in courses:
+        xml += c.to_xml_shallow()
+    xml += '</entity>'
+    return Response(xml, mimetype='application/xml')
 
 @app.route('/cursos/<id>')
 def course(id):
     course = Course.query.get_or_404(id)
-    xml_text= xser.Model_Serializer(course).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
-    return Response(xml_text, mimetype='application/xml')
+    return Response(response = course.to_xml(), mimetype='application/xml')
 
 @app.route('/cadeiras')
 def subjects():
-    start = request.args.get('start', 0)
-    end = request.args.get('end', 10)
+    start = int(request.args.get('start', 0))
+    end = int(request.args.get('end', 10))
     subjects = Subject.query.limit(end-start).offset(start).all()
-    xml_text= xser.ModelList_xml(subjects).to_xml(SERIALIZER_PARAMETERS).toxml()
-    return Response(xml_text, mimetype='application/xml')
+    xml = '<entity type="list">'
+    for s in subjects:
+        xml += s.to_xml_shallow()
+    xml += '</entity>'
+    return Response(xml, mimetype='application/xml')
 
 @app.route('/cadeiras/<id>')
 def subject(id):
     subject = Subject.query.get_or_404(id)
-    xml_text= xser.Model_Serializer(subject).to_xml(SERIALIZER_PARAMETERS).toprettyxml()
-    return Response(xml_text, mimetype='application/xml')
+    return Response(response = subject.to_xml(), mimetype='application/xml')
