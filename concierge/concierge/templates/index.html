@@ -33,9 +33,9 @@
 
 <script type="text/javascript">
 
-    $('#index').load(function(event){
-        $("#index ul").listview('refresh');
-    });
+//    $('#index').load(function(event){
+//        $("#index ul").listview('refresh');
+//    });
 
     $("#index form").submit(function(e) {
         if (!auth) {
@@ -96,8 +96,8 @@
         });
     });
     
-    $("#service_list").ajaxSuccess(function() {
-        $(this).listview('refresh');
-    });    
+//    $("#index ul").ajaxSuccess(function() {
+//        $(this).listview('refresh');
+//    });    
 </script>
 {% endblock %}

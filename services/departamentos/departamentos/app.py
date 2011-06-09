@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, Response, request
+from flask import Flask, Response, request, url_for
 from flaskext.sqlalchemy import SQLAlchemy
-from common import xml_kinds, xml_attributes, xml_names, xser
-from common.xser_property import set_xser_prop
-from common.xser_parameters import SERIALIZER_PARAMETERS
 from common import search
 
 
@@ -22,24 +19,36 @@ course_subjects = db.Table('course_subjects',
 # DEPARTMENT
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(xml_attributes.departamentos_dep_name(255))
+    name = db.Column(db.String(255))
 
     courses =  db.relationship('Course', backref='department')
 
-    keywords = ['departamento', 'departamentos']
+    keywords = ['departamento', 'departamentos' 'department']
     search_atributes = ['name']
 
-set_xser_prop(Department, xml_kinds.KIND_PROP_NAME, xml_kinds.department )
-set_xser_prop(Department, xml_names.NAME_PROP_NAME, xml_names.departamentos_department )
+    def permalink(self):
+        return url_for('department', id=self.id)
 
+    def to_xml_shallow(self):
+        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' %(self.permanlink(), self.name)
 
+    def to_xml(self):
+        xml = '<entity type="record">'
+        xml += '<entity type="string">%s</entity>' %self.name
+        if courses:
+            xml += '<entity type="list" name="Cursos">'
+            for course in courses:
+                xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (course.permalink(), course.name)
+            xml += '</entity>'       
+        xml += '</entity>'
+        return xml
 
 # COURSE
 class CourseType(db.Model):
     keywords = ['licenciatura', 'licenciaturas', 'mestrado', 'mestrados',
                'douturamento', 'douturamento']
     id = db.Column(db.Integer, primary_key=True)
-    name= db.Column(xml_attributes.departamentos_course_type(255))
+    name= db.Column(db.String(255))
     courses = db.relationship('Course', backref='type')
 
     search_atributes = ['name']
@@ -49,8 +58,8 @@ class CourseType(db.Model):
 class Course(db.Model):
     keywords=['curso', 'cursos']
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(xml_attributes.departamentos_course_name(255))
-    acronym = db.Column(xml_attributes.departamentos_course_acronym(10))
+    name = db.Column(db.String(255))
+    acronym = db.Column(db.String(10))
     depatment_id = db.Column (db.Integer, db.ForeignKey('department.id'))
     type_id = db.Column(db.Integer, db.ForeignKey('course_type.id'))
 
@@ -58,26 +67,61 @@ class Course(db.Model):
 
     search_atributes = ['name', 'acronym']
     search_join = ['type']
+    
+    def permalink(self):
+        return url_for('course', id=self.id)
 
-set_xser_prop(Course, xml_kinds.KIND_PROP_NAME, xml_kinds.course )
-set_xser_prop(Course, xml_names.NAME_PROP_NAME, xml_names.departamentos_course )
+    def to_xml_shallow(self):
+        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (self.permanlink(), self.name)
 
+    def to_xml(self):
+        xml = '<entity type="record">'
+        xml += '<entity type="string">%s</entity>' % self.name
+        xml += '<entity type="string" name="acronimo">%s</entity>' % self.acronym
+        xml += '<entity type="string" service ="Departamentos" url="%s" name="Departamento">%s</entity>' % (self.department.permalink(), self.department.name)
+        if subjects:
+            xml += '<entity type="list" name="Cadeiras">'
+            for subject in subjects:
+                xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (subject.permalink(), subject.name)
+            xml += '<entity>'
+        if self.type:
+            xml += '</entity type="string"> %s</entity>' % type.name
+        xml += '</entity>'
+        return xml
 
 
 class Subject(db.Model):
     keywords=['cadeira', 'cadeiras', 'disciplina', 'disciplinas']
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(xml_attributes.departamentos_subject_name(255))
-    acronym = db.Column(xml_attributes.departamentos_subject_acronym(10))
-    regent = db.Column(xml_attributes.departamentos_subject_regent(255))
-    coordinator = db.Column(xml_attributes.departamentos_subject_coordinator(255))
+    name = db.Column(db.String(255))
+    acronym = db.Column(db.String(10))
+    regent = db.Column(db.String(255))
+    coordinator = db.Column(db.String(255))
     period = db.Column(db.Enum(u'Anual', u'1º Sem', u'2º Sem',
                                u'1º Tri', u'2º Tri', u'3º Tri'))
 
     search_atributes = ['name', 'acronym']
 
-set_xser_prop(Subject, xml_kinds.KIND_PROP_NAME, xml_kinds.subject )
-set_xser_prop(Subject, xml_names.NAME_PROP_NAME, xml_names.departamentos_subject )
+    def permalink(self):
+        return url_for('subject', id=self.id)
+
+    def to_xml_shallow(self):
+        return '<entity type="string" service="Departamentos" url="%s">%s</entity>' %(self.permanlink(), self.name)
+
+    def to_xml(self):
+        xml = '<entity type="record">'
+        xml += '<entity type="string">%s</entity>' %self.name
+        xml += '<entity type="string">%s</entity>' %self.acronym
+        xml += '<entity kind="person" type="string" name="Regente">%s</entity>' %self.regent
+        xml += '<entity kind="person" type="string" name="Coordenador">%s</entity>' %self.coordinator
+        xml += '<entity type="string" name="Periodo">%s</entity>' % self.period
+        if courses:
+            xml += '<entity type="list" name="Cursos">'
+            for course in courses:
+                xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (course.permalink(), course.name)
+            xml += '</entity>'
+        xml += '</entity>'
+        return xml
 
 
 
