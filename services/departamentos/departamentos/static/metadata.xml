@@ -33,18 +33,30 @@
                 <parameter>start</parameter>
                 <parameter>end</parameter>
             </method>
+            <resource url="\d+">
+                <method type="GET">
+                </method>
+            </resource>
         </resource>
         <resource url="cursos">
             <method type="GET" >
                 <parameter>start</parameter>
                 <parameter>end</parameter>
             </method>
+            <resource url="\d+">
+                <method type="GET">
+                </method>
+            </resource>
         </resource>
         <resource url="cadeiras">
             <method type="GET" >
                 <parameter>start</parameter>
                 <parameter>end</parameter>
             </method>
+            <resource url="\d+">
+                <method type="GET">
+                </method>
+            </resource>
         </resource>
     </resource>
 </service>
