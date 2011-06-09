@@ -58,7 +58,7 @@ def fixtures():
             for description_piece_xml in description_xml:
                 assert description_piece_xml.tag=="meta-information"
                 attrs[description_piece_xml.get('attribute')]= description_piece_xml.get('value')
-            geowkt= placemark_xml.find('geo-wkt').text
+            geowkt= " ".join(placemark_xml.find('geo-wkt').text.split())    #badly formated geowkt in files...
             add_to_db(attrs, geowkt)
     db.session.commit()
 
