@@ -1,4 +1,4 @@
-<service name="sps" url="http://concierge.dyndns.org/services/sps/">
+<service name="sps" url="http://127.0.0.1:5003/static/metadata.xml">
     <description>Este serviço guarda informação dos docentes</description>
     <supported_formats>
         <format>xml</format>
@@ -11,9 +11,14 @@
         <method type="GET" >
             <parameter>query</parameter>
         </method>
-        <resource url="">
+        <resource url="process">
             <method type="GET">
+            <parameter>start</parameter>
+            <parameter>end</parameter>
             </method>
+            <resource url="\d+">
+                <method type="GET"/>
+            </resource>
         </resource>
     </resource>
 </service>
