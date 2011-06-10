@@ -67,7 +67,7 @@ class Course(db.Model):
 
     search_atributes = ['name', 'acronym']
     search_join = ['type']
-    
+
     def permalink(self):
         return url_for('course', id=self.id)
 

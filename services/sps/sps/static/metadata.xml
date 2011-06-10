@@ -1,0 +1,24 @@
+<service name="sps" url="http://127.0.0.1:5003/static/metadata.xml">
+    <description>Este serviço guarda informação dos docentes</description>
+    <supported_formats>
+        <format>xml</format>
+    </supported_formats>
+
+    <resource url="">
+        <keywords>
+            <keyword>prazos</keyword>
+        </keywords>
+        <method type="GET" >
+            <parameter>query</parameter>
+        </method>
+        <resource url="process">
+            <method type="GET">
+            <parameter>start</parameter>
+            <parameter>end</parameter>
+            </method>
+            <resource url="\d+">
+                <method type="GET"/>
+            </resource>
+        </resource>
+    </resource>
+</service>

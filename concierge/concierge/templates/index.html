@@ -67,24 +67,7 @@
 </div><!-- /content -->
 {% endblock %}
 
-
-{% block footer %}
-<div data-role="footer" data-position="fixed" data-id="concfooter" >
-    <div data-role="navbar">
-        <ul>
-            <li><a href="/settings">Settings</a></li>
-            <li>
-            {% if session.get("auth") == True %}
-            <a href="/auth/logout">Logout</a>
-            {% else %}
-            <a href="/auth/login" data-transition="slideup">Login</a>
-            {% endif %}
-            </li>
-            <li><a href="/history">History</a></li>
-        </ul>
-    </div><!-- /navbar -->
-</div><!-- /footer -->
-
+{% block page_end %}
 <script type="text/javascript">
     $("#index select").bind('change', function() {
         var option = $("#index select").val();
@@ -95,9 +78,8 @@
             url: url
         });
     });
-    
 //    $("#index ul").ajaxSuccess(function() {
 //        $(this).listview('refresh');
-//    });    
+//    });
 </script>
 {% endblock %}

@@ -16,5 +16,10 @@
         <method type="GET" >
             <parameter>query</parameter>
         </method>
+        <resource url="book">
+            <resource url=".*">
+                <method type="GET" />
+            </resource>
+        </resource>
     </resource>
 </service>

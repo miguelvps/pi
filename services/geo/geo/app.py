@@ -56,9 +56,9 @@ def search_method():
 
 @app.route("/placemarks", methods=['GET',])
 def placemarks():
-    #start = request.args.get('start', 0)
-    #end = request.args.get('end', 10)
-    placemarks = Placemark.query.all()
+    start = int(request.args.get('start', 0))
+    end = int(request.args.get('end', 10))
+    placemarks = Placemark.query.limit(end-start).offset(start).all()
     xml = '<entity type="list">'
     for p in placemarks:
         xml += p.to_xml_shallow()
