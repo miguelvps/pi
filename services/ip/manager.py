@@ -1,6 +1,6 @@
 from flaskext.script import Manager, Server
 
-from sps.app import app, db
+from ip.app import app, db
 
 manager = Manager(app)
 

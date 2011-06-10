@@ -5,7 +5,7 @@ from common import search
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sps.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ip.db'
 db = SQLAlchemy(app)
 
 
@@ -44,7 +44,7 @@ class Process(db.Model):
         return url_for('processes', id=self.id)
 
     def to_xml_shallow(self):
-        return '<entity type="string" service="SPS" url="%s">%s</entity>' % (self.permalink(), self.name)
+        return '<entity type="string" service="IP" url="%s">%s</entity>' % (self.permalink(), self.name)
 
 @app.route("/")
 def s():
