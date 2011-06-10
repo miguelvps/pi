@@ -52,7 +52,7 @@
             {% block page_content %}{% endblock %}
 
             {% block footer %}
-                <div data-role="footer" data-position="fixed" data-id="concfooter">
+                <div data-role="footer" style="position:fixed; bottom:0;" data-id="concfooter">
                         <div data-role="navbar">
                             <ul>
                                 <li><a href="/settings">Settings</a></li>
@@ -68,6 +68,8 @@
                         </div><!-- /navbar -->
                 </div><!-- /footer -->
             {% endblock %}
+
+            {% block page_end %}{% endblock %}
 
         </div><!-- /page -->
     </body>
