@@ -38,7 +38,6 @@ $('#service{{service.id}}').live('pagebeforeshow',function(event){
 $("#service{{service.id}} form").submit(function(e) {
     if (!auth) {
         var rating = $('#service{{service.id}} input[name="{{form.rating.name}}"]').val();
-        alert(rating);
         if (rating != "")
             localStorage.setItem("service_rating.{{service.id}}", rating);
         var favorite = $('#service{{service.id}} input[name="{{form.favorite.name}}"]').attr("checked");

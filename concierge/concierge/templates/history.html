@@ -13,18 +13,19 @@
 
 {% block page_content %}
 <div data-role="content">
-    <ul data-role="listview"  data-theme="c" data-dividertheme="b">
-        {% for entry in history %}
-        <li><a href="/search/{{entry.id}}">{{entry.search_query}}</a></li>
-        {% endfor %}
-        <li>
-        <form action="/history" method="post">
-            <fieldset>
-                <button type="submit" data-theme="a" name="submit" value="submit-value">Clear History</button>
-            </fieldset>
-        </form>
-        </li>
-    </ul>
+    <form action="/history" method="post">
+        <ul data-role="listview"  data-theme="c" data-dividertheme="b">
+            {% for entry in history %}
+            <li><a href="/search/{{entry.id}}">{{entry.search_query}}</a></li>
+            {% endfor %}
+            <li>
+                <fieldset>
+                    <button type="submit" data-theme="a" name="submit" value="submit-value">Clear History</button>
+                </fieldset>        
+            </li>
+        </ul>
+    </form>
+    
 </div><!-- /content -->
 
 <script type="text/javascript">
@@ -42,7 +43,7 @@
     $('#history').live('pagebeforeshow', function(event){
         if (!auth) {
             var list = $("#history ul");
-            list.empty();
+            //list.empty();
         
             var keys = [];
             for (var i = 0; i < localStorage.length; i++){
@@ -65,6 +66,8 @@
                     var li = '<li><a href="/search/' + id + '">' + split_entry[0] + '</a></li>';
                     list.prepend(li);
                 }
+            //var li = '<li><fieldset><button type="submit" data-theme="a" name="submit" value="submit-value">Clear History</button></fieldset></li>'    
+            //list.append(li);
             list.listview('refresh');
         }
     });
