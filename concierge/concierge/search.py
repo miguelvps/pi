@@ -10,6 +10,7 @@ from flaskext.wtf.html5 import SearchField
 
 from common import rest_method_parameters
 from common.search import match_keywords_to_something
+from concierge import xml_to_html
 
 
 search = Module(__name__, 'search')
@@ -118,10 +119,5 @@ def search_aux(query, services=None, add_to_history=True):
     for result in results:
         for e in ElementTree.fromstring(result.encode('utf-8')):
             xml.append(e)
-
-    for e in xml.getiterator():
-        if 'service' in e.attrib:
-            s = Service.query.filter_by(name=e.attrib['service']).first()
-            if s:
-                e.attrib['service_id'] = s.id
-    return render_template('search.html', element=xml)
+    html= xml_to_html.render(xml)
+    return render_template('search.html', html=html)
