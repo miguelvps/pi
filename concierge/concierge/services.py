@@ -13,7 +13,7 @@ from concierge import db
 from concierge.auth import requires_auth
 from concierge.services_models import Service
 from concierge.service_metadata_parser import parse_metadata
-
+from concierge import xml_to_html
 
 services = Module(__name__, 'services')
 
@@ -146,9 +146,5 @@ def browse_resource(id, url):
     # TODO: resource methods/params etc
     xml = urllib.urlopen(service.url + url).read()
     element = ElementTree.fromstring(xml)
-    for e in element.getiterator():
-        if 'service' in e.attrib:
-            s = Service.query.filter_by(name=e.attrib['service']).first()
-            if s:
-                e.attrib['service_id'] = s.id
-    return render_template('service_browse_resource.html', service=service, element=element, url=url)
+    html= xml_to_html.render(element)
+    return render_template('service_browse_resource.html', service=service, html=html, url=url)
