@@ -93,8 +93,8 @@ def search_method():
 
 @app.route("/pessoas", methods=['GET',])
 def persons():
-    start = request.args.get('start', 0)
-    end = request.args.get('end', 10)
+    start = int(request.args.get('start', 0))
+    end = int(request.args.get('end', 10))
     persons = Person.query.limit(end-start).offset(start).all()
     xml = '<entity type="list">'
     for p in persons:

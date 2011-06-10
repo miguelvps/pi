@@ -55,8 +55,8 @@ def s():
 
 @app.route("/process")
 def processes():
-    start = request.args.get('start', 0)
-    end = request.args.get('end', 10)
+    start = int(request.args.get('start', 0))
+    end = int(request.args.get('end', 10))
     process = Process.query.limit(end-start).offset(start).all()
     xml = '<entity type="list">'
     for p in process:
