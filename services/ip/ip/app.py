@@ -33,6 +33,7 @@ class Document(db.Model):
 class Process(db.Model):
     keywords = ['processo', 'processos']
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(256))
     url = db.Column(db.String(2083))
     info = db.Column(db.Text)
 
