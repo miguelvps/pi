@@ -49,11 +49,9 @@ def render_map(xml):
     min_coords, max_coords = get_bounds(coords);
     
     html ='''
-    <link rel="stylesheet" href="/static/map.css" /> 
     <script type="text/javascript"> 
         // When map page opens get location and display map
-        $('div').live("pagecreate", function() {         
-     
+        $('.page-map').live("pageshow", function() {     
             
             var min_latlng = new google.maps.LatLng(%(min_lat)s, %(min_lng)s);
             var max_latlng = new google.maps.LatLng(%(max_lat)s, %(max_lng)s);
@@ -92,7 +90,6 @@ def render_map(xml):
                 title: "title",
            };
            var marker = new google.maps.Marker(markerOptions);
-           
         }); 
         </script>
         <div id="map-canvas">

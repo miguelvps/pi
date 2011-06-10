@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
-{% block page_id %} register {% endblock %}
+{% block page_id %}search{% endblock %}
 	
-{% block redirect %} data-url="/search" {% endblock %}
+{% block redirect %} data-url="/search"{% endblock %}
   
 {% block header %}
-    <div data-role="header" data-backbtn="false">
+    <div data-role="header">
         <a href="/" class="ui-btn-left">Back</a>
+        <h1>Search</h1>
     </div><!-- /header -->
 {% endblock %}
     
