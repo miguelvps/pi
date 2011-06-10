@@ -27,56 +27,82 @@ def render_record(xml):
     return html
     
 def render_map(xml):
-    return
-    '''
-    {% elif element.get('type') == "map" %}
--    <link rel="stylesheet" href="/static/map.css" />
--    <script type="text/javascript">
--        // When map page opens get location and display map
--        $('div').live("pagecreate", function() {         
--     
--
--            var lat = 38.66097,
--                lng = -9.203217;
--
--            var latlng = new google.maps.LatLng(lat, lng);
--            var myOptions = {
--                zoom: 17,
--                center: latlng,
--                mapTypeId: google.maps.MapTypeId.ROADMAP
--            };
--            var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
--            
--            var str = String("{{element[2].text}}"); 
--
--            var polygon;
--
--            var triangleCoords = [
--                new google.maps.LatLng(25.774252, -80.190262),
--                new google.maps.LatLng(18.466465, -66.118292),
--                new google.maps.LatLng(32.321384, -64.75737),
--                new google.maps.LatLng(25.774252, -80.190262)
--            ];
--
--            // Construct the polygon
--            // Note that we don't specify an array or arrays, but instead just
--            // a simple array of LatLngs in the paths property
--            polygon = new google.maps.Polygon({
--                paths: triangleCoords,
--                strokeColor: "#FF0000",
--                strokeOpacity: 0.8,
--                strokeWeight: 2,
--                fillColor: "#FF0000",
--                fillOpacity: 0.35
--            });
--
--            polygon.setMap(map);
--        }); 
--        </script>
--        <div id="map-canvas">
--            <!-- map loads here... -->
--        </div>
-    '''
+    
+    def parse_geowkt(geowkt):
+        if geowkt[:9] == 'POLYGON((':
+            assert geowkt[-2:] == '))'
+            geowkt = geowkt[9:-2] 
+            pair_list = geowkt.split(', ')
+            tuple_list = map(lambda s: tuple([float(a) for a in s.split(' ')]), pair_list)
+            return (tuple_list, 'polygon')
+        else:
+            raise Exception("geowkt parse error")
+    
+    def get_bounds(coords):
+        min_coords = reduce(lambda (x,y),(z,w): (min(x,z), min(y,w)) ,coords)
+        max_coords = reduce(lambda (x,y),(z,w): (max(x,z), max(y,w)) ,coords)
+        return (min_coords, max_coords)
+        
+    geowkt = filter(lambda e: e.get('type') == 'geowkt', xml.getchildren())
+    assert len(geowkt) == 1
+    coords, wkt_type = parse_geowkt(geowkt[0].text);
+    min_coords, max_coords = get_bounds(coords);
+    
+    html ='''
+    <link rel="stylesheet" href="/static/map.css" /> 
+    <script type="text/javascript"> 
+        // When map page opens get location and display map
+        $('div').live("pagecreate", function() {         
+     
+            
+            var min_latlng = new google.maps.LatLng(%(min_lat)s, %(min_lng)s);
+            var max_latlng = new google.maps.LatLng(%(max_lat)s, %(max_lng)s);
+            
+            var bounds = new google.maps.LatLngBounds(min_latlng, max_latlng);
+            
+            var myOptions = {
+                zoom: 12,
+                center: bounds.getCenter(),
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+
+            var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
+            map.fitBounds(bounds);
+            
+            var polygon;
+ 
+            var myCoords = [%(draw_coords)s];
+ 
+            // Construct the polygon
+            // Note that we don't specify an array or arrays, but instead just
+            // a simple array of LatLngs in the paths property
+            polygon = new google.maps.Polygon({
+                paths: myCoords,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35
+           });
+           polygon.setMap(map);
+           
+           var markerOptions = {
+                position: bounds.getCenter(),
+                map: map,
+                title: "title",
+           };
+           var marker = new google.maps.Marker(markerOptions);
+           
+        }); 
+        </script>
+        <div id="map-canvas">
+        </div>
+    ''' % {'min_lat': min_coords[0], 'min_lng': min_coords[1],
+           'max_lat': max_coords[0], 'max_lng': max_coords[1],    
+            'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])}
+
+           
+    return html
 
 def add_service_id(xml):
     service= xml.get('service')
@@ -103,4 +129,3 @@ def render(xml):
     except:
         raise Exception('Could not find function to render type '+t)
     return construct_link(xml) % (render_function(xml))
-    
