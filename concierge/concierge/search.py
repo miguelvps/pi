@@ -26,7 +26,7 @@ def match_search_to_methods_keywords(query, methods):
 def add_search_to_history(query, services):
     #creates the entry in the user_history if the user is logged in
     if session.get('auth'):
-        hstr_entry = HistoryEntry(user = g.user, query=query, entry_services=services)
+        hstr_entry = HistoryEntry(user = g.user, search_query=query, entry_services=services)
         db.session.add(hstr_entry)
         db.session.commit()
         
@@ -55,9 +55,10 @@ def custom_search(history_entry = None, entry_id = None):
         selected_services = history_entry.entry_services
         selected_services_names = [ service.name for service in selected_services]
         for field in form:
-            if field != form.search_query:
-                if field.name in selected_services_names:
-                    field.data = True
+            if field == form.search_query:
+                form.search_query.data = history_entry.search_query
+            elif field.name in selected_services_names:
+                field.data = True
         return render_template('custom_search.html', search_form=form, history_call='false')
 
     elif entry_id != None:  #localStorage history entry id
@@ -82,20 +83,20 @@ def search_history(entry_id):
     if hasattr(g, 'user'):
         user = g.user
         history = user.user_history
-        hist
-        for entry in history:
-            if entry.id == entry_id:
-                return custom_search(history_entry = entry)
+        entry = HistoryEntry.query.get_or_404(entry_id)
+        return custom_search(history_entry = entry)
     return custom_search(entry_id=entry_id)
 
-@search.route('/search', methods=['POST'])
+@search.route('/search', methods=['GET', 'POST'])
 def search_view():
-    '''general search on all services'''
     form = SearchForm(request.form)
-    if  form.validate_on_submit():
+    if form.validate_on_submit():
         return search_aux(form.search_query.data)
-    return redirect('/')   #null string case
-
+    else:
+        query = request.args.get('query', None)
+        if query:
+            return search_aux(query.encode('utf-8'), add_to_history=False)
+    return redirect('/')
 
 def search_aux(query, services=None, add_to_history=True):
     '''give a list of services, and a query, executes the search on
@@ -108,22 +109,17 @@ def search_aux(query, services=None, add_to_history=True):
         add_search_to_history(query, services)
     search_methods= [m.global_search() for m in services]
     matches = match_search_to_methods_keywords(query, search_methods)
-    if len(matches)==0:
-        #no keywords match
-        results=[]
-    else:
-        params= {rest_method_parameters.QUERY: query}
-        method_parameters= [(method, params) for ignoreme, method in matches]
-        results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
-        print results
+
+    params= {rest_method_parameters.QUERY: query}
+    method_parameters= [(method, params) for ignoreme, method in matches]
+    results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
 
     xml = ElementTree.Element("entity", type='list')
     for result in results:
-        element = ElementTree.fromstring(result)
-        for e in element:
+        for e in ElementTree.fromstring(result.encode('utf-8')):
             xml.append(e)
 
-    for e in xml.iter():
+    for e in xml.getiterator():
         if 'service' in e.attrib:
             s = Service.query.filter_by(name=e.attrib['service']).first()
             if s:

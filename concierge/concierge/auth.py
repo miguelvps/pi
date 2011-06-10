@@ -33,7 +33,7 @@ class HistoryEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created = db.Column(db.DateTime, default=datetime.utcnow)
-    query = db.Column(db.String(50))
+    search_query = db.Column(db.String(50))
 
     user = db.relationship('User', backref=backref('user_history', order_by=created))
 
