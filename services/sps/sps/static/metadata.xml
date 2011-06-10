@@ -1,0 +1,19 @@
+<service name="sps" url="http://concierge.dyndns.org/services/sps/">
+    <description>Este serviço guarda informação dos docentes</description>
+    <supported_formats>
+        <format>xml</format>
+    </supported_formats>
+
+    <resource url="">
+        <keywords>
+            <keyword>prazos</keyword>
+        </keywords>
+        <method type="GET" >
+            <parameter>query</parameter>
+        </method>
+        <resource url="">
+            <method type="GET">
+            </method>
+        </resource>
+    </resource>
+</service>
