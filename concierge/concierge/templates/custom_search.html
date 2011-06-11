@@ -19,7 +19,7 @@
         <ul data-role="listview" data-inset=True>
             <li data-role="fieldcontain">
             {{search_form.search_query.label}}
-            {{search_form.search_query}}
+            {{search_form.search_query(placeholder=search_form.search_query.label.text)}}
                 {% for error in search_form.search_query.errors  %}
                 <span class="error">{{ error }}</span>
                 {% endfor %}
@@ -59,19 +59,21 @@
     $("#custom_search form").submit(function(e) {
         if (!auth) {
             var query = $('#custom_search input[name="{{search_form.search_query.name}}"]').val();
-            var entry_id = localStorage.getItem("entry_id");
-            if (entry_id == null)
-                entry_id = 0;
-            var entry = query + "\0";
-            var checkboxes = $("#custom_search input[type='checkbox']");
-            checkboxes.each(function(index, element){
-                if ( element.checked ){
-                    entry += element.name + "\0";
-                }
-            });
-            localStorage.setItem("history." + entry_id, entry );
-            entry_id= parseInt(entry_id) +1;
-            localStorage.setItem("entry_id", entry_id);
+            if (query != "" && query != null){
+                var entry_id = localStorage.getItem("entry_id");
+                if (entry_id == null)
+                    entry_id = 0;
+                var entry = query + "\0";
+                var checkboxes = $("#custom_search input[type='checkbox']");
+                checkboxes.each(function(index, element){
+                    if ( element.checked ){
+                        entry += element.name + "\0";
+                    }
+                });
+                localStorage.setItem("history." + entry_id, entry );
+                entry_id= parseInt(entry_id) +1;
+                localStorage.setItem("entry_id", entry_id);
+            }
         }
     });
 </script>

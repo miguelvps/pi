@@ -1,5 +1,6 @@
 from concierge.services_models import Service
 from xml.etree import ElementTree
+import random
 
 def render_string(xml):
     return xml.text
@@ -47,12 +48,12 @@ def render_map(xml):
     assert len(geowkt) == 1
     coords, wkt_type = parse_geowkt(geowkt[0].text);
     min_coords, max_coords = get_bounds(coords);
-    
+    rndm = str(random.randint(0,999999999))
     html ='''
     <script type="text/javascript"> 
         // When map page opens get location and display map
-        $('.page-map').live("pageshow", function() {     
-            
+        $('.page-map').live("pagecreate", function() {     
+            alert('cenas');
             var min_latlng = new google.maps.LatLng(%(min_lat)s, %(min_lng)s);
             var max_latlng = new google.maps.LatLng(%(max_lat)s, %(max_lng)s);
             
@@ -97,7 +98,6 @@ def render_map(xml):
     ''' % {'min_lat': min_coords[0], 'min_lng': min_coords[1],
            'max_lat': max_coords[0], 'max_lng': max_coords[1],    
             'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])}
-
            
     return html
 
