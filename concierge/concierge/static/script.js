@@ -1,5 +1,5 @@
 // remove page caching
-$('.ui-page').live('pagehide', function(){ $(this).remove(); });
+// $('.ui-page').live('pagehide', function(){ $(this).remove(); });
 
 
 // notifications

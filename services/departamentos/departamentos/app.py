@@ -77,10 +77,10 @@ class Course(db.Model):
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' % self.name
-        xml += '<entity type="string" name="acronimo">%s</entity>' % self.acronym
-        xml += '<entity type="string" service ="Departamentos" url="%s" name="Departamento">%s</entity>' % (self.department.permalink(), self.department.name)
+        xml += u'<entity type="string" name="Acrónimo">%s</entity>' % self.acronym
         if self.type:
-            xml += '<entity type="string"> %s</entity>' % self.type.name        
+            xml += '<entity name="Tipo" type="string">%s</entity>' % self.type.name
+        xml += '<entity type="string" service ="Departamentos" url="%s" name="Departamento">%s</entity>' % (self.department.permalink(), self.department.name)
         if self.subjects:
             xml += '<entity type="list" name="Cadeiras">'
             for subject in self.subjects:
@@ -111,7 +111,7 @@ class Subject(db.Model):
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' %self.name
-        xml += '<entity type="string">%s</entity>' %self.acronym
+        xml += u'<entity type="string" name="Acrónimo">%s</entity>' % self.acronym
         xml += '<entity kind="pessoa" type="string" name="Regente">%s</entity>' %self.regent
         xml += '<entity kind="pessoa" type="string" name="Coordenador">%s</entity>' %self.coordinator
         xml += '<entity type="string" name="Periodo">%s</entity>' % self.period
