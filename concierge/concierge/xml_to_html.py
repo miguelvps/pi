@@ -52,8 +52,7 @@ def render_map(xml):
     html ='''
     <script type="text/javascript"> 
         // When map page opens get location and display map
-        $('.page-map').live("pagecreate", function() {     
-            alert('cenas');
+ 
             var min_latlng = new google.maps.LatLng(%(min_lat)s, %(min_lng)s);
             var max_latlng = new google.maps.LatLng(%(max_lat)s, %(max_lng)s);
             
@@ -66,6 +65,8 @@ def render_map(xml):
             };
 
             var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
+            google.maps.event.trigger(map,'resize');
+
             map.fitBounds(bounds);
             
             var polygon;
@@ -84,20 +85,26 @@ def render_map(xml):
                 fillOpacity: 0.35
            });
            polygon.setMap(map);
-           
            var markerOptions = {
                 position: bounds.getCenter(),
                 map: map,
                 title: "title",
            };
            var marker = new google.maps.Marker(markerOptions);
-        }); 
+           
+       $('.page-map').live('pageshow',function(){
+            google.maps.event.trigger(map, 'resize');
+            map.setOptions(myOptions); 
+            map.fitBounds(bounds);
+        });
+
         </script>
         <div id="map-canvas">
         </div>
     ''' % {'min_lat': min_coords[0], 'min_lng': min_coords[1],
            'max_lat': max_coords[0], 'max_lng': max_coords[1],    
-            'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])}
+            'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords]),
+            'name': xml[0] }
            
     return html
 
