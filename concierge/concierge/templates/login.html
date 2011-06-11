@@ -19,13 +19,13 @@
             <div data-role="fieldcontain">
                 {{ form.username(placeholder=form.username.label.text) }}
                 {% for error in form.username.errors  %}
-                <div data-role="fieldcontain"><span class="error">{{ error }}</span></div>
+                <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
             </div>
             <div data-role="fieldcontain">
                 {{ form.password(placeholder=form.password.label.text) }}
                 {% for error in form.password.errors  %}
-                <div data-role="fieldcontain"><span class="error">{{ error }}</span></div>
+                <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
             </div>
             <div data-role="fieldcontain">
