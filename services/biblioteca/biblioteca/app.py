@@ -2,6 +2,8 @@
 
 import re
 import urllib
+import urllib2
+import socket
 import HTMLParser
 import itertools
 from BeautifulSoup import BeautifulSoup
@@ -9,6 +11,7 @@ from BeautifulSoup import BeautifulSoup
 from flask import Flask, Response, request
 
 unescape = HTMLParser.HTMLParser().unescape
+socket.setdefaulttimeout(10)
 
 app = Flask(__name__)
 
@@ -54,7 +57,7 @@ BASE_URL = "http://biblioteca.fct.unl.pt:8888/docbweb/"
 def library_search(query, start=0, amount=20):
     url = BASE_URL + "pesqres.asp?Base=ISBD&Form=COMP&StartRec=%s&RecPag=%s&SearchTxt=%s" % (start, amount, urllib.quote(query.replace(' ', '+')))
     books = []
-    page = urllib.urlopen(url).read()
+    page = urllib2.urlopen(url).read()
     xml = BeautifulSoup(page)
     odd = xml.findAll('div', { 'class': "recordodd" })
     even = xml.findAll('div', { 'class': "record" })
