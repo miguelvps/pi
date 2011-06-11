@@ -1,6 +1,5 @@
 from concierge.services_models import Service
 from xml.etree import ElementTree
-import random
 
 def render_string(xml):
     return xml.text
@@ -9,10 +8,10 @@ def render_email(xml):
     return '<a href="mailto:%s">%s</a>' % (xml.text, xml.text)
 
 def render_image(xml):
-    return '<img src="%s"/>' % (element.text)
+    return '<img src="%s"/>' % (xml.text)
 
 def render_list(xml):
-    html= '<ul data-role="listview" data-inset="true">'
+    html= '<ul data-role="listview" data-inset="true" class="list">'
     for child in xml:
         child_html= render(child)
         html += '<li>%s</li>' % (child_html)
@@ -26,9 +25,9 @@ def render_record(xml):
         html+= '<dd>%s</dd>' % (render(child))
     html+='</dl>'
     return html
-    
+
 def render_map(xml):
-    
+
     def parse_geowkt(geowkt):
         if geowkt[:9] == 'POLYGON((':
             assert geowkt[-2:] == '))'
@@ -38,12 +37,12 @@ def render_map(xml):
             return (tuple_list, 'polygon')
         else:
             raise Exception("geowkt parse error")
-    
+
     def get_bounds(coords):
         min_coords = reduce(lambda (x,y),(z,w): (min(x,z), min(y,w)) ,coords)
         max_coords = reduce(lambda (x,y),(z,w): (max(x,z), max(y,w)) ,coords)
         return (min_coords, max_coords)
-        
+
     geowkt = filter(lambda e: e.get('type') == 'geowkt', xml.getchildren())
     assert len(geowkt) == 1
     coords, wkt_type = parse_geowkt(geowkt[0].text)
@@ -54,12 +53,12 @@ def render_map(xml):
     </style>
     <script type="text/javascript"> 
         // When map page opens get location and display map
- 
+
             var min_latlng = new google.maps.LatLng(%(min_lat)s, %(min_lng)s);
             var max_latlng = new google.maps.LatLng(%(max_lat)s, %(max_lng)s);
-            
+
             var bounds = new google.maps.LatLngBounds(min_latlng, max_latlng);
-            
+
             var myOptions = {
                 zoom: 12,
                 center: bounds.getCenter(),
@@ -70,11 +69,11 @@ def render_map(xml):
             google.maps.event.trigger(map,'resize');
 
             map.fitBounds(bounds);
-            
+
             var polygon;
- 
+
             var myCoords = [%(draw_coords)s];
- 
+
             // Construct the polygon
             // Note that we don't specify an array or arrays, but instead just
             // a simple array of LatLngs in the paths property
@@ -93,13 +92,13 @@ def render_map(xml):
                 title: "title",
            };
            var marker = new google.maps.Marker(markerOptions);
-           
+
        $('.page-map').live('pageshow',function(){
             google.maps.event.trigger(map, 'resize');
             map.setOptions(myOptions); 
             map.fitBounds(bounds);
         });
-    
+
         </script>
         <div id="map-canvas">
         </div>
@@ -107,7 +106,7 @@ def render_map(xml):
            'max_lat': max_coords[0], 'max_lng': max_coords[1],    
             'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords]),
             }
-           
+
     return html
 
 def add_service_id(xml):
@@ -116,7 +115,7 @@ def add_service_id(xml):
         s = Service.query.filter_by(name=xml.attrib['service']).first()
         if s:
             xml.attrib['service_id']= s.id
-        
+
 def construct_link(xml):
     service_id, url, kind= map(xml.get, ('service_id','url','kind'))
     if service_id and url:
@@ -125,7 +124,7 @@ def construct_link(xml):
         return ('<a href="/search?query=%s %s">' % (kind, xml.text))+"%s"+'</a>'
     else:
         return "%s"
-        
+
 def render(xml):
     assert isinstance(xml, ElementTree._ElementInterface)
     add_service_id(xml)

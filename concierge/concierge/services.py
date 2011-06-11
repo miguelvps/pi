@@ -179,8 +179,8 @@ def browse_resource(id, url):
                         function (data)
                             {
                             start+=%i;
-                            $("ul").append(data);
-                            $("ul").listview("refresh");
+                            $("ul.list").append(data);
+                            $("ul.list").listview("refresh");
                             doing_request= false;
                             } });
                         
