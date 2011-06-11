@@ -87,11 +87,14 @@ class ServiceResource(db.Model):
     methods = db.relationship('ResourceMethod', backref='resource')
     resources = db.relationship('ServiceResource', backref=backref('parent', remote_side='ServiceResource.id'))
 
-    def relative_url(self):
-        return self.parent.relative_url()+self.url+"/" if self.parent else ""
+    def relative_url(self, add_service_url=False):
+        if not self.parent:
+            return (self.service.url) if add_service_url else ""
+        else:
+            return self.parent.relative_url(add_service_url=add_service_url)+"/"+self.url
 
     def absolute_url(self):
-        return self.service.url + "/" + self.relative_url()
+        return self.relative_url(add_service_url=True)
 
     def find_methods(self, recursive= False, filter_function= (lambda x: True) ):
         '''returns the methods of the resource and (optionally) subresources.
@@ -138,7 +141,7 @@ class ResourceMethod(db.Model):
         parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
         parameters_kv= dict(zip(needed_parameters_names, parameters_values))
         params= urllib.urlencode(parameters_kv)
-        page = urllib.urlopen(method_url + "?" + params).read().decode('utf-8')
+        page = urllib.urlopen(method_url + "?" + params).read()
         return page
 
     @staticmethod
