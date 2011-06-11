@@ -136,7 +136,12 @@ def imports():
 def browse(id):
     service = Service.query.get_or_404(id)
     root = service.resources[0]
-    return render_template('service_browse.html', resources=root.resources, service=service)
+    resources = []
+    for resource in root.resources:
+        if filter(lambda m: m.type==rest_methods.GET, resource.methods):
+            resources.append(resource)
+
+    return render_template('service_browse.html', resources=resources, service=service)
 
 
     
