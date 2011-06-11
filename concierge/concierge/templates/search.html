@@ -2,17 +2,16 @@
 
 {% block page_id %}search{% endblock %}
 	
-{% block redirect %} data-url="/search"{% endblock %}
+{% block redirect %}data-url="/search"{% endblock %}
   
 {% block header %}
-    <div data-role="header">
+    <div data-role="header" data-position="fixed" data-id="concheader">
         <h1>Search</h1>
     </div><!-- /header -->
 {% endblock %}
-    
+
 {% block page_content %}
 	<div data-role="content">	
-		search results:
 		 {{html|safe}}
 	</div><!-- /content -->
 {% endblock %}
