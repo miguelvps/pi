@@ -46,9 +46,8 @@ def render_map(xml):
         
     geowkt = filter(lambda e: e.get('type') == 'geowkt', xml.getchildren())
     assert len(geowkt) == 1
-    coords, wkt_type = parse_geowkt(geowkt[0].text);
-    min_coords, max_coords = get_bounds(coords);
-    rndm = str(random.randint(0,999999999))
+    coords, wkt_type = parse_geowkt(geowkt[0].text)
+    min_coords, max_coords = get_bounds(coords)
     html ='''
     <script type="text/javascript"> 
         // When map page opens get location and display map
@@ -97,14 +96,14 @@ def render_map(xml):
             map.setOptions(myOptions); 
             map.fitBounds(bounds);
         });
-
+    
         </script>
         <div id="map-canvas">
         </div>
     ''' % {'min_lat': min_coords[0], 'min_lng': min_coords[1],
            'max_lat': max_coords[0], 'max_lng': max_coords[1],    
             'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords]),
-            'name': xml[0] }
+            }
            
     return html
 
