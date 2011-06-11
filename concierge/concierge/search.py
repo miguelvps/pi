@@ -119,7 +119,7 @@ def search_aux(query, services=None, add_to_history=True):
 
     xml = ElementTree.Element("entity", type='list')
     for result in results:
-        for e in ElementTree.fromstring(result.encode('utf-8')):
+        for e in ElementTree.fromstring(result):
             xml.append(e)
     html= xml_to_html.render(xml)
     return render_template('search.html', html=html)
