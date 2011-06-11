@@ -1,3 +1,8 @@
+// remove page caching
+$('.ui-page').live('pagehide', function(){ $(this).remove(); });
+
+
+// notifications
 $('div').live('pageshow', function(event, ui) {
     $(".notification").slideDown(750);
 });

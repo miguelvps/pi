@@ -4,24 +4,17 @@
         <title>Concierge</title>
 
         <link rel="stylesheet" href="/static/jquery.mobile-1.0a4.1.min.css"/>
-        <link rel="stylesheet" href="/static/style.css" type="text/css"/>
+        <link rel="stylesheet" href="/static/style.css"/>
         <script src="/static/jquery-1.5.2.min.js"></script>
-        <script src="/static/jquery.mobile-1.0a4.1.min.js"></script>
         <script src="/static/script.js"></script>
+        <script src="/static/jquery.mobile-1.0a4.1.min.js"></script>
         <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-        <link rel="stylesheet" href="/static/map.css" /> 
 
-        
         {% block map_imports %}
         {% endblock %}
-        <script type="text/javascript"> 
-            $('.ui-page').live('pagehide', function(){ $(this).remove(); }); 
-        </script> 
     </head>
 
     <body>
-
-
         <!-- Start of first page -->
         <div data-role="page" id="{% block page_id %}{% endblock %}" {% block redirect %}{% endblock %} {% block class %}{% endblock %}>
             <script type="text/javascript">
@@ -58,9 +51,9 @@
                                 <li><a href="/settings">Settings</a></li>
                                 <li>
                                 {% if session.get("auth") == True %}
-                                <a href="/auth/logout">Logout</a>
+                                <a href="{{ url_for('auth.logout') }}">Logout</a>
                                 {% else %}
-                                <a href="/auth/login" data-transition="slideup">Login</a>
+                                <a href="{{ url_for('auth.login') }}" data-transition="slideup">Login</a>
                                 {% endif %}
                                 </li>
                                 <li><a href="/history">History</a></li>
@@ -70,7 +63,6 @@
             {% endblock %}
 
             {% block page_end %}{% endblock %}
-
         </div><!-- /page -->
     </body>
 </html>

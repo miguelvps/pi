@@ -8,19 +8,21 @@
 <div data-role="header"  data-id="concheader" data-backbtn="false">
     <h1>Concierge</h1>
 
+    {# Breaks notification system (fires two create page events?)
     <div class="ui-btn-right">
-        <select data-theme="a" data-icon="arrow-d" data-native-menu="false" data-iconpos="notext" tabindex="-1"> 
-            <option value="name">Order by name</option> 
+        <select data-theme="a" data-icon="arrow-d" data-iconpos="notext" tabindex="-1">
+            <option value="name">Order by name</option>
             <option value="created">Order by date</option>
             <option value="user.username">Order by provider</option>
             <option value="active">Order by status</option>
         </select>
     </div>
+    #}
 
     <div data-role="header" data-position="inline" data-theme="c">
         <form action="/search" method="POST">
             {% for field in search_form %}
-                {{field(placeholder=field.label.text) }}            
+                {{ field(placeholder=field.label.text) }}
                 {% for error in field.errors  %}
                     <span class="error">{{ error }}</span>
                 {% endfor %}
@@ -28,11 +30,9 @@
         </form>
         <a href="/custom_search" data-icon="gear" data-iconpos="notext" class="ui-btn-right">Custom Search</a>
     </div>
-
 </div><!-- /header -->
 
 <script type="text/javascript">
-
 //    $('#index').load(function(event){
 //        $("#index ul").listview('refresh');
 //    });
@@ -52,7 +52,6 @@
         }
     });
 </script>
-
 {% endblock %}
 
 {% block page_content %}
@@ -69,6 +68,7 @@
 </div><!-- /content -->
 {% endblock %}
 
+{# select javascript
 {% block page_end %}
 <script type="text/javascript">
     $("#index select").bind('change', function() {
@@ -85,3 +85,4 @@
 //    });
 </script>
 {% endblock %}
+#}
