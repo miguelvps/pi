@@ -11,9 +11,10 @@ from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL, ValidationError
 from concierge import db
 from concierge.auth import requires_auth
-from concierge.services_models import Service
+from concierge.services_models import Service, ResourceMethod
 from concierge.service_metadata_parser import parse_metadata
 from concierge import xml_to_html
+from common import rest_methods, rest_method_parameters
 
 services = Module(__name__, 'services')
 
@@ -138,13 +139,66 @@ def browse(id):
     return render_template('service_browse.html', resources=root.resources, service=service)
 
 
+    
 @services.route('/<id>/browse/<path:url>')
 def browse_resource(id, url):
+    START, END, GET= rest_method_parameters.START, rest_method_parameters.END, rest_methods.GET
+
     service = Service.query.get_or_404(id)
     root = service.resources[0]
     resource = root.get_resource_by_url(url)
-    # TODO: resource methods/params etc
-    xml = urllib.urlopen(service.url + url).read()
-    element = ElementTree.fromstring(xml)
-    html= xml_to_html.render(element)
+    methods= filter(lambda m: m.type==GET, resource.methods)
+    assert len(methods) #resourse must have at least one GET method
+
+    def scrollable_method(method):
+        parameters= [p.parameter for p in method.parameters]
+        return all([p in parameters for p in (START, END)])
+    scrollable= filter(scrollable_method, methods)
+    if len(scrollable):
+        PAGE_ELEMENTS= 10
+        #there's a scrollable method
+        method= scrollable[0]
+        start, end = request.args.get('start', 0), request.args.get('end', PAGE_ELEMENTS)
+        xml= method.execute({START:start, END:end})
+        html= xml_to_html.render(ElementTree.fromstring(xml))
+        if start==0 and end==PAGE_ELEMENTS:
+            #first page
+            html+= '''
+            <script>
+            var doing_request= false;
+            var start= %i;
+            var url= "%s";
+            $(document).bind('scrollstop',function()
+                {
+                var x= $('body').height() +$(document).scrollTop() ;
+                var y= $(document).height();
+                if ((x>=y) && (!doing_request))
+                        {
+                        doing_request= true;
+                        $.ajax({url: url+"?start="+start+"&end="+(start+%i), success:
+                        function (data)
+                            {
+                            start+=%i;
+                            $("ul").append(data);
+                            $("ul").listview("refresh");
+                            doing_request= false;
+                            } });
+                        
+                        }
+                });
+
+            </script>'''%(PAGE_ELEMENTS, "/services/"+id+"/browse/"+url, PAGE_ELEMENTS, PAGE_ELEMENTS )
+            return render_template('service_browse_resource.html', service=service, html=html, url=url)
+        else:
+            html_tree= ElementTree.fromstring(html.encode('utf-8'))
+            assert html_tree.tag=="ul"
+            html= "".join(map(ElementTree.tostring, html_tree.getchildren() ))
+            return html
+    else:
+        method= methods[0]  #choose any GET method
+        xml= method.execute({}, url_override=service.url+url)
+        html= xml_to_html.render(ElementTree.fromstring(xml))
+
+
+    
     return render_template('service_browse_resource.html', service=service, html=html, url=url)
