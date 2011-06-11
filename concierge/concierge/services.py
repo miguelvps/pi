@@ -156,20 +156,45 @@ def browse_resource(id, url):
         return all([p in parameters for p in (START, END)])
     scrollable= filter(scrollable_method, methods)
     if len(scrollable):
+        PAGE_ELEMENTS= 10
         #there's a scrollable method
         method= scrollable[0]
-        start, end = request.args.get('start', 0), request.args.get('end', 20)
+        start, end = request.args.get('start', 0), request.args.get('end', PAGE_ELEMENTS)
         xml= method.execute({START:start, END:end})
         html= xml_to_html.render(ElementTree.fromstring(xml))
-        if start==0 and end==10:
+        if start==0 and end==PAGE_ELEMENTS:
             #first page
             html+= '''
-            <script src="jquery.endless-scroll.1.4.1.js"></script>
             <script>
-            function scroll_callback(n) { alert(n)}
-            $(document).endlessScroll();
-            $(document).endlessScroll({ fireOnce: false, fireDelay: 10, callback: scroll_callback});
-            </script>'''
+            var doing_request= false;
+            var start= %i;
+            var url= "%s";
+            $(document).bind('scrollstop',function()
+                {
+                var x= $('body').height() +$(document).scrollTop() ;
+                var y= $(document).height();
+                if ((x>=y) && (!doing_request))
+                        {
+                        doing_request= true;
+                        $.ajax({url: url+"?start="+start+"&end="+(start+%i), success:
+                        function (data)
+                            {
+                            start+=%i;
+                            $("ul").append(data);
+                            $("ul").listview("refresh");
+                            doing_request= false;
+                            } });
+                        
+                        }
+                });
+
+            </script>'''%(PAGE_ELEMENTS, "/services/"+id+"/browse/"+url, PAGE_ELEMENTS, PAGE_ELEMENTS )
+            return render_template('service_browse_resource.html', service=service, html=html, url=url)
+        else:
+            html_tree= ElementTree.fromstring(html.encode('utf-8'))
+            assert html_tree.tag=="ul"
+            html= "".join(map(ElementTree.tostring, html_tree.getchildren() ))
+            return html
     else:
         method= methods[0]  #choose any GET method
         xml= method.execute({})
