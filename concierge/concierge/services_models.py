@@ -128,12 +128,12 @@ class ResourceMethod(db.Model):
 
     parameters = db.relationship('MethodParameter', backref="method")
 
-    def execute(self, received_parameters):
+    def execute(self, received_parameters, url_override=""):
         '''takes a dictionary of method parameters, executes the method
         and returns response'''
         if self.type!=rest_methods.GET:
             raise NotImplementedError("Can't execute a service method that is not a GET")
-        method_url= self.resource.absolute_url()
+        method_url= url_override if url_override else self.resource.absolute_url()
         needed_parameters= [p.parameter for p in self.parameters]
         needed_parameters_names= [rest_method_parameters.reverse[p] for p in needed_parameters]
         #all received parameters must be method parameters

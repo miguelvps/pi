@@ -144,7 +144,6 @@ def browse(id):
 def browse_resource(id, url):
     START, END, GET= rest_method_parameters.START, rest_method_parameters.END, rest_methods.GET
 
-
     service = Service.query.get_or_404(id)
     root = service.resources[0]
     resource = root.get_resource_by_url(url)
@@ -197,7 +196,7 @@ def browse_resource(id, url):
             return html
     else:
         method= methods[0]  #choose any GET method
-        xml= method.execute({})
+        xml= method.execute({}, url_override=service.url+url)
         html= xml_to_html.render(ElementTree.fromstring(xml))
 
 
