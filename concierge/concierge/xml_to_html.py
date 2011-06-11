@@ -49,6 +49,9 @@ def render_map(xml):
     coords, wkt_type = parse_geowkt(geowkt[0].text)
     min_coords, max_coords = get_bounds(coords)
     html ='''
+    <style>
+        .page-map, .ui-content, #map-canvas { width: 100%%; height: 100%%; padding: 0; }
+    </style>
     <script type="text/javascript"> 
         // When map page opens get location and display map
  

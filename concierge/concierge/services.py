@@ -147,4 +147,4 @@ def browse_resource(id, url):
     xml = urllib.urlopen(service.url + url).read()
     element = ElementTree.fromstring(xml)
     html= xml_to_html.render(element)
-    return render_template('service_browse_resource.html', service=service, html=html, url=url)
+    return render_template('service_browse_resource.html', c="page-map" if element.get('type') == "map" else "", service=service, html=html, url=url)
