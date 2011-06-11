@@ -13,27 +13,30 @@
 
 {% block page_content %}
 <div data-role="content">
-    <h4>LogIn to your concierge account.</h4>
     <form action="{{ url_for('auth.login') }}" method="POST">
         <fieldset>
             {{ form.csrf }}
-            {{ form.username(placeholder=form.username.label.text) }}
-                {% for error in form.username.errors  %}
-                <span class="error">{{ error }}</span>
-                {% endfor %}
-            {{ form.password(placeholder=form.password.label.text) }}
-                {% for error in form.password.errors  %}
-                <span class="error">{{ error }}</span>
-                {% endfor %}
             <div data-role="fieldcontain">
-                <input type="checkbox" id="remember" name="remember" value="{{form.remember.data}}" data-role="none"/>
-                {{ form.remember.label }}
+                {{ form.username(placeholder=form.username.label.text) }}
+                {% for error in form.username.errors  %}
+                <div data-role="fieldcontain"><span class="error">{{ error }}</span></div>
+                {% endfor %}
             </div>
-            <input type="submit" value="Sign in" data-role="button" data-inline="true" data-theme="b" />
+            <div data-role="fieldcontain">
+                {{ form.password(placeholder=form.password.label.text) }}
+                {% for error in form.password.errors  %}
+                <div data-role="fieldcontain"><span class="error">{{ error }}</span></div>
+                {% endfor %}
+            </div>
+            <div data-role="fieldcontain">
+                {{ form.remember }} {{ form.remember.label }}
+            </div>
+            <div data-role="fieldcontain">
+                <input type="submit" value="Sign in" data-role="button" data-inline="true" data-theme="b" />
+            </div>
         </fieldset>
     </form>
-    <hr />
-    <h4> Don't have an account? <a href="/auth/register">Register here.</a> </h4>
+    <h4>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here.</a></h4>
 </div><!-- /content -->
 {% endblock %}
 
