@@ -158,14 +158,23 @@ def browse_resource(id, url):
     if len(scrollable):
         #there's a scrollable method
         method= scrollable[0]
-        start, end = request.args.get('start', 0), request.args.get('end', 10)
+        start, end = request.args.get('start', 0), request.args.get('end', 20)
         xml= method.execute({START:start, END:end})
+        html= xml_to_html.render(ElementTree.fromstring(xml))
+        if start==0 and end==10:
+            #first page
+            html+= '''
+            <script src="jquery.endless-scroll.1.4.1.js"></script>
+            <script>
+            function scroll_callback(n) { alert(n)}
+            $(document).endlessScroll();
+            $(document).endlessScroll({ fireOnce: false, fireDelay: 10, callback: scroll_callback});
+            </script>'''
     else:
         method= methods[0]  #choose any GET method
         xml= method.execute({})
+        html= xml_to_html.render(ElementTree.fromstring(xml))
 
-    # TODO: resource methods/params etc
+
     
-    element = ElementTree.fromstring(xml)
-    html= xml_to_html.render(element)
     return render_template('service_browse_resource.html', service=service, html=html, url=url)
