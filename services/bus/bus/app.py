@@ -21,7 +21,7 @@ def locations_to_xml(locations):
     xml+="</entity>"
     return xml
     
-@app.route("/transportation")
+@app.route("/transport/transportation")
 def destination():
     l1= request.args.get('lat', '')
     ln1= request.args.get('long', '')
@@ -38,12 +38,12 @@ def destination():
 @app.route("/")
 def search_method():
     query= urllib.unquote_plus(request.args.get('query', ''))
-    if query=="" or len(query)<12 or query[:12]!="transportes ":
+    if not "transportes " in query:
         xml=""
     else:
         locationstr= query[12:]
         
         locations= transporlis.geolocate(locationstr)
-        xml= locations_to_xml(locations).decode('utf-8')
+        xml= locations_to_xml(locations)
         
-        return Response(response=xml, mimetype="application/xml")
+    return Response(response=xml, mimetype="application/xml")
