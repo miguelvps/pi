@@ -13,21 +13,29 @@
 
 {% block page_content %}
 <div data-role="content">
-    <h2> User Register </h2>
+    <h2>User Register</h2>
     <form action="{{ url_for('auth.register') }}" method="POST">
         <fieldset>
             {{ csrf }}
-            {{ form.username(placeholder=form.username.label.text) }}
+            <div data-role="fieldcontain">
+                {{ form.username(placeholder=form.username.label.text) }}
                 {% for error in form.username.errors  %}
-                <span class="error">{{ error }}</span>
+                <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
-            {{ form.password(placeholder=form.password.label.text) }}
+            </div>
+            <div data-role="fieldcontain">
+                {{ form.password(placeholder=form.password.label.text) }}
                 {% for error in form.password.errors  %}
-                <span class="error">{{ error }}</span>
+                <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
-            {{ form.confirm(placeholder=form.confirm.label.text) }}
-            {{ form.remember }} {{ form.remember.label }}
-            <input type="submit" value="Sign up" data-role="button" data-inline="true" data-theme="b" />
+            </div>
+            <div data-role="fieldcontain">
+                {{ form.confirm(placeholder=form.confirm.label.text) }}
+            </div>
+            <div data-role="fieldcontain">
+                {{ form.remember }} {{ form.remember.label }}
+            </div>
+            <input type="submit" value="Register" data-role="button" data-inline="true" data-theme="b" />
         </fieldset>
     </form>
 </div><!-- /content -->

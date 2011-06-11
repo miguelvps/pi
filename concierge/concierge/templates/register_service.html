@@ -13,15 +13,17 @@
 
 {% block page_content %}
 <div data-role="content">
-    <p>Please insert the url with the service metadata to perform the submission</p>
-    <form action="/services/register", method="POST">
+    <p>Please insert the url with the service metadata to perform the submission.</p>
+    <form action="{{ url_for('services.register') }}", method="POST">
         <fieldset>
-            {{form.url(placeholder = form.url.label.text) }}
+            {{ form.csrf }}
+            <div data-role="fieldcontain">
+                {{form.url(placeholder = form.url.label.text) }}
                 {% for error in form.url.errors  %}
-                <span class="error">{{ error }}</span>
-                <br \>
+                <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
-            <input id="Submit1" type="submit" value="Register" data-role="button" data-inline="true" data-theme="b" />
+            </div>
+            <input type="submit" value="Register" data-role="button" data-inline="true" data-theme="b" />
         </fieldset>
     </form>
 </div><!-- /content -->
