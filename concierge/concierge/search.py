@@ -67,7 +67,9 @@ def custom_search(history_entry = None, entry_id = None):
 
     else:   #Favorite services button
         favorite_check = request.args.get('check_favorites', '')
+        fav_check = 'false' #for localStorage favorite button press
         if favorite_check:
+            fav_check = 'true'
             if hasattr(g, 'user'):
                 user = g.user
                 favorites = user.favorite_services
@@ -76,7 +78,7 @@ def custom_search(history_entry = None, entry_id = None):
                     if field != form.search_query:
                         if field.name in favorite_services_names:
                             field.data = True
-        return render_template('custom_search.html', search_form=form, history_call='false')
+        return render_template('custom_search.html', search_form=form, history_call='false', fav_check=fav_check)
 
 @search.route('/search/<entry_id>')
 def search_history(entry_id):
