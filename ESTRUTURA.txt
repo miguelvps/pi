@@ -1,0 +1,29 @@
+[utf-8]
+
+estruturação de directorias
+    common - contém modulos usados tanto pelo concierge como pelos
+            serviços (funções auxiliares, constantes de XML, etc)
+    concierge - módulo flask
+        concierge - contém o código do concierge
+            static - ver notas
+            templates - os templates
+            tests - testes
+    services - directoria que contém directorias com módulos flask para
+                os serviços
+            
+        
+
+
+notas:
+na directoria de módulo de flask encontam-se ficheiros de deployment,
+ficheiros de configuração de virtualenv (python), etc
+
+qualquer directoria com o nome "static" contém os ficheiros que o
+servidor retorna de forma não dinâmica
+
+para evitar import relativos, foram criados vários "symbolic links"
+(unix) para a directoria "common" (qualquer directoria chamada "common"
+deve ser entendida desta maneira)
+
+as diversas fixtures e código de leitura de dados encontram-se nos
+ficheiros manager.py
