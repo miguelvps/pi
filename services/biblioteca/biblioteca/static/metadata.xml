@@ -1,4 +1,4 @@
-<service name="Biblioteca" url="http://127.0.0.1:5002/">
+<service name="Biblioteca" url="http://127.0.0.1:3002/">
     <supported_formats>
         <format>xml</format>
     </supported_formats>

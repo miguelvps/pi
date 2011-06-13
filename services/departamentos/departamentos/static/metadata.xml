@@ -1,4 +1,4 @@
-<service name="Departamentos" url="http://127.0.0.1:5005/">
+<service name="Departamentos" url="http://127.0.0.1:3005/">
     <description>Este serviço guarda informação dos departamentos/cursos/cadeiras</description>
     <supported_formats>
         <format>xml</format>

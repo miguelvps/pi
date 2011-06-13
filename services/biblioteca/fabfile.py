@@ -6,16 +6,13 @@ from fabric.contrib.console import confirm
 env.user = 'pi2011'
 env.hosts = ['193.136.122.119']
 
-env.project = 'concierge'
+env.project = 'biblioteca'
 env.directory = '/home/pi2011/%(project)s/' % env # remote directory
 
 
-def virtualenv(command, su=False):
+def virtualenv(command):
     source = 'source %(directory)sENV/bin/activate && ' % env
-    if su:
-        sudo(source + command)
-    else:
-        run(source + command)
+    run(source + command)
 
 def upload():
     local('tar ch . | gzip > %(project)s.tar.gz' % env)
@@ -35,7 +32,6 @@ def install():
         virtualenv('pip install -r requirements.txt')
         virtualenv('python setup.py develop')
         virtualenv('pip install gunicorn')
-        virtualenv('export SETTINGS=../settings.cfg && python manager.py resetdb')
 
 def uninstall():
     stop()
@@ -46,18 +42,18 @@ def start():
         if exists('gunicorn.pid') and \
             not confirm("gunicorn.pid already exists. Continue anyway?"):
                 abort("Aborting at user request.")
-        virtualenv('export SETTINGS=../settings.cfg && gunicorn -c gunicorn.conf %(project)s.app:app' % env, su=True)
+        virtualenv('export SETTINGS=../settings.cfg && gunicorn -c gunicorn.conf %(project)s.app:app' % env)
 
 def stop():
     with cd(env.directory):
         if exists('gunicorn.pid'):
-            sudo('kill -9 `cat gunicorn.pid`')
-            sudo('rm gunicorn.pid')
+            run('kill -9 `cat gunicorn.pid`')
+            run('rm gunicorn.pid')
 
 def reload():
     with cd(env.directory):
         if exists('gunicorn.pid'):
-            sudo('kill -HUP `cat gunicorn.pid`')
+            run('kill -HUP `cat gunicorn.pid`')
         else:
             start()
 

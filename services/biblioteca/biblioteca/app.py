@@ -14,6 +14,7 @@ unescape = HTMLParser.HTMLParser().unescape
 socket.setdefaulttimeout(10)
 
 app = Flask(__name__)
+app.config.from_envvar('SETTINGS', silent=True)
 
 class Book(object):
     def __init__(self, title, author=None, publisher=None, isbn=None, notes=None, url=None):

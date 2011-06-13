@@ -1,3 +1,3 @@
-BeautifulSoup
 Flask
+Flask-SQLAlchemy
 Flask-Script

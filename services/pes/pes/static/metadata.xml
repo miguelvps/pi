@@ -1,4 +1,4 @@
-<service name="Pessoas" url="http://127.0.0.1:5001/">
+<service name="Pessoas" url="http://127.0.0.1:3001/">
     <description>Este serviço guarda informação dos docentes</description>
     <supported_formats>
         <format>xml</format>

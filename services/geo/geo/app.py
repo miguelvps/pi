@@ -4,6 +4,7 @@ from common import search
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///geo.db'
+app.config.from_envvar('SETTINGS', silent=True)
 db = SQLAlchemy(app)
 
 class PlacemarkType(db.Model):

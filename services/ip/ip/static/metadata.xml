@@ -1,4 +1,4 @@
-<service name="IP" url="http://127.0.0.1:5003/static/metadata.xml">
+<service name="IP" url="http://127.0.0.1:3003/static/metadata.xml">
     <description>Este serviço guarda informação dos docentes</description>
     <supported_formats>
         <format>xml</format>

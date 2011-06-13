@@ -8,6 +8,7 @@ from transporlis import transporlis
 
 SERVICE_NAME= "Bus"
 app = Flask(__name__)
+app.config.from_envvar('SETTINGS', silent=True)
 
 
 

@@ -6,6 +6,7 @@ from common import search
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pes.db'
+app.config.from_envvar('SETTINGS', silent=True)
 db = SQLAlchemy(app)
 
 
