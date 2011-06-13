@@ -30,6 +30,7 @@ def parse_metadata(xml):
     assert service_xml.tag=='service'
     name= service_xml.get('name')
     url= service_xml.get('url')
+    assert url[-1]=="/" #convention 
     descriptions_xml= service_xml.find('description')
     description= descriptions_xml.text if descriptions_xml is not None else ""
     formats_xml= service_xml.find('supported_formats')

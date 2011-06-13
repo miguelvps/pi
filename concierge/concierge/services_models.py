@@ -89,7 +89,7 @@ class ServiceResource(db.Model):
 
     def relative_url(self, add_service_url=False):
         if not self.parent:
-            return (self.service.url) if add_service_url else ""
+            return (self.service.url[:-1]) if add_service_url else ""
         else:
             return self.parent.relative_url(add_service_url=add_service_url)+"/"+self.url
 
