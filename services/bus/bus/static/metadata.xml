@@ -1,4 +1,4 @@
-<service name="Bus" url="http://127.0.0.1:5006/">
+<service name="Bus" url="http://127.0.0.1:3006/">
     <description>Este servico permite a pesquisa sobre transportes publicos</description>
     <supported_formats>
         <format>xml</format>
