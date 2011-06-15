@@ -70,7 +70,7 @@ def service_model_search(model_class, query):
     representative= getattr(model_class, "search_representative", None)
 
     joins= map(joinedload, join_models)
-    atributes_likes= [getattr(model_class, atr).like(query) for atr in atributes]
+    atributes_likes= [getattr(model_class, atr).ilike(query) for atr in atributes]
 
     results= model_class.query.options(*joins).filter(or_(*atributes_likes)).all()
     if representative:
