@@ -149,6 +149,7 @@ def browse(id):
             resources.append(resource)
     return render_template('service_browse.html', resources=resources, service=service)
 
+
 def complete_method_args(method, given_args, add_start_end=False):
     '''given a method, verifies it's parameters and takes their values
     from dictionary given_args'''
@@ -166,9 +167,9 @@ def complete_method_args(method, given_args, add_start_end=False):
     return results
     
     
-    
-def browse_resource_unpaginated(url, service, method):
-    xml= method.execute({}, url_override=service.url+url)
+def browse_resource_unpaginated(url, service, method, args):
+    args= complete_method_args(method, args)
+    xml= method.execute(args, url_override=service.url+url)
     element = ElementTree.fromstring(xml)
     html= xml_to_html.render(element)
     return render_template('service_browse_resource.html', c="page-map" if element.get('type') == "map" else "", service=service, html=html, url=url)
@@ -231,4 +232,4 @@ def browse_resource(id, url):
     if len(paginated):
         return browse_resource_paginated(url, service, paginated[0], request.args) #choose first paginated method
     else:
-        return browse_resource_unpaginated(url, service, methods[0]) #choose any GET method
+        return browse_resource_unpaginated(url, service, methods[0], request.args) #choose any GET method
