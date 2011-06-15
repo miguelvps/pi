@@ -16,6 +16,8 @@ from concierge.service_metadata_parser import parse_metadata
 from concierge import xml_to_html
 from common import rest_methods, rest_method_parameters
 
+RESULTS_PER_PAGINATED_PAGE= 15
+
 services = Module(__name__, 'services')
 
 
@@ -132,6 +134,11 @@ def imports():
     return redirect("/")
 
 
+
+
+
+
+
 @services.route('/<id>/browse')
 def browse(id):
     service = Service.query.get_or_404(id)
@@ -140,13 +147,78 @@ def browse(id):
     for resource in root.resources:
         if filter(lambda m: m.type==rest_methods.GET, resource.methods):
             resources.append(resource)
-
     return render_template('service_browse.html', resources=resources, service=service)
 
-
+def complete_method_args(method, given_args, add_start_end=False):
+    '''given a method, verifies it's parameters and takes their values
+    from dictionary given_args'''
+    START, END, QUERY, LATLNG= rest_method_parameters.START, rest_method_parameters.END,  rest_method_parameters.QUERY,rest_method_parameters.LATLNG
+    results= {}
+    method_parameters= [p.parameter for p in method.parameters]
+    for parameter in method_parameters:
+        param_name= rest_method_parameters.reverse[parameter]
+        value= given_args.get(param_name)
+        if not value and parameter==START and add_start_end:
+            value=0
+        if not value and parameter==END and add_start_end:
+            value=RESULTS_PER_PAGINATED_PAGE
+        results[parameter]=value
+    return results
     
+    
+    
+def browse_resource_unpaginated(url, service, method):
+    xml= method.execute({}, url_override=service.url+url)
+    element = ElementTree.fromstring(xml)
+    html= xml_to_html.render(element)
+    return render_template('service_browse_resource.html', c="page-map" if element.get('type') == "map" else "", service=service, html=html, url=url)
+
+
+def browse_resource_paginated(url, service, method, args):
+    args= complete_method_args(method, args, add_start_end=True)
+    xml= method.execute(args)
+    html= xml_to_html.render(ElementTree.fromstring(xml))
+    n= RESULTS_PER_PAGINATED_PAGE
+    if args[rest_method_parameters.END]==n:
+        #first page
+        html+= '''
+        <script>
+        var doing_request= false;
+        var start= %i;
+        var url= "%s";
+        $(document).bind('scrollstop',function()
+            {
+            var x= $('body').height() +$(document).scrollTop() ;
+            var y= $(document).height();
+            if ((x>=y) && (!doing_request))
+                    {
+                    doing_request= true;
+                    $.ajax({url: url+"?start="+start+"&end="+(start+%i), success:
+                    function (data)
+                        {
+                        start+=%i;
+                        $("ul.list").append(data);
+                        $("ul.list").listview("refresh");
+                        doing_request= false;
+                        } });
+                    
+                    }
+            });
+
+        </script>'''%(n, "/services/"+str(service.id)+"/browse/"+url, n, n )
+        return render_template('service_browse_resource.html', service=service, html=html, url=url)
+    else:
+        #not first page, don't return all the page, only li elements
+        html_tree= ElementTree.fromstring(html.encode('utf-8'))
+        assert html_tree.tag=="ul"
+        html= "".join(map(ElementTree.tostring, html_tree.getchildren() ))
+        return html
+            
 @services.route('/<id>/browse/<path:url>')
 def browse_resource(id, url):
+    def paginated_method(method):
+        parameters= [p.parameter for p in method.parameters]
+        return all([p in parameters for p in (START, END)])
     START, END, GET= rest_method_parameters.START, rest_method_parameters.END, rest_methods.GET
 
     service = Service.query.get_or_404(id)
@@ -154,55 +226,9 @@ def browse_resource(id, url):
     resource = root.get_resource_by_url(url)
     methods= filter(lambda m: m.type==GET, resource.methods)
     assert len(methods) #resourse must have at least one GET method
-
-    def scrollable_method(method):
-        parameters= [p.parameter for p in method.parameters]
-        return all([p in parameters for p in (START, END)])
-    scrollable= filter(scrollable_method, methods)
-    if len(scrollable):
-        PAGE_ELEMENTS= 10
-        #there's a scrollable method
-        method= scrollable[0]
-        start, end = request.args.get('start', 0), request.args.get('end', PAGE_ELEMENTS)
-        xml= method.execute({START:start, END:end})
-        html= xml_to_html.render(ElementTree.fromstring(xml))
-        if start==0 and end==PAGE_ELEMENTS:
-            #first page
-            html+= '''
-            <script>
-            var doing_request= false;
-            var start= %i;
-            var url= "%s";
-            $(document).bind('scrollstop',function()
-                {
-                var x= $('body').height() +$(document).scrollTop() ;
-                var y= $(document).height();
-                if ((x>=y) && (!doing_request))
-                        {
-                        doing_request= true;
-                        $.ajax({url: url+"?start="+start+"&end="+(start+%i), success:
-                        function (data)
-                            {
-                            start+=%i;
-                            $("ul.list").append(data);
-                            $("ul.list").listview("refresh");
-                            doing_request= false;
-                            } });
-                        
-                        }
-                });
-
-            </script>'''%(PAGE_ELEMENTS, "/services/"+id+"/browse/"+url, PAGE_ELEMENTS, PAGE_ELEMENTS )
-            return render_template('service_browse_resource.html', service=service, html=html, url=url)
-        else:
-            html_tree= ElementTree.fromstring(html.encode('utf-8'))
-            assert html_tree.tag=="ul"
-            html= "".join(map(ElementTree.tostring, html_tree.getchildren() ))
-            return html
+    paginated= filter(paginated_method, methods)
+    args= request.args
+    if len(paginated):
+        return browse_resource_paginated(url, service, paginated[0], request.args) #choose first paginated method
     else:
-        method= methods[0]  #choose any GET method
-        xml= method.execute({}, url_override=service.url+url)
-        element = ElementTree.fromstring(xml)
-        html= xml_to_html.render(element)
-
-        return render_template('service_browse_resource.html', c="page-map" if element.get('type') == "map" else "", service=service, html=html, url=url)
+        return browse_resource_unpaginated(url, service, methods[0]) #choose any GET method
