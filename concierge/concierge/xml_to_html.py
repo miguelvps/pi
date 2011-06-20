@@ -128,9 +128,9 @@ def construct_link(xml):
 
 def render(xml):
     assert isinstance(xml, ElementTree._ElementInterface)
-    if xml.tag=='data':
+    if xml.tag!='entity':
         #Group 07 xml
-        xml= xml_to_html_g7.transform_xml(xml)
+        xml= xml_to_html_g7.transform_element(xml)
 
     assert xml.tag=='entity'
     add_service_id(xml)
