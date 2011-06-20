@@ -1,1 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?><data><record label='docente'><text label='Nome'>Abel José de Sousa Costa Vieira</text><text label='Email'>ajscv@fct.unl.pt</text><text label='Email'>ajvieira@dq.fct.unl.pt</text><text label='Sector' assoc='sector'>Departamento de Química</text><text label='Categoria'>Professor Associado</text></record></data>
+<?xml version="1.0" encoding="UTF-8" ?>
+<data>
+    <record label='docente'>
+        <text label='Nome'>Abel José de Sousa Costa Vieira</text>
+        <text label='Email'>ajscv@fct.unl.pt</text>
+        <text label='Email'>ajvieira@dq.fct.unl.pt</text>
+        <text label='Sector' assoc='sector'>Departamento de Química</text>
+        <text label='Categoria'>Professor Associado</text>
+    </record>
+</data>
