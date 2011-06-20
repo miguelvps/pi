@@ -21,7 +21,7 @@ def transform_list(xml):
     else:
         newxml= ElementTree.Element('entity', {"type":"list"}, text=xml.text)
     for child in xml.getchildren():
-        assert child.tagname=='el'
+        assert child.tag=='el'
         name= get_name(child) or "<link>"
         link= child.get('iref')
         ElementTree.SubElement(newxml, 'entity', {"type":"string", "service":"", "url":link}, text=name)
@@ -35,21 +35,21 @@ def transform_record(xml):
     
 
 def transform_element(xml):
-    if xml.tagname=='record':
+    if xml.tag=='record':
         return transform_record(xml)
-    if xml.tagname=='list':
+    if xml.tag=='list':
         return transform_list(xml)
-    if xml.tagname=='text':
+    if xml.tag=='text':
         return transform_text(xml)
     
     
 
 def transform_xml(xml):
-    assert xml.tagname==xml
+    assert xml.tag==xml
     l= xml.getchildren()
     assert len(l)==1
     data= l[0]
-    assert data.tagname=='data'
+    assert data.tag=='data'
     l= data.getchildren()
     assert len(l)==1
     element= l[0]
