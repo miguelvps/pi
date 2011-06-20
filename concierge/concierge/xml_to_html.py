@@ -1,5 +1,6 @@
 from concierge.services_models import Service
 from xml.etree import ElementTree
+from concierge import xml_to_html_g7
 
 def render_string(xml):
     return xml.text
@@ -127,6 +128,11 @@ def construct_link(xml):
 
 def render(xml):
     assert isinstance(xml, ElementTree._ElementInterface)
+    if xml.tag!='entity':
+        #Group 07 xml
+        xml= xml_to_html_g7.transform_element(xml)
+
+    assert xml.tag=='entity'
     add_service_id(xml)
     t= xml.get('type')
     try:
@@ -134,3 +140,5 @@ def render(xml):
     except:
         raise Exception('Could not find function to render type '+t)
     return construct_link(xml) % (render_function(xml))
+    
+    return
