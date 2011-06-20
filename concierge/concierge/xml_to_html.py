@@ -128,19 +128,17 @@ def construct_link(xml):
 
 def render(xml):
     assert isinstance(xml, ElementTree._ElementInterface)
-    if xml.tagname=='data':
+    if xml.tag=='data':
         #Group 07 xml
         xml= xml_to_html_g7.transform_xml(xml)
 
-    assert xml.tagname=='entity'
-        #our xml
-        add_service_id(xml)
-        t= xml.get('type')
-        try:
-            render_function= globals()['render_'+t]
-        except:
-            raise Exception('Could not find function to render type '+t)
-        return construct_link(xml) % (render_function(xml))
-    elif xml.tagname=='data':
-        
-        return
+    assert xml.tag=='entity'
+    add_service_id(xml)
+    t= xml.get('type')
+    try:
+        render_function= globals()['render_'+t]
+    except:
+        raise Exception('Could not find function to render type '+t)
+    return construct_link(xml) % (render_function(xml))
+    
+    return
