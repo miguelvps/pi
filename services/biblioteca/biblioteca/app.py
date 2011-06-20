@@ -39,13 +39,13 @@ class Book(object):
 
 def normalize(kv):
     if (kv[0] == u'Autor'):
-        return ('author', kv[1])
+        return ('author', kv[1].replace('&', '&amp;'))
     if (kv[0] == u'Título'):
-        return ('title', kv[1])
+        return ('title', kv[1].replace('&', '&amp;'))
     if (kv[0] == u'Publicação'):
-        return ('publisher', kv[1])
+        return ('publisher', kv[1].replace('&', '&amp;'))
     if (kv[0] == u'Notas gerais'):
-        return ('notes', kv[1])
+        return ('notes', kv[1].replace('&', '&amp;'))
     if (kv[0] == u'ISBN'):
         match = re.search("([\d,-]+)", kv[1])
         return ('isbn', match.group(0) if match else None) #
