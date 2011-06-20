@@ -11,6 +11,7 @@ from flaskext.wtf.html5 import SearchField
 from common import rest_method_parameters
 from common.search import match_keywords_to_something
 from concierge import xml_to_html
+from os import getcwd
 
 
 search = Module(__name__, 'search')
@@ -115,7 +116,9 @@ def search_aux(query, services=None, add_to_history=True):
 
     params= {rest_method_parameters.QUERY: query}
     method_parameters= [(method, params) for ignoreme, method in matches]
-    results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
+    #results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
+    f = open(getcwd()+'/concierge/example_list.xml', 'r')
+    results= [f.read()]
 
     xml = ElementTree.Element("entity", type='list')
     for result in results:
