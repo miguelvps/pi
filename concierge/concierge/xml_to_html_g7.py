@@ -67,7 +67,7 @@ def transform_xml(xml):
     data = xml
     assert data.tag=='data'
     l= data.getchildren()
-    assert len(l)==1
+    #assert len(l)==1
     element= l[0]
     return transform_element(element)
         
