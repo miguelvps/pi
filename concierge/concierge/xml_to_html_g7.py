@@ -1,4 +1,3 @@
-from common.awesomexml import AwesomeXml
 from xml.etree import ElementTree
 from services_models import Service
 
@@ -68,7 +67,6 @@ def transform_xml(xml):
     data = xml
     assert data.tag=='data'
     l= data.getchildren()
-    import pdb; pdb.set_trace()
     assert len(l)==1
     element= l[0]
     return transform_element(element)
