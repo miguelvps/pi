@@ -1,4 +1,4 @@
-<service name="Pessoas Gxpto" url="http://193.136.122.77:8080/pplbook/api/pt/pessoas/">
+<service name="Pessoas G07" url="http://193.136.122.77:8080/pplbook/api/pt/pessoas/">
     <description>Este serviço guarda informação dos docentes</description>
     <supported_formats>
         <format>xml</format>
