@@ -24,7 +24,7 @@
                 <keyword>pessoas</keyword>
             </keywords>
             <method type="GET" >
-                <parameter>query</parameter>
+                <parameter>name</parameter>
             </method>
         </resource>
         <resource url="docentes">
