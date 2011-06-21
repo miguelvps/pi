@@ -8,24 +8,34 @@ def get_name(xml):
 def transform_text(xml):
     name= get_name(xml)
     if name:
-        newxml= ElementTree.Element('entity', {"type":"string", "name":name}, text=xml.text)
+        newxml= ElementTree.Element('entity', {"type":"string", "name":name})
+        newxml.text=text=xml.text
     else:
-        newxml= ElementTree.Element('entity', {"type":"string"}, text=xml.text)
+        newxml= ElementTree.Element('entity', {"type":"string"})
+        newxml.text=xml.text
     return newxml
 
 def transform_list(xml):
     name= get_name(xml)
     #t= xml.get('type')
     if name:
-        newxml= ElementTree.Element('entity', {"type":"list", "name":name}, text=xml.text)
+        newxml= ElementTree.Element('entity', {"type":"list", "name":name})
+        newxml.text=xml.text
     else:
-        newxml= ElementTree.Element('entity', {"type":"list"}, text=xml.text)
+        newxml= ElementTree.Element('entity', {"type":"list"})
+        newxml.text=xml.text
     for child in xml.getchildren():
-        assert child.tag=='el'
-        name= get_name(child) or "<link>"
-        link= child.get('iref')
-        ElementTree.SubElement(newxml, 'entity', {"type":"string", "service":"", "url":link}, text=name)
+        ElementTree.append(transform_list_element(child))
     return newxml
+
+def transform_list_element(xml):
+    assert xml.tag=='el'
+    link= xml.get('iref')
+    name= get_name(xml) or ("<link>" if link else "")
+    newxml= ElementTree.Element('entity', {"type":"string", "service":"", "url":link})
+    newxml.text= name
+    return newxml
+    
 
 def transform_record(xml):
     newxml= ElementTree.Element('entity', {"type":"record"})
@@ -41,6 +51,8 @@ def transform_element(xml):
         return transform_list(xml)
     if xml.tag=='text':
         return transform_text(xml)
+    if xml.tag=='el':
+        return transform_list_element(xml)
     
     
 
