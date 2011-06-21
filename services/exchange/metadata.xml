@@ -1,0 +1,61 @@
+<service name="Pessoas Gxpto" url="http://193.136.122.77:8080/pplbook/api/pt/pessoas">
+    <description>Este serviço guarda informação dos docentes</description>
+    <supported_formats>
+        <format>xml</format>
+    </supported_formats>
+
+    <resource url="">
+        <resource url="search">
+            <keywords>
+                <keyword>docente</keyword>
+                <keyword>docentes</keyword>
+                <keyword>professor</keyword>
+                <keyword>professores</keyword>
+                <keyword>aluno</keyword>
+                <keyword>alunos</keyword>
+                <keyword>email</keyword>
+                <keyword>mail</keyword>
+                <keyword>phone</keyword>
+                <keyword>telefone</keyword>
+                <keyword>tel</keyword>
+                <keyword>fax</keyword>
+                <keyword>person</keyword>
+                <keyword>pessoa</keyword>
+                <keyword>pessoas</keyword>
+            </keywords>
+            <method type="GET" >
+                <parameter>query (nome)</parameter>
+            </method>
+        </resource>
+        <resource url="docentes">
+            <method type="GET" >
+                <parameter>start</parameter>
+                <parameter>end</parameter>
+            </method>
+            <resource url="\d+">
+                <method type="GET">
+                </method>
+            </resource>
+        </resource>
+        <resource url="ndocentes">
+            <method type="GET" >
+                <parameter>start</parameter>
+                <parameter>end</parameter>
+            </method>
+            <resource url="\d+">
+                <method type="GET">
+                </method>
+            </resource>
+        </resource>
+        <resource url="alunos">
+            <method type="GET" >
+                <parameter>start</parameter>
+                <parameter>end</parameter>
+            </method>
+            <resource url="\d+">
+                <method type="GET">
+                </method>
+            </resource>
+        </resource>
+    </resource>
+</service>
