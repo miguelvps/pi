@@ -64,7 +64,6 @@ class Service(db.Model):
 
     def global_search(self):
         '''returns the global search method'''
-
         filter_f= lambda m: m.type==rest_methods.GET and rest_method_parameters.QUERY in [p.parameter for p in m.parameters] \
             or rest_method_parameters.NAME in [p.parameter for p in m.parameters] #G07 search
         search_methods= self.resources[0].find_methods( filter_function= filter_f)

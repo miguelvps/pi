@@ -116,9 +116,7 @@ def search_aux(query, services=None, add_to_history=True):
 
     params= {rest_method_parameters.QUERY: query}
     method_parameters= [(method, params) for ignoreme, method in matches]
-    #results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
-    f = open(getcwd()+'/concierge/example_list.xml', 'r')
-    results= [f.read()]
+    results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
 
     xml = ElementTree.Element("entity", type='list')
     for result in results:
@@ -127,6 +125,6 @@ def search_aux(query, services=None, add_to_history=True):
             result_xml = result_xml.getchildren()[0]
         for e in result_xml:
             xml.append(e)
-    import pdb; pdb.set_trace()
+
     html= xml_to_html.render(xml)
     return render_template('search.html', html=html)
