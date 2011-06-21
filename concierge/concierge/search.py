@@ -114,8 +114,13 @@ def search_aux(query, services=None, add_to_history=True):
     search_methods= [m.global_search() for m in services]
     matches = match_search_to_methods_keywords(query, search_methods)
 
-    params= {rest_method_parameters.QUERY: query, rest_method_parameters.NOME: query}
-    method_parameters= [(method, params) for ignoreme, method in matches]
+    method_parameters = []
+    for squery, method in matches:
+        if method.parameters[0].parameter == rest_method_parameters.NOME:
+            method_parameters.append((method, {rest_method_parameters.NOME: squery}))
+        else:
+            method_parameters.append((method, {rest_method_parameters.QUERY: query}))
+
     results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
 
     xml = ElementTree.Element("entity", type='list')

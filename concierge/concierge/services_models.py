@@ -64,9 +64,9 @@ class Service(db.Model):
 
     def global_search(self):
         '''returns the global search method'''
-        filter_f= lambda m: m.type==rest_methods.GET and rest_method_parameters.QUERY in [p.parameter for p in m.parameters] \
-            or rest_method_parameters.NAME in [p.parameter for p in m.parameters] #G07 search
-        search_methods= self.resources[0].find_methods( filter_function= filter_f)
+        filter_f= lambda m: m.type==rest_methods.GET and ( rest_method_parameters.QUERY in [p.parameter for p in m.parameters] \
+            or rest_method_parameters.NOME in [p.parameter for p in m.parameters] ) #G07 search
+        search_methods= self.resources[0].find_methods(filter_function= filter_f, recursive=True)
         assert len(search_methods)==1
         return search_methods[0]
 
@@ -141,7 +141,10 @@ class ResourceMethod(db.Model):
         parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
         parameters_kv= dict(zip(needed_parameters_names, parameters_values))
         params= urllib.urlencode(parameters_kv)
-        page = urllib.urlopen(method_url + "?" + params).read()
+        page = urllib.urlopen(method_url + "?" + params) #
+        if page.getcode() == 404:
+            return '<entity type="list"/>'
+        page = page.read()
         return page
 
     @staticmethod

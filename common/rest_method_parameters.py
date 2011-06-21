@@ -1,5 +1,5 @@
 from constant_generator import constant_generator
 l=['query', 'start', 'end', 'latlng',
-'name', 
+'nome', 
  ]
 constant_generator( l, locals())
