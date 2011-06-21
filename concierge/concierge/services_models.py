@@ -137,7 +137,7 @@ class ResourceMethod(db.Model):
         needed_parameters= [p.parameter for p in self.parameters]
         needed_parameters_names= [rest_method_parameters.reverse[p] for p in needed_parameters]
         #all received parameters must be method parameters
-        assert all([r in needed_parameters for r in received_parameters.keys()])
+        #assert all([r in needed_parameters for r in received_parameters.keys()])
         parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
         parameters_kv= dict(zip(needed_parameters_names, parameters_values))
         params= urllib.urlencode(parameters_kv)
