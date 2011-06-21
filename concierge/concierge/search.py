@@ -117,8 +117,6 @@ def search_aux(query, services=None, add_to_history=True):
     params= {rest_method_parameters.QUERY: query}
     method_parameters= [(method, params) for ignoreme, method in matches]
     results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
-    #f = open(getcwd()+'/concierge/example_list.xml', 'r')
-    #results= [f.read()]
 
     xml = ElementTree.Element("entity", type='list')
     for result in results:
