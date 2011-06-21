@@ -66,7 +66,7 @@ class Service(db.Model):
         '''returns the global search method'''
 
         filter_f= lambda m: m.type==rest_methods.GET and rest_method_parameters.QUERY in [p.parameter for p in m.parameters]
-        search_methods= self.resources[0].find_methods( filter_function= filter_f)
+        search_methods= self.resources[0].find_methods( filter_function= filter_f, recursive=True)
         assert len(search_methods)==1
         return search_methods[0]
 
