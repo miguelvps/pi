@@ -11,15 +11,16 @@ from concierge.common import rest_methods
 
 api = Module(__name__, 'api')
 
-
 @api.before_request
 def before_request():
+    """ Authenticates the user on request """
     if request.authorization:
         user = User.query.filter_by(username=request.authorization.username).first()
         if user and user.check_password(request.authorization.password):
             g.user = user
 
 def requires_api_auth(f):
+    """ Requires authentication decorator """
     @wraps(f)
     def decorator(*args, **kwargs):
         if not hasattr(g, 'user'):
@@ -97,6 +98,7 @@ def service_manage(id):
 
 @api.route('/services/<int:id>/search')
 def service_search(id):
+    """ Search on a specific service """
     service = Service.query.get_or_404(id)
     query = request.args.get('query')
     if hasattr(g, 'user'):
@@ -165,6 +167,7 @@ def user(id):
 
 @api.route('/users/login', methods=['POST'])
 def login():
+    """ Authenticate a user, session based """
     user = User.query.filter_by(username=request.json['username']).first()
     if not user:
         return abort(404)
@@ -180,6 +183,7 @@ def login():
 @api.route('/users/logout')
 @requires_api_auth
 def logout():
+    """ Logout a user, session based """
     session.pop('auth')
     return ""
 
