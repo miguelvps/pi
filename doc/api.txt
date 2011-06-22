@@ -9,6 +9,8 @@
 /services/<1>/browse/<resource> [RESOURCE_METHODS]
 
 /users [GET, POST]
+/users/login [POST]
+/users/logout [GET]
 /users/<1> [GET]
 /users/<1>/ratings [GET, POST] [AUTH]
 /users/<1>/ratings/<1> [DELETE, PUT] [AUTH]
