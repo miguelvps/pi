@@ -1,0 +1,19 @@
+/search
+
+/services [GET]
+/services [POST] [AUTH]
+/services/<1> [GET]
+/services/<1> [DELETE, PUT] [AUTH]
+/services/<1>/search [GET]
+/services/<1>/browse [GET]
+/services/<1>/browse/<resource> [RESOURCE_METHODS]
+
+/users [GET, POST]
+/users/login [POST]
+/users/logout [GET]
+/users/<1> [GET]
+/users/<1>/ratings [GET, POST] [AUTH]
+/users/<1>/ratings/<1> [DELETE, PUT] [AUTH]
+/users/<1>/favorites [GET, POST] [AUTH]
+/users/<1>/favorites/<1> [DELETE] [AUTH]
+/users/<1>/history [GET, DELETE] [AUTH]

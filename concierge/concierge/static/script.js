@@ -1,7 +1,7 @@
 // remove page caching
 // $('.ui-page').live('pagehide', function(){ $(this).remove(); });
 $('.page-map').live('pagehide', function(){ $(this).each(function(){$(this).remove();}); });
-
+//$('#custom_search').live('pagehide', function(){ $(this).remove(); });
 
 // notifications
 $('div').live('pageshow', function(event, ui) {
