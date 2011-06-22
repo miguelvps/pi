@@ -37,7 +37,7 @@ class Fax(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
 
     search_atributes= ["fax"]
-    earch_representative="person"
+    search_representative="person"
 
 class Person(db.Model):
     keywords= ['pessoa','professor']
