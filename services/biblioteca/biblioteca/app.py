@@ -7,6 +7,7 @@ import socket
 import HTMLParser
 import itertools
 from BeautifulSoup import BeautifulSoup
+from xml.sax.saxutils import escape
 
 from flask import Flask, Response, request
 
@@ -38,16 +39,19 @@ class Book(object):
         return xml
 
 def normalize(kv):
+    value = kv[1]
+    if isinstance(kv[1], str) or isinstance(kv[1], unicode):
+        value = escape(kv[1])
     if (kv[0] == u'Autor'):
-        return ('author', kv[1])
+        return ('author', value)
     if (kv[0] == u'Título'):
-        return ('title', kv[1])
+        return ('title', value)
     if (kv[0] == u'Publicação'):
-        return ('publisher', kv[1])
+        return ('publisher', value)
     if (kv[0] == u'Notas gerais'):
-        return ('notes', kv[1])
+        return ('notes', value)
     if (kv[0] == u'ISBN'):
-        match = re.search("([\d,-]+)", kv[1])
+        match = re.search("([\d,-]+)", value)
         return ('isbn', match.group(0) if match else None) #
     return None
 

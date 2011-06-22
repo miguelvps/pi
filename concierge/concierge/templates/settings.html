@@ -36,7 +36,7 @@
 <script type="text/javascript">
     $('#settings').live('pagebeforeshow', function(event) {
         var anchor = $('#settings #import');
-        var link = anchor.attr('href') + "?";
+        var link = "/services/import?";
         for (var i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
             if (key.indexOf("service_favorite.") === 0) {
