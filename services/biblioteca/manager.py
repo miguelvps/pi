@@ -4,7 +4,7 @@ from biblioteca.app import app
 
 
 manager = Manager(app)
-manager.add_command("runserver", Server(port = 5002))
+manager.add_command("runserver", Server(port = 3002))
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ import datetime
 
 manager = Manager(app)
 
-manager.add_command("runserver", Server(port = 5003))
+manager.add_command("runserver", Server(port = 3003))
 
 @manager.shell
 def make_shell_context():
