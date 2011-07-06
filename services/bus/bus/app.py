@@ -25,8 +25,7 @@ def locations_to_xml(locations):
     
 @app.route("/transport/transportation")
 def destination():
-    import ipdb; ipdb.set_trace()
-    latlng= urllib.unquote_plus(request.args.get(str(LATLNG), ''))
+    latlng= urllib.unquote_plus(request.args.get("latlng", ''))
     dlatlng= urllib.unquote_plus(request.args.get('destination_latlng', ''))
     try:
         l1, ln1= latlng.split(",")

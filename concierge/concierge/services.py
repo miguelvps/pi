@@ -153,7 +153,7 @@ def complete_latlng(service, method, url, args):
     LATLNG= rest_method_parameters.LATLNG
     method_parameters= [p.parameter for p in method.parameters]
     if LATLNG in method_parameters: #if REST method needs LATLNG...
-        if not str(LATLNG) in args:  #...and we don't have it yet
+        if not "latlng" in args:  #...and we don't have it yet
             argstr= "&".join([k+"="+v for k,v in args.items()])
             redirect_url= "/services/%s/browse/%s"%(str(service.id), url)
             if len(argstr):
@@ -165,17 +165,16 @@ def complete_latlng(service, method, url, args):
 def complete_method_args(service, url, method, given_args, add_start_end=False):
     '''given a method, verifies it's parameters and takes their values
     from dictionary given_args'''
-    START, END, QUERY, LATLNG= rest_method_parameters.START, rest_method_parameters.END,  rest_method_parameters.QUERY,rest_method_parameters.LATLNG
     given_args= given_args.to_dict()
     
     for parameter in [p.parameter for p in method.parameters]:
         param_name= rest_method_parameters.reverse[parameter]
-        value= given_args.get(parameter)
-        if not value and parameter==START and add_start_end:
+        value= given_args.get(param_name)
+        if not value and param_name=="start" and add_start_end:
             value=0
-        if not value and parameter==END and add_start_end:
+        if not value and param_name=="end" and add_start_end:
             value=RESULTS_PER_PAGINATED_PAGE
-        given_args[parameter]=value
+        given_args[param_name]=value
     return given_args
     
     
@@ -192,7 +191,7 @@ def browse_resource_paginated(url, service, method, args):
     xml= method.execute(args)
     html= xml_to_html.render(ElementTree.fromstring(xml))
     n= RESULTS_PER_PAGINATED_PAGE
-    if args[rest_method_parameters.END]==n:
+    if args["end"]==n:
         #first page
         html+= '''
         <script>
