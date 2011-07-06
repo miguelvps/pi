@@ -6,13 +6,13 @@
 
 {% block header %}
 <div data-role="header">
-    <h1>Register Service</h1>
+    <h1>{{ _('Register Service') }}</h1>
 </div><!-- /header -->
 {% endblock %}
 
 {% block page_content %}
 <div data-role="content">
-    <p>Please insert the url with the service metadata to perform the submission.</p>
+    <p>{{ _('Please insert the url with the service metadata to perform the submission.') }}</p>
     <form action="{{ url_for('services.register') }}", method="POST">
         <fieldset>
             {{ form.csrf }}

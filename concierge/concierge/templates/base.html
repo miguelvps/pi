@@ -50,15 +50,15 @@
                 <div data-role="footer" style="position:fixed; bottom:0;" data-id="concfooter">
                         <div data-role="navbar">
                             <ul>
-                                <li><a href="/settings">Settings</a></li>
+                                <li><a href="/settings">{{ _('Settings') }}</a></li>
                                 <li>
                                 {% if session.get("auth") == True %}
-                                <a href="{{ url_for('auth.logout') }}">Logout</a>
+                                <a href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
                                 {% else %}
-                                <a href="{{ url_for('auth.login') }}" data-transition="slideup">Login</a>
+                                <a href="{{ url_for('auth.login') }}" data-transition="slideup">{{ _('Login') }}</a>
                                 {% endif %}
                                 </li>
-                                <li><a href="/history">History</a></li>
+                                <li><a href="/history">{{ _('History') }}</a></li>
                             </ul>
                         </div><!-- /navbar -->
                 </div><!-- /footer -->

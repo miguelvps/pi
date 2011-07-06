@@ -6,7 +6,7 @@
 
 {% block header %}
 <div data-role="header">
-    <h1>Favorites</h1>
+    <h1>{{ _('Favorites') }}</h1>
 </div><!-- /header -->
 {% endblock %}
 
@@ -18,7 +18,6 @@
         {% endfor %}
     </ul>
 </div><!-- /content -->
-
 
 <script type="text/javascript">
     $('#favorites').live('pagebeforeshow', function(event) {

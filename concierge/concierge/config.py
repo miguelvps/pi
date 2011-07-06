@@ -4,6 +4,8 @@ SECRET_KEY = 'secret_key'
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///concierge.db'
 
+BABEL_DEFAULT_LOCALE = 'en'
+
 CSRF_ENABLED = False
 
 DEBUG_TB_ENABLED = False
