@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block page_id %}geolocating{% endblock %}
+
+{% block redirect %}data-url="/geolocating"{% endblock %}
+
+{% block header %}
+<div data-role="header">
+    <h1>geolocating...</h1>
+</div><!-- /header -->
+{% endblock %}
+
+{% block page_content %}
+<div data-role="content">
+</div><!-- /content -->
+
+<script>
+var argstr= "{{argstr|safe}}"
+window.location = "{{url}}"+"?"+argstr+'3=38.74569,-9.14775';  //3 is LATLNG
+</script>
+
+{% endblock %}
+
+{% block footer %} {% endblock %}
+
+
