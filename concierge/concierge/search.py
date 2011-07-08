@@ -1,6 +1,7 @@
+import json
 from xml.etree import ElementTree
 from flask import Module, request, session, render_template, redirect, g
-from concierge.services_models import Service, ResourceMethod
+from concierge.services_models import Service, ResourceMethod, ResourceKeyword
 
 from concierge.auth import HistoryEntry
 from concierge import db
@@ -30,7 +31,7 @@ def add_search_to_history(query, services):
         hstr_entry = HistoryEntry(user = g.user, search_query=query, entry_services=services)
         db.session.add(hstr_entry)
         db.session.commit()
-        
+
 @search.route('/custom_search', methods=['GET', 'POST'])
 def custom_search(history_entry = None, entry_id = None):
     services = Service.query.all()
@@ -123,3 +124,9 @@ def search_aux(query, services=None, add_to_history=True):
             xml.append(e)
     html= xml_to_html.render(xml)
     return render_template('search.html', html=html)
+
+@search.route('/search/completion')
+def search_completion():
+    query = request.args.get("term")
+    keywords = ResourceKeyword.query.distinct(ResourceKeyword.keyword).filter(ResourceKeyword.keyword.ilike(query+"%")).limit(10).all()
+    return json.dumps([k.keyword for k in keywords])
