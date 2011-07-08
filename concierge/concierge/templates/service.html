@@ -16,9 +16,10 @@
 <div data-role="content">
     <form action="/services/{{service.id}}" method="POST">
         <fieldset>
-            <p> Check/Uncheck this service to favorite it.</p>
+            <div data-role="fieldcontain">
             {{form.favorite}} {{form.favorite.label}}
-            <p>Give it a rating (1 to 5).</p>
+            </div>
+            <p><h3>Rating</h3></p>
             <input type="range" name="{{form.rating.name}}" id="slider" value="{{form.rating.data}}" min="1" max="5"  />
             <!-- put error presentation here /-->
         </fieldset>
