@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+﻿from flask import Flask, Response, request
 from flaskext.sqlalchemy import SQLAlchemy
 from common.rest_method_parameters import LATLNG
 import urllib
@@ -21,6 +21,31 @@ def locations_to_xml(locations):
         location_str= location[2]
         xml+= '<entity type="string" service="%s" url="/transport/transportation?destination_latlng=%s">%s</entity>' % (SERVICE_NAME, l+","+ln, location_str)
     xml+="</entity>"
+    return xml
+
+
+def journey_to_xml(j):
+    transports_names= ["%s (%s)"%(t.operator, t.operator_type) for t in j.transports]
+        
+    pairs= []   #pairs of geowkt, text
+    for t in j.transports:
+        first=True
+        for i,path in enumerate(t.paths):
+            if first:
+                first=False
+                s= u"%s (%s)\n%s-%s\n%.2f€\t%.0fg CO2" % (t.operator, t.operator_type, t.start_time.strftime("%H:%M"), t.end_time.strftime("%H:%M"), t.cost, t.co2)
+            else:
+                s="%s - %i/%i"%(t.operator, i+1, len(t.paths))
+            geowkt="POLYLINE((%s))" % (",".join(["%f %f"%(c.x,c.y) for c in path.l]))
+            pairs.append( (geowkt, s) )
+
+    
+    xml = '<entity type="map">'
+    xml += '<entity type="string">%s</entity>' %"Viagem"
+    for geowkt, s in pairs:
+        xml += '<entity type="geowkt">%s</entity>' % (geowkt)
+        xml += '<entity type="string">%s</entity>' % (s)
+    xml += '</entity>'
     return xml
     
 @app.route("/transport/transportation")
