@@ -1,0 +1,55 @@
+<div id="map-canvas">
+</div>
+<style>
+        .page-map, .ui-content, #map-canvas { width: 100%; height: 100%; padding: 0; }
+    </style>
+    <script type="text/javascript"> 
+        // When map page opens get location and display map
+
+            var min_latlng = new google.maps.LatLng({{min_lat}}, {{min_lng}});
+            var max_latlng = new google.maps.LatLng({{max_lat}}, {{max_lng}});
+
+            var bounds = new google.maps.LatLngBounds(min_latlng, max_latlng);
+
+            var myOptions  = {
+                zoom: 12,
+                center: bounds.getCenter(),
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+            var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
+            google.maps.event.trigger(map,'resize');
+
+            map.fitBounds(bounds);
+
+            {% for coords, desc in coord_desc_pairs %}
+                var coords{{loop.index}}= [{{coords}}];
+                var overlay{{loop.index}} = new google.maps.{{wkt_type}}({
+                    {{"path: coords%i"%(loop.index) if wkt_type=="Polyline" else "paths: coords%i"%(loop.index)}},
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    {{'fillColor: "#FF0000",\nfillOpacity: 0.35,'|safe if wkt_type=="Polygon" else ""}}
+               });
+               overlay{{loop.index}}.setMap(map);
+               
+               var markerOptions{{loop.index}} = {
+                    position: coords{{loop.index}}[0],
+                    map: map,
+                    title: "title",
+                };
+                var marker{{loop.index}} = new google.maps.Marker(markerOptions{{loop.index}});
+                var contentString{{loop.index}} = "{{desc|safe}}";          
+                var infowindow{{loop.index}} = new google.maps.InfoWindow(
+                    {content: contentString{{loop.index}}});           
+                google.maps.event.addListener(marker{{loop.index}}, 'click', function()
+                    {infowindow{{loop.index}}.open(map,marker{{loop.index}});});
+
+            {% endfor %}
+            
+       $('.page-map').live('pageshow',function(){
+            google.maps.event.trigger(map, 'resize');
+            map.setOptions(myOptions); 
+            map.fitBounds(bounds);
+        });
+
+        </script>

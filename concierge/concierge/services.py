@@ -150,26 +150,37 @@ def browse(id):
             resources.append(resource)
     return render_template('service_browse.html', resources=resources, service=service)
 
+def complete_latlng(service, method, url, args):
+    LATLNG= rest_method_parameters.LATLNG
+    method_parameters= [p.parameter for p in method.parameters]
+    if LATLNG in method_parameters: #if REST method needs LATLNG...
+        if not "latlng" in args:  #...and we don't have it yet
+            argstr= "&".join([k+"="+v for k,v in args.items()])
+            redirect_url= "/services/%s/browse/%s"%(str(service.id), url)
+            if len(argstr):
+                argstr+="&"
+            return render_template('geolocate_redirect.html', url=redirect_url, argstr=argstr)
+    
+    return None
 
-def complete_method_args(method, given_args, add_start_end=False):
+def complete_method_args(service, url, method, given_args, add_start_end=False):
     '''given a method, verifies it's parameters and takes their values
     from dictionary given_args'''
-    START, END, QUERY, LATLNG= rest_method_parameters.START, rest_method_parameters.END,  rest_method_parameters.QUERY,rest_method_parameters.LATLNG
-    results= {}
-    method_parameters= [p.parameter for p in method.parameters]
-    for parameter in method_parameters:
+    given_args= given_args.to_dict()
+    
+    for parameter in [p.parameter for p in method.parameters]:
         param_name= rest_method_parameters.reverse[parameter]
         value= given_args.get(param_name)
-        if not value and parameter==START and add_start_end:
+        if not value and param_name=="start" and add_start_end:
             value=0
-        if not value and parameter==END and add_start_end:
+        if not value and param_name=="end" and add_start_end:
             value=RESULTS_PER_PAGINATED_PAGE
-        results[parameter]=value
-    return results
+        given_args[param_name]=value
+    return given_args
     
     
 def browse_resource_unpaginated(url, service, method, args):
-    args= complete_method_args(method, args)
+    args= complete_method_args(service, url, method, args)
     xml= method.execute(args, url_override=service.url+url)
     element = ElementTree.fromstring(xml)
     html= xml_to_html.render(element)
@@ -177,11 +188,11 @@ def browse_resource_unpaginated(url, service, method, args):
 
 
 def browse_resource_paginated(url, service, method, args):
-    args= complete_method_args(method, args, add_start_end=True)
+    args= complete_method_args(service, url, method, args, add_start_end=True)
     xml= method.execute(args)
     html= xml_to_html.render(ElementTree.fromstring(xml))
     n= RESULTS_PER_PAGINATED_PAGE
-    if args[rest_method_parameters.END]==n:
+    if args["end"]==n:
         #first page
         html+= '''
         <script>
@@ -222,7 +233,6 @@ def browse_resource(id, url):
         parameters= [p.parameter for p in method.parameters]
         return all([p in parameters for p in (START, END)])
     START, END, GET= rest_method_parameters.START, rest_method_parameters.END, rest_methods.GET
-
     service = Service.query.get_or_404(id)
     root = service.resources[0]
     resource = root.get_resource_by_url(url)
@@ -231,6 +241,8 @@ def browse_resource(id, url):
     paginated= filter(paginated_method, methods)
     args= request.args
     if len(paginated):
-        return browse_resource_paginated(url, service, paginated[0], request.args) #choose first paginated method
+        method= paginated[0] #choose first paginated method
+        return complete_latlng(service, method, url, args) or browse_resource_paginated(url, service, method, args) 
     else:
-        return browse_resource_unpaginated(url, service, methods[0], request.args) #choose any GET method
+        method= methods[0] #choose any GET method
+        return complete_latlng(service, method, url, args) or browse_resource_unpaginated(url, service, methods[0], args) 

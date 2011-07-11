@@ -1,5 +1,6 @@
 from concierge.services_models import Service
 from xml.etree import ElementTree
+from flask import render_template
 
 def render_string(xml):
     return xml.text
@@ -32,104 +33,72 @@ def render_record(xml):
 def render_map(xml):
 
     def parse_geowkt(geowkt):
+        assert geowkt[-2:] == '))'
         if geowkt[:9] == 'POLYGON((':
-            assert geowkt[-2:] == '))'
+            t= "Polygon"
             geowkt = geowkt[9:-2] 
-            pair_list = geowkt.split(', ')
-            tuple_list = map(lambda s: tuple([float(a) for a in s.split(' ')]), pair_list)
-            return (tuple_list, 'polygon')
+        elif geowkt[:10] == 'POLYLINE((':
+            t= "Polyline"
+            geowkt = geowkt[10:-2]         
         else:
             raise Exception("geowkt parse error")
+        
+        pair_list = geowkt.split(', ')
+        tuple_list = map(lambda s: tuple([float(a) for a in s.split(' ')]), pair_list)
+        return (tuple_list, t)
 
     def get_bounds(coords):
         min_coords = reduce(lambda (x,y),(z,w): (min(x,z), min(y,w)) ,coords)
         max_coords = reduce(lambda (x,y),(z,w): (max(x,z), max(y,w)) ,coords)
         return (min_coords, max_coords)
+        
+    children= xml.getchildren()
+    geowkts = filter(lambda e: e.get('type') == 'geowkt', children)
+    geowkts = map(lambda e: e.text , geowkts)
     
-    info_html = '<h2> %s </h2><dl>' % xml[0].text
-    for child in xml.getchildren()[1:]:
-        if child.get('type') == 'geowkt':
-            geowkt = child.text
-        else:
-            info_html+= '<dt><h4>%s</h4></dt>' % child.get('name', '')
-            info_html+= '<dd>%s</dd>' % (render(child))
-            
-    info_html += '</dl>'
+    if len(geowkts) == 1:
+        #polygon
+        coords, wkt_type = parse_geowkt(geowkts[0])
+        assert wkt_type== 'Polygon'
+        min_coords, max_coords = get_bounds(coords)
+        
+        info_html = '<h2> %s </h2><dl>' % xml[0].text
+        for child in xml.getchildren()[1:]:
+            if child.get('type') == 'geowkt':
+                geowkt = child.text
+            else:
+                info_html+= '<dt><h4>%s</h4></dt>' % child.get('name', '')
+                info_html+= '<dd>%s</dd>' % (render(child))
+        info_html += '</dl>'
+        
+        descriptions= [info_html]
+        coords= [coords]
+        coord_desc_pairs= [(coords, info_html)]
+        
+    if len(geowkts)>1:
+        #route
+        descriptions= filter(lambda e: e.get('type') == 'string', children)
+        descriptions= map(lambda e: e.text, descriptions)
+        descriptions=descriptions[1:]   # first string is title, each other is the description of geowkt
+        assert len(descriptions)==len(geowkts)
+        coords, type_list= zip(*map(parse_geowkt, geowkts))
+        assert all([t=="Polyline" for t in type_list])
+        wkt_type="Polyline"
+        
+        all_coords= []
+        for l in coords:
+            all_coords.extend(l)
+        min_coords, max_coords = get_bounds(all_coords)
+
+    javascript_coords= map(lambda cs: ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in cs]), coords);
+    coord_desc_pairs= zip(javascript_coords, descriptions)
     
-    coords, wkt_type = parse_geowkt(geowkt)
-    min_coords, max_coords = get_bounds(coords)
-    html ='''
-    <style>
-        .page-map, .ui-content, #map-canvas { width: 100%%; height: 100%%; padding: 0; }
-    </style>
-    <script type="text/javascript"> 
-        // When map page opens get location and display map
+    result= render_template('map2.html',
+    min_lat= min_coords[0], min_lng= min_coords[1], max_lat= max_coords[0], max_lng= max_coords[1],    
+    wkt_type= wkt_type, coord_desc_pairs=coord_desc_pairs)
+        
+    return result
 
-            var min_latlng = new google.maps.LatLng(%(min_lat)s, %(min_lng)s);
-            var max_latlng = new google.maps.LatLng(%(max_lat)s, %(max_lng)s);
-
-            var bounds = new google.maps.LatLngBounds(min_latlng, max_latlng);
-
-            var myOptions = {
-                zoom: 12,
-                center: bounds.getCenter(),
-                mapTypeId: google.maps.MapTypeId.SATELLITE
-            };
-
-            var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
-            google.maps.event.trigger(map,'resize');
-
-            map.fitBounds(bounds);
-
-            var polygon;
-
-            var myCoords = [%(draw_coords)s];
-
-            // Construct the polygon
-            // Note that we don't specify an array or arrays, but instead just
-            // a simple array of LatLngs in the paths property
-            polygon = new google.maps.Polygon({
-                paths: myCoords,
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: "#FF0000",
-                fillOpacity: 0.35
-            });
-            polygon.setMap(map);
-                      
-            var markerOptions = {
-                position: bounds.getCenter(),
-                map: map,
-                title: "title",
-            };
-            var marker = new google.maps.Marker(markerOptions);
-
-            var contentString = "%(info)s";          
-
-            var infowindow = new google.maps.InfoWindow({
-                content: contentString
-            });           
-
-            google.maps.event.addListener(marker, 'click', function() {
-              infowindow.open(map,marker);
-            });
-
-       $('.page-map').live('pageshow',function(){
-            google.maps.event.trigger(map, 'resize');
-            map.setOptions(myOptions); 
-            map.fitBounds(bounds);
-        });
-
-        </script>
-        <div id="map-canvas">
-        </div>
-    ''' % {'min_lat': min_coords[0], 'min_lng': min_coords[1],
-           'max_lat': max_coords[0], 'max_lng': max_coords[1],    
-            'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords]),
-            'info':info_html, }
-
-    return html
 
 def add_service_id(xml):
     service= xml.get('service')
