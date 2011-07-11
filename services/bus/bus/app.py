@@ -33,7 +33,7 @@ def journey_to_xml(j):
         for i,path in enumerate(t.paths):
             if first:
                 first=False
-                s= u"%s (%s)\n%s-%s\n%.2f€\t%.0fg CO2" % (t.operator, t.operator_type, t.start_time.strftime("%H:%M"), t.end_time.strftime("%H:%M"), t.cost, t.co2)
+                s= u"%s (%s)  %s-%s  %.2f€\t%.0fg CO2" % (t.operator, t.operator_type, t.start_time.strftime("%H:%M"), t.end_time.strftime("%H:%M"), t.cost, t.co2)
             else:
                 s="%s - %i/%i"%(t.operator, i+1, len(t.paths))
             geowkt="POLYLINE((%s))" % (", ".join(["%f %f"%(c.y,c.x) for c in path.l]))

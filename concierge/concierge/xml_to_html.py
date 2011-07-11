@@ -68,26 +68,31 @@ def render_map(xml):
                 info_html+= '<dd>%s</dd>' % (render(child))
         info_html += '</dl>'
         
+        descriptions= [info_html]
+        coords= [coords]
+        coord_desc_pairs= [(coords, info_html)]
+        
     if len(geowkts)>1:
         #route
         descriptions= filter(lambda e: e.get('type') == 'string', children)
         descriptions= map(lambda e: e.text, descriptions)
         descriptions=descriptions[1:]   # first string is title, each other is the description of geowkt
         assert len(descriptions)==len(geowkts)
-        coord_list, type_list= zip(*map(parse_geowkt, geowkts))
+        coords, type_list= zip(*map(parse_geowkt, geowkts))
         assert all([t=="Polyline" for t in type_list])
         wkt_type="Polyline"
+        
         all_coords= []
-        for l in coord_list:
+        for l in coords:
             all_coords.extend(l)
         min_coords, max_coords = get_bounds(all_coords)
-        coords= all_coords   #FIXME
-        info_html= "blah"
-        
-    result= render_template('map2.html', min_lat= min_coords[0], min_lng= min_coords[1],
-       max_lat= max_coords[0], max_lng= max_coords[1],    
-        draw_coords = ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords]),
-        wkt_type= wkt_type, info=info_html)
+
+    javascript_coords= map(lambda cs: ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in cs]), coords);
+    coord_desc_pairs= zip(javascript_coords, descriptions)
+    
+    result= render_template('map2.html',
+    min_lat= min_coords[0], min_lng= min_coords[1], max_lat= max_coords[0], max_lng= max_coords[1],    
+    wkt_type= wkt_type, coord_desc_pairs=coord_desc_pairs)
         
     return result
 
