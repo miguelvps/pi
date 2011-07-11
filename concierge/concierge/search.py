@@ -5,7 +5,7 @@ from concierge.services_models import Service, ResourceMethod, ResourceKeyword
 
 from concierge.auth import HistoryEntry
 from concierge import db
-
+from flaskext.babel import get_locale
 from flaskext.wtf import Form, Required, Length, BooleanField
 from flaskext.wtf.html5 import SearchField
 
@@ -116,7 +116,7 @@ def search_aux(query, services=None, add_to_history=True):
 
     params= {rest_method_parameters.QUERY: query}
     method_parameters= [(method, params) for ignoreme, method in matches]
-    results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
+    results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters, locale=get_locale()))
 
     xml = ElementTree.Element("entity", type='list')
     for result in results:

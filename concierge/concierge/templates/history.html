@@ -6,8 +6,8 @@
 
 {% block header %}
 <div data-role="header">
-    <h1>History</h1>
-    <a href="/" data-icon="home" class="ui-btn-left">Home</a>
+    <h1>{{ _('History') }}</h1>
+    <a href="/" data-icon="home" class="ui-btn-left">{{ _('Home') }}</a>
 </div><!-- /header -->
 {% endblock %}
 
@@ -18,12 +18,11 @@
             <li><a href="/search/{{entry.id}}">{{entry.search_query}}</a></li>
             {% endfor %}
         </ul>
-    <form action="/history" method="post">    
+    <form action="/history" method="post">
         <div data-role="fieldcontain">
-            <button type="submit" data-theme="a" name="submit" value="submit-value">Clear History</button>
-        </div>        
+            <button type="submit" data-theme="a" name="submit" value="submit-value">{{ _('Clear History') }}</button>
+        </div>
     </form>
-    
 </div><!-- /content -->
 
 <script type="text/javascript">
@@ -43,20 +42,20 @@
         if (!auth) {
             var list = $("#history ul");
             list.empty();
-        
+
             var keys = [];
             for (var i = 0; i < localStorage.length; i++){
                 var key = localStorage.key(i)
                 if (key.indexOf("history") == 0)
                     keys.push(key);
             }
-            
+
             keys.sort(function(a,b){
                 var id1 = a.substring("history.".length);
                 var id2 = b.substring("history.".length);
                 return id1-id2;
             });
-            
+
             for (var i = 0; i < keys.length; i++){
                     key = keys[i];
                     var entry = localStorage.getItem(key);
@@ -69,7 +68,7 @@
         }
     });
 </script>
-{% endblock %} 
+{% endblock %}
 
 {% block footer %} {% endblock %}
 

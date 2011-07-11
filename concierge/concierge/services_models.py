@@ -3,6 +3,7 @@ import urllib
 from datetime import datetime
 
 from flask import Module
+from flaskext.babel import get_locale
 from sqlalchemy.orm import backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -128,7 +129,7 @@ class ResourceMethod(db.Model):
 
     parameters = db.relationship('MethodParameter', backref="method")
 
-    def execute(self, received_parameters, url_override=""):
+    def execute(self, received_parameters, url_override="", locale=None):
         '''takes a dictionary of method parameters, executes the method
         and returns response'''
         if self.type!=rest_methods.GET:
@@ -138,12 +139,15 @@ class ResourceMethod(db.Model):
         #all received parameters must be method parameters
         #assert all([r in needed_parameters for r in received_parameters.keys()])
         parameters_kv= dict([(needed_parameters.get(k) or k, v) for k,v in received_parameters.items()])
+        locale = locale or get_locale()
+        if locale:
+            parameters_kv['lang'] = locale
         params= urllib.urlencode(parameters_kv)
         page = urllib.urlopen(method_url + "?" + params).read()
         return page
 
     @staticmethod
-    def execute_several(method_parameters_pairs, thread_number=8):
+    def execute_several(method_parameters_pairs, thread_number=8, locale=None):
         '''
         See execute().
         given a list of tuples in the form (method, parameters),
@@ -155,13 +159,13 @@ class ResourceMethod(db.Model):
         import threading
         tasks_queue = Queue()
         results_list = [0]*len(method_parameters_pairs)
-        
+
         class ExecuteThread(threading.Thread):
             def __init__(self, tasks_queue, results_list):
                 threading.Thread.__init__(self)
                 self.tasks_queue = tasks_queue
                 self.results_list= results_list
-        
+
             def run(self):
                 while True:
                     #n is the desired position of the result in the
@@ -169,7 +173,7 @@ class ResourceMethod(db.Model):
                     n, x = self.tasks_queue.get()
                     method, parameters= x
                     try:
-                        result= method.execute(parameters)
+                        result= method.execute(parameters, locale=locale)
                     except IOError:
                         #communication error
                         result= None
@@ -177,7 +181,7 @@ class ResourceMethod(db.Model):
                     result = result or None
                     self.results_list[n]= result
                     self.tasks_queue.task_done()
-        
+
         for i in range(thread_number):
             t = ExecuteThread(tasks_queue, results_list)
             t.setDaemon(True)
@@ -188,7 +192,7 @@ class ResourceMethod(db.Model):
         #wait until everything has been processed     
         tasks_queue.join()
         return results_list
-        
+
 
 
 class MethodParameter(db.Model):

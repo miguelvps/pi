@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, request, g
+from flaskext.babel import Babel
 from flaskext.sqlalchemy import SQLAlchemy
 
 
@@ -13,6 +14,15 @@ def create_app(cfg=None):
     if cfg: app.config.from_object(cfg)
 
     db.init_app(app)
+
+    babel = Babel(app)
+
+    @babel.localeselector
+    def get_locale():
+        user = getattr(g, 'user', None)
+        if user is not None and user.locale:
+            return user.locale
+        return request.accept_languages.best_match(['pt', 'en'])
 
     if app.config['DEBUG_TB_ENABLED']:
         from flaskext.debugtoolbar import DebugToolbarExtension

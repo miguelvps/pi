@@ -9,6 +9,7 @@ setup(
         'Flask',
         'Flask-SQLAlchemy',
         'Flask-WTF',
+        'Flask-Babel'
         'Flask-Script',
         'Flask-Testing',
         'Flask-DebugToolbar'

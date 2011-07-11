@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 
 {% block page_id %} register {% endblock %}
-	
+
 {% block redirect %} data-url="/search" {% endblock %}
-  
+
 {% block header %}
-    <div data-role="header">
-    </div><!-- /header -->
+<div data-role="header">
+</div><!-- /header -->
 {% endblock %}
-    
+
 {% block page_content %}
-	<div data-role="content">
-	<ul data-role="listview">
-	    {% for atr_name,value in atributes %}
-		<p>{{atr_name}}: {{value}}</p> 
-	    {% endfor %}
-	</ul>
-	</div><!-- /content -->
+<div data-role="content">
+    <ul data-role="listview">
+        {% for atr_name,value in atributes %}
+        <p>{{atr_name}}: {{value}}</p>
+        {% endfor %}
+    </ul>
+</div><!-- /content -->
 {% endblock %}
 
 {% block footer %} {% endblock %}

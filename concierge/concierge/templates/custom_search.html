@@ -6,8 +6,9 @@
 
 {% block header %}
 <div data-role="header"  data-id="concheader">
+    <a href="/">Back</a>
     <h1>Concierge</h1>
-    <a href="/custom_search?check_favorites=True" data-icon="heart" class="ui-btn-right" id='fav'>Select Favorites</a>
+    <a href="/custom_search?check_favorites=True" data-icon="heart" class="ui-btn-right" id='fav'>{{ _('Select Favorites') }}</a>
 </div><!-- /header -->
 
 {% endblock %}
@@ -17,8 +18,8 @@
     <form action="/custom_search" method="POST">
         <ul data-role="listview" data-inset=True>
             <li data-role="fieldcontain">
-            {{search_form.search_query.label}}
-            {{search_form.search_query(placeholder=search_form.search_query.label.text)}}
+            {{ search_form.search_query.label }}
+            {{ search_form.search_query(placeholder=_('%(Search)s', Search=search_form.search_query.label.text)) }}
                 {% for error in search_form.search_query.errors  %}
                 <span class="error">{{ error }}</span>
                 {% endfor %}
@@ -27,9 +28,8 @@
         <div data-role="fieldcontain">
             <fieldset data-role="controlgroup">
                 {{search_form.csrf}}
-                {% for field in search_form if field != search_form.search_query 
-                and field != search_form.csrf %}
-                {{field}}  {{field.label}}
+                {% for field in search_form if field != search_form.search_query and field != search_form.csrf %}
+                    {{field}}  {{field.label}}
                 {% endfor %}
             </fieldset>
         </div>
@@ -37,7 +37,8 @@
 </div><!-- /content -->
 
 <script type="text/javascript">
-        
+
+    $('div').live('pagecreate',function(event, ui){
         if (!auth && ("{{fav_check}}" == "true")){
             $('input[type=checkbox]').attr("checked", false).checkboxradio("refresh");
             for (var i = 0; i < localStorage.length; i++) {
@@ -62,7 +63,7 @@
                     $('input[name="' + split_entry[i] + '"]').attr("checked", true).checkboxradio("refresh");
             }
         }
-
+    });
     $("#custom_search form").submit(function(e) {
         if (!auth) {
             var query = $('#custom_search input[name="{{search_form.search_query.name}}"]').val();
