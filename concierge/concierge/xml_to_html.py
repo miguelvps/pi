@@ -66,16 +66,17 @@ def render_map(xml):
         assert len(descriptions)==len(geowkts)
         coord_list, type_list= zip(*map(parse_geowkt, geowkts))
         assert all([t=="Polyline" for t in type_list])
+        wkt_type="Polyline"
         all_coords= []
         for l in coord_list:
             all_coords.extend(l)
         min_coords, max_coords = get_bounds(all_coords)
-        coords= coord_list[0]   #FIXME
+        coords= all_coords   #FIXME
         
     result= render_template('map2.html', min_lat= min_coords[0], min_lng= min_coords[1],
        max_lat= max_coords[0], max_lng= max_coords[1],    
-        draw_coords = ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])
-        )
+        draw_coords = ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords]),
+        wkt_type= wkt_type)
 
     return result
 
