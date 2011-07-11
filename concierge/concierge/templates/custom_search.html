@@ -38,6 +38,8 @@
 
 <script type="text/javascript">
         
+    $('div').live('pagecreate',function(event, ui){
+        
         if (!auth && ("{{fav_check}}" == "true")){
             $('input[type=checkbox]').attr("checked", false).checkboxradio("refresh");
             for (var i = 0; i < localStorage.length; i++) {
@@ -62,7 +64,7 @@
                     $('input[name="' + split_entry[i] + '"]').attr("checked", true).checkboxradio("refresh");
             }
         }
-
+    });
     $("#custom_search form").submit(function(e) {
         if (!auth) {
             var query = $('#custom_search input[name="{{search_form.search_query.name}}"]').val();
