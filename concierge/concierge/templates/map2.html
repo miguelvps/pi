@@ -1,0 +1,58 @@
+<div id="map-canvas">
+</div>
+<style>
+        .page-map, .ui-content, #map-canvas { width: 100%; height: 100%; padding: 0; }
+    </style>
+    <script type="text/javascript"> 
+        // When map page opens get location and display map
+
+            var min_latlng = new google.maps.LatLng({{min_lat}}, {{min_lng}});
+            var max_latlng = new google.maps.LatLng({{max_lat}}, {{max_lng}});
+
+            var bounds = new google.maps.LatLngBounds(min_latlng, max_latlng);
+
+            var myOptions  = {
+                zoom: 12,
+                center: bounds.getCenter(),
+                mapTypeId: google.maps.MapTypeId.SATELLITE
+            };
+            var map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
+            google.maps.event.trigger(map,'resize');
+
+            map.fitBounds(bounds);
+
+            var polygon;
+
+            var myCoords = [{{draw_coords}}];
+
+            // Construct the polygon
+            // Note that we don't specify an array or arrays, but instead just
+            // a simple array of LatLngs in the paths property
+            polygon = new google.maps.{{wkt_type}}({
+                {{"path: myCoords" if wkt_type=="Polyline" else "paths: myCoords"}},
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                {{'fillColor: "#FF0000",\nfillOpacity: 0.35,'|safe if wkt_type=="Polygon" else ""}}
+           });
+           polygon.setMap(map);
+           
+           var markerOptions = {
+                position: bounds.getCenter(),
+                map: map,
+                title: "title",
+            };
+            var marker = new google.maps.Marker(markerOptions);
+            var contentString = "{{info|safe}}";          
+            var infowindow = new google.maps.InfoWindow(
+                {content: contentString});           
+            google.maps.event.addListener(marker, 'click', function()
+                {infowindow.open(map,marker);});
+            
+       $('.page-map').live('pageshow',function(){
+            google.maps.event.trigger(map, 'resize');
+            map.setOptions(myOptions); 
+            map.fitBounds(bounds);
+        });
+
+        </script>

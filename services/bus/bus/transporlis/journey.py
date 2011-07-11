@@ -88,9 +88,9 @@ class JourneyTransport(object):
         self.end_time=      end_time
         self.wait_time=     wait_time
         self.cost=          float(cost)
-        self.operator=      str(operator)
-        self.operator_type= str(operator_type)
-        self.description=   str(description)
+        self.operator=      unicode(operator)
+        self.operator_type= unicode(operator_type)
+        self.description=   unicode(description)
         self.co2=           int(co2)
         self.distance=      int(distance)
 

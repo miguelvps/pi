@@ -134,12 +134,10 @@ class ResourceMethod(db.Model):
         if self.type!=rest_methods.GET:
             raise NotImplementedError("Can't execute a service method that is not a GET")
         method_url= url_override if url_override else self.resource.absolute_url()
-        needed_parameters= [p.parameter for p in self.parameters]
-        needed_parameters_names= [rest_method_parameters.reverse[p] for p in needed_parameters]
+        needed_parameters= dict([(p.parameter, rest_method_parameters.reverse[p.parameter]) for p in self.parameters])
         #all received parameters must be method parameters
-        assert all([r in needed_parameters for r in received_parameters.keys()])
-        parameters_values= [received_parameters.get(p,'') for p in needed_parameters]
-        parameters_kv= dict(zip(needed_parameters_names, parameters_values))
+        #assert all([r in needed_parameters for r in received_parameters.keys()])
+        parameters_kv= dict([(needed_parameters.get(k) or k, v) for k,v in received_parameters.items()])
         params= urllib.urlencode(parameters_kv)
         page = urllib.urlopen(method_url + "?" + params).read()
         return page
