@@ -86,7 +86,7 @@ class Course(db.Model):
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' % self.name
-        xml += u'<entity type="string" name="%s">%s</entity>' % (_('Acrónimo'), self.acronym)
+        xml += u'<entity type="string" name="%s">%s</entity>' % (_(u'Acrónimo'), self.acronym)
         if self.type:
             xml += '<entity name="%s" type="string">%s</entity>' % (_('Tipo'), self.type.name)
         xml += '<entity type="string" service ="Departamentos" url="%s" name="%s">%s</entity>' % (self.department.permalink(), _('Departamento'), self.department.name)
@@ -120,7 +120,7 @@ class Subject(db.Model):
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' %self.name
-        xml += u'<entity type="string" name="%s">%s</entity>' % (_('Acrónimo'), self.acronym)
+        xml += u'<entity type="string" name="%s">%s</entity>' % (_(u'Acrónimo'), self.acronym)
         xml += '<entity kind="pessoa" type="string" name="%s">%s</entity>' % (_('Regente'), self.regent)
         xml += '<entity kind="pessoa" type="string" name="%s">%s</entity>' % (_('Coordenador'), self.coordinator)
         xml += '<entity type="string" name="%s">%s</entity>' % (_('Periodo'), self.period)
