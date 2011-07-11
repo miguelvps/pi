@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-07-06 17:29+0100\n"
+"POT-Creation-Date: 2011-07-11 16:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,19 +38,19 @@ msgstr ""
 msgid "New service: %(name)s"
 msgstr ""
 
-#: templates/base.html:54 templates/settings.html:9
+#: templates/base.html:53 templates/settings.html:9
 msgid "Settings"
 msgstr ""
 
-#: templates/base.html:57
+#: templates/base.html:56
 msgid "Logout"
 msgstr ""
 
-#: templates/base.html:59
+#: templates/base.html:58
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:62 templates/history.html:9
+#: templates/base.html:61 templates/history.html:9
 msgid "History"
 msgstr ""
 
@@ -118,8 +118,7 @@ msgstr ""
 msgid "Map"
 msgstr ""
 
-#: templates/ratings.html:9 templates/ratings.html:16
-#: templates/settings.html:25
+#: templates/ratings.html:9 templates/settings.html:21
 msgid "Ratings"
 msgstr ""
 
@@ -140,46 +139,35 @@ msgstr ""
 msgid "Please insert the url with the service metadata to perform the submission."
 msgstr ""
 
-#: templates/service.html:19
-msgid "Check/Uncheck this service to favorite it."
+#: templates/service.html:22
+msgid "Rating"
 msgstr ""
 
-#: templates/service.html:21
-msgid "Give it a rating (1 to 5)."
-msgstr ""
-
-#: templates/service.html:25
+#: templates/service.html:26
 msgid "Save"
 msgstr ""
 
 #: templates/settings.html:18
-msgid "View the list with all the favorite services"
-msgstr ""
-
-#: templates/settings.html:21
-msgid "Add a Service"
+msgid "View your favorite services"
 msgstr ""
 
 #: templates/settings.html:22
-msgid "Register a new service in Concierge "
+msgid "View all assigned ratings"
 msgstr ""
 
-#: templates/settings.html:22 templates/settings.html:26
-#: templates/settings.html:30
-msgid "(must be logged in)"
-msgstr ""
-
-#: templates/settings.html:26
-msgid "View a list with all the assigned service ratings"
-msgstr ""
-
-#: templates/settings.html:29
+#: templates/settings.html:25
 msgid "Import"
 msgstr ""
 
+#: templates/settings.html:26
+msgid "Import data from this device to your user account"
+msgstr ""
+
+#: templates/settings.html:29
+msgid "Add a Service"
+msgstr ""
+
 #: templates/settings.html:30
-msgid ""
-"Import your favorite services and ratings from your device to your user "
-"account"
+msgid "Register a new service"
 msgstr ""
 
