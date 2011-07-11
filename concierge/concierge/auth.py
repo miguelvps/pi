@@ -5,6 +5,7 @@ from flask import Module, request, session, g, render_template, redirect, \
                   make_response, url_for, flash
 from flaskext.wtf import Form, TextField, PasswordField, BooleanField, \
                          Required, Length, EqualTo, ValidationError
+from flaskext.babel import gettext as _
 from werkzeug import generate_password_hash, check_password_hash
 
 from concierge import db
@@ -20,6 +21,7 @@ class User(db.Model):
     password = db.Column(db.String(54)) # enough for sha1$hash
     created = db.Column(db.DateTime, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    locale = db.Column(db.String(6))
 
     def __init__(self, username, password):
         self.username = username
@@ -66,7 +68,7 @@ def requires_auth(f):
     @wraps(f)
     def decorator(*args, **kwargs):
         if not session.get('auth') and not hasattr(g, 'user'):
-            flash('You must login', 'warning')
+            flash(_('You must login'), 'warning')
             session['referrer'] = request.url
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
@@ -107,7 +109,7 @@ def register():
         session['id'] = user.id
         session['username'] = user.username
         session['auth'] = True
-        flash('Successfull registration', 'success')
+        flash(_('Successfull registration'), 'success')
         session.permanent = form.remember.data
         referrer = session.pop('referrer', None)
         if referrer:
@@ -127,7 +129,7 @@ def login():
             session['username'] = user.username
             session['auth'] = True
             session.permanent = form.remember.data
-            flash('You were successfully logged in', 'success')
+            flash(_('You were successfully logged in'), 'success')
             referrer = session.pop('referrer', None)
             if referrer:
                 return redirect(referrer)
@@ -143,5 +145,5 @@ def logout():
     session.pop('auth')
     response = make_response(redirect('/'))
     response.delete_cookie('online')
-    flash('You were successfully logged out', 'success')
+    flash(_('You were successfully logged out'), 'success')
     return response

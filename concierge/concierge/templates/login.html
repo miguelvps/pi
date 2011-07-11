@@ -6,7 +6,7 @@
 
 {% block header %}
 <div data-role="header">
-    <h1>Sign in</h1>
+    <h1>{{ _('Sign in') }}</h1>
     <a href="/" class="ui-btn-left" data-transition="slidedown">Cancel</a>
 </div><!-- /header -->
 {% endblock %}
@@ -17,26 +17,26 @@
         <fieldset>
             {{ form.csrf }}
             <div data-role="fieldcontain">
-                {{ form.username(placeholder=form.username.label.text) }}
+                {{ form.username(placeholder=_('%(Username)s', Username=form.username.label.text)) }}
                 {% for error in form.username.errors  %}
                 <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
             </div>
             <div data-role="fieldcontain">
-                {{ form.password(placeholder=form.password.label.text) }}
+                {{ form.password(placeholder=_('%(Password)s', Password=form.password.label.text)) }}
                 {% for error in form.password.errors  %}
                 <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
             </div>
             <div data-role="fieldcontain">
-                {{ form.remember }} {{ form.remember.label }}
+                {{ form.remember }} {{ _('%(Remember)s', Remember=form.remember.label) }}
             </div>
             <div data-role="fieldcontain">
-                <input type="submit" value="Sign in" data-role="button" data-inline="true" data-theme="b" />
+                <input type="submit" value="{{ _('Sign in') }}" data-role="button" data-inline="true" data-theme="b" />
             </div>
         </fieldset>
     </form>
-    <h4>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here.</a></h4>
+    <h4>{{ _('Don\'t have an account?') }} <a href="{{ url_for('auth.register') }}">{{ _('Register here.') }}</a></h4>
 </div><!-- /content -->
 {% endblock %}
 

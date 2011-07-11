@@ -4,14 +4,13 @@
         <title>Concierge</title>
 
         <link rel="stylesheet" href="/static/ui-lightness/jquery-ui-1.8.13.custom.css"/>
-        <link rel="stylesheet" href="/static/jquery.mobile-1.0a4.1.min.css"/>
+        <link rel="stylesheet" href="/static/jquery.mobile-1.0b1.min.css"/>
         <link rel="stylesheet" href="/static/style.css"/>
-        <script src="/static/jquery-1.5.2.min.js"></script>
+        <script src="/static/jquery-1.6.1.min.js"></script>
         <script src="/static/script.js"></script>
-        <script src="/static/jquery.mobile-1.0a4.1.min.js"></script>
+        <script src="/static/jquery.mobile-1.0b1.min.js"></script>
         <script src="/static/jquery-ui-1.8.13.custom.min.js"></script>
         <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
-
 
         {% block map_imports %}
         {% endblock %}
@@ -19,7 +18,7 @@
 
     <body>
         <!-- Start of first page -->
-        <div data-role="page" id="{% block page_id %}{% endblock %}" {% block redirect %}{% endblock %} class="{% block page_class %}{% endblock %}">
+        <div data-role="page"  data-add-back-btn="true" id="{% block page_id %}{% endblock %}" {% block redirect %}{% endblock %} class="{% block page_class %}{% endblock %}">
             <script type="text/javascript">
                 {% if g.user %}
                     auth = true;
@@ -51,15 +50,15 @@
                 <div data-role="footer" style="position:fixed; bottom:0;" data-id="concfooter">
                         <div data-role="navbar">
                             <ul>
-                                <li><a href="/settings">Settings</a></li>
+                                <li><a href="/settings">{{ _('Settings') }}</a></li>
                                 <li>
                                 {% if session.get("auth") == True %}
-                                <a href="{{ url_for('auth.logout') }}">Logout</a>
+                                <a href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
                                 {% else %}
-                                <a href="{{ url_for('auth.login') }}" data-transition="slideup">Login</a>
+                                <a href="{{ url_for('auth.login') }}" data-transition="slideup">{{ _('Login') }}</a>
                                 {% endif %}
                                 </li>
-                                <li><a href="/history">History</a></li>
+                                <li><a href="/history">{{ _('History') }}</a></li>
                             </ul>
                         </div><!-- /navbar -->
                 </div><!-- /footer -->

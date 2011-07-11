@@ -9,9 +9,10 @@ except:
 from flask import Module, request, g, render_template, redirect, url_for, flash
 from flaskext.wtf import Form, TextField, IntegerField, BooleanField, \
                          Required, NumberRange, URL, ValidationError
+from flaskext.babel import gettext as _
 from concierge import db
 from concierge.auth import requires_auth
-from concierge.services_models import Service, ResourceMethod
+from concierge.services_models import Service
 from concierge.service_metadata_parser import parse_metadata
 from concierge import xml_to_html
 from common import rest_methods, rest_method_parameters
@@ -28,7 +29,7 @@ def before_request():
             last_seen = g.user.last_seen
             services = Service.query.filter(Service.created > last_seen).all()
             for service in services:
-                flash('New service: %s' % service.name, 'info')
+                flash(_('New service: %(name)s', name=service.name), 'info')
             g.user.last_seen = datetime.utcnow()
             db.session.add(g.user)
             db.session.commit()

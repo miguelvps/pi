@@ -6,7 +6,7 @@
 
 {% block header %}
 <div data-role="header">
-    <h1>Settings</h1>
+    <h1>{{ _('Settings') }}</h1>
 </div><!-- /header -->
 {% endblock %}
 
@@ -14,20 +14,20 @@
 <div data-role="content">	
     <ul data-role="listview">
         <li><a href="/services/favorites">
-                <h3>Favorites</h3>
-                <p>View your favorite services</p>
+            <h3>{{ _('Favorites') }}</h3>
+            <p>{{ _('View your favorite services') }}</p>
         </a></li>
         <li><a href="/services/ratings">
-                <h3>Ratings</h3>
-                <p>View all assigned ratings</p>
+            <h3>{{ _('Ratings') }}</h3>
+            <p>{{ _('View all assigned ratings') }}</p>
         </a></li>
-        <li><a href="/services/ratings">
-                <h3>Ratings</h3>
-                <p>View all assigned ratings</p>
+        <li><a id="import" href="/services/import">
+            <h3>{{ _('Import') }}</h3>
+            <p>{{ _('Import data from this device to your user account') }}</p>
         </a></li>
         <li><a href="/services/register">
-                <h3>Add a Service</h3>
-                <p>Register a new service in Concierge</p>
+            <h3>{{ _('Add a Service') }}</h3>
+            <p>{{ _('Register a new service') }}</p>
         </a></li>
     </ul><!--/config_list-->
 </div><!-- /content -->
