@@ -30,30 +30,52 @@ def render_record(xml):
 def render_map(xml):
 
     def parse_geowkt(geowkt):
+        assert geowkt[-2:] == '))'
         if geowkt[:9] == 'POLYGON((':
-            assert geowkt[-2:] == '))'
+            t= "Polygon"
             geowkt = geowkt[9:-2] 
-            pair_list = geowkt.split(', ')
-            tuple_list = map(lambda s: tuple([float(a) for a in s.split(' ')]), pair_list)
-            return (tuple_list, 'polygon')
+        elif geowkt[:10] == 'POLYLINE((':
+            t= "Polyline"
+            geowkt = geowkt[10:-2]         
         else:
             raise Exception("geowkt parse error")
+        
+        pair_list = geowkt.split(', ')
+        tuple_list = map(lambda s: tuple([float(a) for a in s.split(' ')]), pair_list)
+        return (tuple_list, t)
 
     def get_bounds(coords):
         min_coords = reduce(lambda (x,y),(z,w): (min(x,z), min(y,w)) ,coords)
         max_coords = reduce(lambda (x,y),(z,w): (max(x,z), max(y,w)) ,coords)
         return (min_coords, max_coords)
-
-    geowkt = filter(lambda e: e.get('type') == 'geowkt', xml.getchildren())
-    assert len(geowkt) == 1
-    coords, wkt_type = parse_geowkt(geowkt[0].text)
-    min_coords, max_coords = get_bounds(coords)
+        
+    children= xml.getchildren()
+    geowkts = filter(lambda e: e.get('type') == 'geowkt', children)
+    geowkts = map(lambda e: e.text , geowkts)
+    
+    if len(geowkts) == 1:
+        #polygon
+        coords, wkt_type = parse_geowkt(geowkts[0])
+        assert wkt_type== 'Polygon'
+        min_coords, max_coords = get_bounds(coords)
+    if len(geowkts)>1:
+        #route
+        descriptions= filter(lambda e: e.get('type') == 'string', children)
+        descriptions= map(lambda e: e.text, descriptions)
+        descriptions=descriptions[1:]   # first string is title, each other is the description of geowkt
+        assert len(descriptions)==len(geowkts)+1 
+        coord_list, type_list= zip(*map(parse_geowkt, geowkts))
+        assert all([t=="Polyline" for t in type_list])
+        all_coords= ",".join(coord_list)
+        min_coords, max_coords = get_bounds(all_coords)
+        coords= coord_list[0]   #FIXME
+        
     result= render_template('map2.html', min_lat= min_coords[0], min_lng= min_coords[1],
-           max_lat= max_coords[0], max_lng= max_coords[1],    
-            draw_coords = ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])
-            )
-    print result
+       max_lat= max_coords[0], max_lng= max_coords[1],    
+        draw_coords = ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])
+        )
     return result
+
 
 
 def add_service_id(xml):
