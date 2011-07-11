@@ -63,10 +63,12 @@ def render_map(xml):
         descriptions= filter(lambda e: e.get('type') == 'string', children)
         descriptions= map(lambda e: e.text, descriptions)
         descriptions=descriptions[1:]   # first string is title, each other is the description of geowkt
-        assert len(descriptions)==len(geowkts)+1 
+        assert len(descriptions)==len(geowkts)
         coord_list, type_list= zip(*map(parse_geowkt, geowkts))
         assert all([t=="Polyline" for t in type_list])
-        all_coords= ",".join(coord_list)
+        all_coords= []
+        for l in coord_list:
+            all_coords.extend(l)
         min_coords, max_coords = get_bounds(all_coords)
         coords= coord_list[0]   #FIXME
         
@@ -74,6 +76,7 @@ def render_map(xml):
        max_lat= max_coords[0], max_lng= max_coords[1],    
         draw_coords = ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])
         )
+
     return result
 
 

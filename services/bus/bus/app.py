@@ -36,7 +36,7 @@ def journey_to_xml(j):
                 s= u"%s (%s)\n%s-%s\n%.2f€\t%.0fg CO2" % (t.operator, t.operator_type, t.start_time.strftime("%H:%M"), t.end_time.strftime("%H:%M"), t.cost, t.co2)
             else:
                 s="%s - %i/%i"%(t.operator, i+1, len(t.paths))
-            geowkt="POLYLINE((%s))" % (",".join(["%f %f"%(c.x,c.y) for c in path.l]))
+            geowkt="POLYLINE((%s))" % (", ".join(["%f %f"%(c.y,c.x) for c in path.l]))
             pairs.append( (geowkt, s) )
 
     
@@ -58,6 +58,7 @@ def destination():
         assert all((l1, ln1, l2, ln2))
         now= datetime.datetime.now()
         j= transporlis.transportation(l1,ln1,l2,ln2, now)
+        xml=journey_to_xml(j)
     except:
         xml=""
     return Response(response=xml, mimetype="application/xml")
