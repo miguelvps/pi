@@ -48,7 +48,7 @@ def render_map(xml):
     assert len(geowkt) == 1
     coords, wkt_type = parse_geowkt(geowkt[0].text)
     min_coords, max_coords = get_bounds(coords)
-    result= render_template('map.html', min_lat= min_coords[0], min_lng= min_coords[1],
+    result= render_template('map2.html', min_lat= min_coords[0], min_lng= min_coords[1],
            max_lat= max_coords[0], max_lng= max_coords[1],    
             draw_coords = ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords])
             )
