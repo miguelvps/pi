@@ -12,8 +12,7 @@
 
 {% block page_content %}
 <div data-role="content">
-    <ul data-role="listview"  data-theme="c" data-dividertheme="a" data-inset=True>
-        <li data-role="list-divider">Ratings</li>
+    <ul data-role="listview"  data-theme="c">
         {% for service,rating in ratings.items() %}
         <li>
             <a href="/services/{{service.id}}">
@@ -30,7 +29,6 @@
         if (!auth) {
             var list = $("#ratings ul");
             list.empty();
-            list.append('<li data-role="list-divider">Ratings</li>');
             for (var i = 0; i < localStorage.length; i++){
                     var key = localStorage.key(i);
                     if (key.indexOf("service_rating") == 0){

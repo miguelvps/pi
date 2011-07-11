@@ -42,10 +42,18 @@ def render_map(xml):
         min_coords = reduce(lambda (x,y),(z,w): (min(x,z), min(y,w)) ,coords)
         max_coords = reduce(lambda (x,y),(z,w): (max(x,z), max(y,w)) ,coords)
         return (min_coords, max_coords)
-
-    geowkt = filter(lambda e: e.get('type') == 'geowkt', xml.getchildren())
-    assert len(geowkt) == 1
-    coords, wkt_type = parse_geowkt(geowkt[0].text)
+    
+    info_html = '<h2> %s </h2><dl>' % xml[0].text
+    for child in xml.getchildren()[1:]:
+        if child.get('type') == 'geowkt':
+            geowkt = child.text
+        else:
+            info_html+= '<dt><h4>%s</h4></dt>' % child.get('name', '')
+            info_html+= '<dd>%s</dd>' % (render(child))
+            
+    info_html += '</dl>'
+    
+    coords, wkt_type = parse_geowkt(geowkt)
     min_coords, max_coords = get_bounds(coords)
     html ='''
     <style>
@@ -84,14 +92,25 @@ def render_map(xml):
                 strokeWeight: 2,
                 fillColor: "#FF0000",
                 fillOpacity: 0.35
-           });
-           polygon.setMap(map);
-           var markerOptions = {
+            });
+            polygon.setMap(map);
+                      
+            var markerOptions = {
                 position: bounds.getCenter(),
                 map: map,
                 title: "title",
-           };
-           var marker = new google.maps.Marker(markerOptions);
+            };
+            var marker = new google.maps.Marker(markerOptions);
+
+            var contentString = "%(info)s";          
+
+            var infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });           
+
+            google.maps.event.addListener(marker, 'click', function() {
+              infowindow.open(map,marker);
+            });
 
        $('.page-map').live('pageshow',function(){
             google.maps.event.trigger(map, 'resize');
@@ -105,7 +124,7 @@ def render_map(xml):
     ''' % {'min_lat': min_coords[0], 'min_lng': min_coords[1],
            'max_lat': max_coords[0], 'max_lng': max_coords[1],    
             'draw_coords' : ",".join(['new google.maps.LatLng(%f, %f)'% (x,y) for (x,y) in coords]),
-            }
+            'info':info_html, }
 
     return html
 
