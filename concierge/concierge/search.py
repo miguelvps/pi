@@ -1,4 +1,7 @@
-import json
+try:
+    import json
+except:
+    import simplejson as json
 from xml.etree import ElementTree
 from flask import Module, request, session, render_template, redirect, g
 from concierge.services_models import Service, ResourceMethod, ResourceKeyword

@@ -1,4 +1,5 @@
 blinker
+simplejson
 Flask==0.6.1
 Flask-SQLAlchemy
 Flask-WTF
