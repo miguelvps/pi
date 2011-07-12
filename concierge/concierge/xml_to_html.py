@@ -8,6 +8,9 @@ def render_string(xml):
 def render_email(xml):
     return '<a href="mailto:%s">%s</a>' % (xml.text, xml.text)
 
+def render_url(xml):
+    return '<a href="%s">%s</a>' % (xml.text, xml.text)
+    
 def render_image(xml):
     return '<img src="%s"/>' % (xml.text)
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Concierge</title>
+        <title>Watson</title>
 
         <link rel="stylesheet" href="/static/ui-lightness/jquery-ui-1.8.13.custom.css"/>
         <link rel="stylesheet" href="/static/jquery.mobile-1.0a4.1.css"/>
@@ -18,7 +18,7 @@
 
     <body>
         <!-- Start of first page -->
-        <div data-role="page"  data-add-back-btn="true" id="{% block page_id %}{% endblock %}" {% block redirect %}{% endblock %} class="{% block page_class %}{% endblock %}">
+        <div data-role="page"  data-add-back-btn="{% block back_btn %}true{% endblock %}" id="{% block page_id %}{% endblock %}" {% block redirect %}{% endblock %} class="{% block page_class %}{% endblock %}">
             <script type="text/javascript">
                 {% if g.user %}
                     auth = true;
@@ -29,7 +29,7 @@
 
             {% block header %}
             <div data-role="header" data-position="fixed" data-id="concheader">
-                <h1>Concierge</h1>
+                <h1>Watson</h1>
             </div><!-- /header -->
             {% endblock %}
 

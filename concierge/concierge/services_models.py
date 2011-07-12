@@ -139,6 +139,9 @@ class ResourceMethod(db.Model):
         #all received parameters must be method parameters
         #assert all([r in needed_parameters for r in received_parameters.keys()])
         parameters_kv= dict([(needed_parameters.get(k) or k, v) for k,v in received_parameters.items()])
+        for k,v in parameters_kv.items():
+            if isinstance(v, unicode):
+                parameters_kv[k] = v.encode('utf-8')
         locale = locale or get_locale()
         if locale:
             parameters_kv['lang'] = locale
