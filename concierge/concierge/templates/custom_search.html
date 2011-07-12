@@ -18,8 +18,8 @@
     <form action="/custom_search" method="POST">
         <ul data-role="listview" data-inset=True>
             <li data-role="fieldcontain">
-            {{ search_form.search_query.label }}
-            {{ search_form.search_query(placeholder=_('%(Search)s', Search=search_form.search_query.label.text)) }}
+                <label for="csearch"> </label>
+                {{ search_form.search_query(id="csearch", placeholder=_('%(Search)s', Search=search_form.search_query.label.text)) }}
                 {% for error in search_form.search_query.errors  %}
                 <span class="error">{{ error }}</span>
                 {% endfor %}
