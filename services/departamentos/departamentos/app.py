@@ -107,7 +107,7 @@ class Subject(db.Model):
     regent = db.Column(db.String(255))
     coordinator = db.Column(db.String(255))
     period = db.Column(db.Enum(u'Anual', u'1º Sem', u'2º Sem',
-                               u'1º Tri', u'2º Tri', u'3º Tri', period_enum="teste"))
+                               u'1º Tri', u'2º Tri', u'3º Tri', name='period_types'))
 
     search_atributes = ['name', 'acronym']
 
