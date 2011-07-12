@@ -7,6 +7,7 @@ setup(
     install_requires=[
         'Flask',
         'Flask-SQLAlchemy',
+        'Flask-Babel',
         'Flask-Script',
     ]
 )
