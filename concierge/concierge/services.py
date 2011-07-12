@@ -206,15 +206,16 @@ def browse_resource_paginated(url, service, method, args):
             if ((x>=y) && (!doing_request))
                     {
                     doing_request= true;
+                    $.mobile.pageLoading();
                     $.ajax({url: url+"?start="+start+"&end="+(start+%i), success:
                     function (data)
                         {
                         start+=%i;
                         $("ul.list").append(data);
                         $("ul.list").listview("refresh");
+                        $.mobile.pageLoading(true);
                         doing_request= false;
                         } });
-                    
                     }
             });
 
