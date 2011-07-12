@@ -144,7 +144,6 @@ class ResourceMethod(db.Model):
         locale = locale or get_locale()
         if locale:
             parameters_kv['lang'] = locale
-        # import pdb; pdb.set_trace()
         params= urllib.urlencode(parameters_kv)
         page = urllib.urlopen(method_url + "?" + params).read()
         return page
