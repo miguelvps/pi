@@ -160,14 +160,14 @@ def complete_latlng(service, method, url, args):
             if len(argstr):
                 argstr+="&"
             return render_template('geolocate_redirect.html', url=redirect_url, argstr=argstr)
-    
+
     return None
 
 def complete_method_args(service, url, method, given_args, add_start_end=False):
     '''given a method, verifies it's parameters and takes their values
     from dictionary given_args'''
     given_args= given_args.to_dict()
-    
+
     for parameter in [p.parameter for p in method.parameters]:
         param_name= rest_method_parameters.reverse[parameter]
         value= given_args.get(param_name)
@@ -177,8 +177,7 @@ def complete_method_args(service, url, method, given_args, add_start_end=False):
             value=RESULTS_PER_PAGINATED_PAGE
         given_args[param_name]=value
     return given_args
-    
-    
+
 def browse_resource_unpaginated(url, service, method, args):
     args= complete_method_args(service, url, method, args)
     xml= method.execute(args, url_override=service.url+url)
@@ -197,21 +196,21 @@ def browse_resource_paginated(url, service, method, args):
         html+= '''
         <script>
         var doing_request= false;
-        var start= %i;
-        var url= "%s";
         $(document).bind('scrollstop',function()
             {
             var x= $('body').height() +$(document).scrollTop() ;
             var y= $(document).height();
             if ((x>=y) && (!doing_request))
                     {
+                    var url = $('div.ui-page-active').attr('data-url');
+                    var start = $('div.ui-page-active ul.list').children().length
                     doing_request= true;
                     $.mobile.pageLoading();
                     $.ajax({url: url+"?start="+start+"&end="+(start+%i), success:
                     function (data)
                         {
                         start+=%i;
-                        $("ul.list").append(data);
+                        $("div.ui-page-active ul.list").append(data);
                         $("ul.list").listview("refresh");
                         $.mobile.pageLoading(true);
                         doing_request= false;
@@ -219,7 +218,7 @@ def browse_resource_paginated(url, service, method, args):
                     }
             });
 
-        </script>'''%(n, "/services/"+str(service.id)+"/browse/"+url, n, n )
+        </script>'''%(n, n )
         return render_template('service_browse_resource.html', service=service, html=html, url=url)
     else:
         #not first page, don't return all the page, only li elements
@@ -227,7 +226,7 @@ def browse_resource_paginated(url, service, method, args):
         assert html_tree.tag=="ul"
         html= "".join(map(ElementTree.tostring, html_tree.getchildren() ))
         return html
-            
+
 @services.route('/<id>/browse/<path:url>')
 def browse_resource(id, url):
     def paginated_method(method):
