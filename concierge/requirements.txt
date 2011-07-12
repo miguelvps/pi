@@ -1,5 +1,5 @@
 blinker
-Flask
+Flask==0.6.1
 Flask-SQLAlchemy
 Flask-WTF
 Flask-Script
