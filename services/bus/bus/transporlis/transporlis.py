@@ -20,6 +20,7 @@ def parse_pesquisar_lugar(html):
             
 
 def geolocate(place_string):
+    place_string= place_string.encode('iso-8859-1')
     method_url= 'http://transporlis.sapo.pt:80//DesktopModules/trp_homepage/Ajax/trp_homepage.ashx'
     params= {"cmd": "pesquisarLugar",
              "Lugar": place_string}
