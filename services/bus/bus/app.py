@@ -21,6 +21,7 @@ def locations_to_xml(locations):
         location_str= location[2]
         xml+= '<entity type="string" service="%s" url="/transport/transportation?destination_latlng=%s">%s</entity>' % (SERVICE_NAME, l+","+ln, location_str)
     xml+="</entity>"
+    xml= xml.replace("&","&amp;")
     return xml
 
 
@@ -46,6 +47,7 @@ def journey_to_xml(j):
         xml += '<entity type="geowkt">%s</entity>' % (geowkt)
         xml += '<entity type="string">%s</entity>' % (s)
     xml += '</entity>'
+    xml= xml.replace("&","&amp;")
     return xml
     
 @app.route("/transport/transportation")
