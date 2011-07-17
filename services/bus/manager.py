@@ -4,7 +4,7 @@ from bus.app import app
 
 
 manager = Manager(app)
-manager.add_command("runserver", Server(port = 5001))
+manager.add_command("runserver", Server(port = 3006))
 
 @manager.command
 def syncdb():

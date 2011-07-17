@@ -1,3 +1,4 @@
-Flask
+Flask==0.6.1
 Flask-SQLAlchemy
+Flask-Babel
 Flask-Script

@@ -4,7 +4,7 @@ from pes.app import app, db
 
 
 manager = Manager(app)
-manager.add_command("runserver", Server(port = 5001))
+manager.add_command("runserver", Server(port = 3001))
 
 @manager.command
 def syncdb():

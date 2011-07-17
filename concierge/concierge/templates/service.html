@@ -7,7 +7,7 @@
 {% block header %}
 <div data-role="header">
     <h1>{{service.name}}</h1>
-    <a href="/" data-icon="home" class="ui-btn-left">Home</a>    
+    <a href="/" data-icon="home" class="ui-btn-left">Home</a>
 </div><!-- /header -->
 {% endblock %}
 
@@ -16,13 +16,14 @@
 <div data-role="content">
     <form action="/services/{{service.id}}" method="POST">
         <fieldset>
-            <p> Check/Uncheck this service to favorite it.</p>
+            <div data-role="fieldcontain">
             {{form.favorite}} {{form.favorite.label}}
-            <p>Give it a rating (1 to 5).</p>
+            </div>
+            <p><h3>{{ _('Rating') }}</h3></p>
             <input type="range" name="{{form.rating.name}}" id="slider" value="{{form.rating.data}}" min="1" max="5"  />
             <!-- put error presentation here /-->
         </fieldset>
-        <input id="submit" type="submit" value="Save" data-role="button" data-inline="true" data-theme="b" />
+        <input id="submit" type="submit" value="{{ _('Save') }}" data-role="button" data-inline="true" data-theme="b" />
     </form>
 </div><!-- /content -->
 
@@ -54,5 +55,3 @@ $("#service{{service.id}} form").submit(function(e) {
 {% endblock %}
 
 {% block footer %} {% endblock %}
-
-

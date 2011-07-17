@@ -2,6 +2,7 @@
 
 from flask import Flask, Response, request, url_for
 from flaskext.sqlalchemy import SQLAlchemy
+from flaskext.babel import Babel, gettext as _
 from common import search
 
 
@@ -9,6 +10,13 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///departamentos.db'
 app.config.from_envvar('SETTINGS', silent=True)
 db = SQLAlchemy(app)
+babel = Babel(app)
+
+
+@babel.localeselector
+def get_locale():
+    lang = request.args.get('lang')
+    return lang or request.accept_languages.best_match(['pt', 'en'])
 
 
 course_subjects = db.Table('course_subjects',
@@ -37,10 +45,10 @@ class Department(db.Model):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' %self.name
         if self.courses:
-            xml += '<entity type="list" name="Cursos">'
+            xml += '<entity type="list" name="%s">' % (_('Cursos'))
             for course in self.courses:
                 xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (course.permalink(), course.name)
-            xml += '</entity>'       
+            xml += '</entity>'
         xml += '</entity>'
         return xml
 
@@ -78,12 +86,12 @@ class Course(db.Model):
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' % self.name
-        xml += u'<entity type="string" name="Acrónimo">%s</entity>' % self.acronym
+        xml += u'<entity type="string" name="%s">%s</entity>' % (_(u'Acrónimo'), self.acronym)
         if self.type:
-            xml += '<entity name="Tipo" type="string">%s</entity>' % self.type.name
-        xml += '<entity type="string" service ="Departamentos" url="%s" name="Departamento">%s</entity>' % (self.department.permalink(), self.department.name)
+            xml += '<entity name="%s" type="string">%s</entity>' % (_('Tipo'), self.type.name)
+        xml += '<entity type="string" service ="Departamentos" url="%s" name="%s">%s</entity>' % (self.department.permalink(), _('Departamento'), self.department.name)
         if self.subjects:
-            xml += '<entity type="list" name="Cadeiras">'
+            xml += '<entity type="list" name="%s">' % (_('Cadeiras'))
             for subject in self.subjects:
                 xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (subject.permalink(), subject.name)
             xml += '</entity>'
@@ -99,7 +107,7 @@ class Subject(db.Model):
     regent = db.Column(db.String(255))
     coordinator = db.Column(db.String(255))
     period = db.Column(db.Enum(u'Anual', u'1º Sem', u'2º Sem',
-                               u'1º Tri', u'2º Tri', u'3º Tri', period_enum="teste"))
+                               u'1º Tri', u'2º Tri', u'3º Tri', name='period_types'))
 
     search_atributes = ['name', 'acronym']
 
@@ -112,12 +120,12 @@ class Subject(db.Model):
     def to_xml(self):
         xml = '<entity type="record">'
         xml += '<entity type="string">%s</entity>' %self.name
-        xml += u'<entity type="string" name="Acrónimo">%s</entity>' % self.acronym
-        xml += '<entity kind="pessoa" type="string" name="Regente">%s</entity>' %self.regent
-        xml += '<entity kind="pessoa" type="string" name="Coordenador">%s</entity>' %self.coordinator
-        xml += '<entity type="string" name="Periodo">%s</entity>' % self.period
+        xml += u'<entity type="string" name="%s">%s</entity>' % (_(u'Acrónimo'), self.acronym)
+        xml += '<entity kind="pessoa" type="string" name="%s">%s</entity>' % (_('Regente'), self.regent)
+        xml += '<entity kind="pessoa" type="string" name="%s">%s</entity>' % (_('Coordenador'), self.coordinator)
+        xml += '<entity type="string" name="%s">%s</entity>' % (_('Periodo'), self.period)
         if self.courses:
-            xml += '<entity type="list" name="Cursos">'
+            xml += '<entity type="list" name="%s">' % (_('Cursos'))
             for course in self.courses:
                 xml += '<entity type="string" service="Departamentos" url="%s">%s</entity>' % (course.permalink(), course.name)
             xml += '</entity>'

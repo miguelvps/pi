@@ -1,10 +1,14 @@
+try:
+    import json
+except:
+    import simplejson as json
 from xml.etree import ElementTree
 from flask import Module, request, session, render_template, redirect, g
-from concierge.services_models import Service, ResourceMethod
+from concierge.services_models import Service, ResourceMethod, ResourceKeyword
 
 from concierge.auth import HistoryEntry
 from concierge import db
-
+from flaskext.babel import get_locale
 from flaskext.wtf import Form, Required, Length, BooleanField
 from flaskext.wtf.html5 import SearchField
 
@@ -31,7 +35,7 @@ def add_search_to_history(query, services):
         hstr_entry = HistoryEntry(user = g.user, search_query=query, entry_services=services)
         db.session.add(hstr_entry)
         db.session.commit()
-        
+
 @search.route('/custom_search', methods=['GET', 'POST'])
 def custom_search(history_entry = None, entry_id = None):
     services = Service.query.all()
@@ -113,7 +117,6 @@ def search_aux(query, services=None, add_to_history=True):
         add_search_to_history(query, services)
     search_methods= [m.global_search() for m in services]
     matches = match_search_to_methods_keywords(query, search_methods)
-
     method_parameters = []
     for squery, method in matches:
         if method.parameters[0].parameter == rest_method_parameters.NOME:
@@ -121,7 +124,7 @@ def search_aux(query, services=None, add_to_history=True):
         else:
             method_parameters.append((method, {rest_method_parameters.QUERY: query}))
 
-    results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters))
+    results= filter(lambda x:x is not None, ResourceMethod.execute_several(method_parameters, locale=get_locale()))
 
     xml = ElementTree.Element("entity", type='list')
     for result in results:
@@ -133,3 +136,9 @@ def search_aux(query, services=None, add_to_history=True):
 
     html= xml_to_html.render(xml)
     return render_template('search.html', html=html)
+
+@search.route('/search/completion')
+def search_completion():
+    query = request.args.get("term")
+    keywords = ResourceKeyword.query.distinct(ResourceKeyword.keyword).filter(ResourceKeyword.keyword.ilike(query+"%")).limit(10).all()
+    return json.dumps([k.keyword for k in keywords])

@@ -6,8 +6,9 @@
 
 {% block header %}
 <div data-role="header">
+    <a href="/settings">Back</a>
     <h1>Sign Up</h1>
-    <a href="/" data-icon="home" class="ui-btn-left">Home</a>
+    <a href="/" data-icon="home">Home</a>
 </div><!-- /header -->
 {% endblock %}
 
@@ -18,24 +19,24 @@
         <fieldset>
             {{ csrf }}
             <div data-role="fieldcontain">
-                {{ form.username(placeholder=form.username.label.text) }}
+                {{ form.username(placeholder=_('%(Username)s', Username=form.username.label.text)) }}
                 {% for error in form.username.errors  %}
                 <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
             </div>
             <div data-role="fieldcontain">
-                {{ form.password(placeholder=form.password.label.text) }}
+                {{ form.password(placeholder=_('%(Password)s', Password=form.password.label.text)) }}
                 {% for error in form.password.errors  %}
                 <div class="formerror"><span class="error">{{ error }}</span></div>
                 {% endfor %}
             </div>
             <div data-role="fieldcontain">
-                {{ form.confirm(placeholder=form.confirm.label.text) }}
+                {{ form.confirm(placeholder=_('%(Confirm)s', Confirm=form.confirm.label.text)) }}
             </div>
             <div data-role="fieldcontain">
-                {{ form.remember }} {{ form.remember.label }}
+                {{ form.remember }} {{ _('%(Remember)s', Remember=form.remember.label) }}
             </div>
-            <input type="submit" value="Register" data-role="button" data-inline="true" data-theme="b" />
+            <input type="submit" value="{{ _('Register') }}" data-role="button" data-inline="true" data-theme="b" />
         </fieldset>
     </form>
 </div><!-- /content -->

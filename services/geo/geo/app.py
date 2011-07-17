@@ -37,12 +37,12 @@ class Placemark(db.Model):
     def to_xml(self):
         xml = '<entity type="map">'
         xml += '<entity type="string">%s</entity>' %self.name
-        xml += '<entity type="string">%s</entity>' %self.folder
+        xml += '<entity name="context" type="string">%s</entity>' %self.folder
         xml += '<entity type="geowkt">%s</entity>' %self.geowkt
         if self.type:
-            xml += '<entity type="string">%s</entity>' %self.type.type_name
+            xml += '<entity name="type" type="string">%s</entity>' %self.type.type_name
         if self.abreviation:
-            xml += '<entity type="string">%s</entity>' %self.abreviation
+            xml += '<entity name="abreviation" type="string">%s</entity>' %self.abreviation
         xml += '</entity>'
         return xml
 

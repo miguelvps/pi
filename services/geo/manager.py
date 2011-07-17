@@ -4,7 +4,7 @@ from geo.app import app, db, Placemark, PlacemarkType
 
 
 manager = Manager(app)
-manager.add_command("runserver", Server(port = 5004))
+manager.add_command("runserver", Server(port = 3004))
 
 @manager.command
 def syncdb():
