@@ -146,8 +146,9 @@ class ResourceMethod(db.Model):
         if locale:
             parameters_kv['lang'] = locale
         params= urllib.urlencode(parameters_kv)
-        page = urllib.urlopen(method_url + "?" + params) #
-        if page.getcode() == 404:
+        try:
+            page = urllib.urlopen(method_url + "?" + params) #
+        except:
             return '<entity type="list"/>'
         page = page.read()
         return page
