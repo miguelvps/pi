@@ -25,12 +25,14 @@ def locations_to_xml(locations):
     return xml
 
 
-def journey_to_xml(j):
+def journey_to_xml(j, give_stations=False):
     transports_names= ["%s (%s)"%(t.operator, t.operator_type) for t in j.transports]
         
     pairs= []   #pairs of geowkt, text
     for t in j.transports:
         first=True
+        if not give_stations:
+            t.join_paths()
         for i,path in enumerate(t.paths):
             if first:
                 first=False

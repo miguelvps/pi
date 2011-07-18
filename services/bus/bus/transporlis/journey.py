@@ -28,6 +28,10 @@ class Path(object):
         return self.l[key]
     def __iter__(self):
         return self.l.__iter__()
+    def join(self, other):
+        tmp= self.l[:]
+        tmp.extend(other.l)
+        return Path(tmp) 
 
 class BoundingBox(object):
     '''for determining zoom'''
@@ -99,6 +103,9 @@ class JourneyTransport(object):
         transportation (stations, etc)'''
         assert all([isinstance(p, Path) for p in paths])
         self.paths= paths
+
+    def join_paths(self):
+        self.paths= [reduce(Path.join, self.paths)]
 
 
 
